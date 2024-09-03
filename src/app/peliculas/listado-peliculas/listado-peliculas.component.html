@@ -1,0 +1,18 @@
+
+@if (!listaPeliculas) {
+    <img src="spinner_loadding.gif" width="200px" alt="">
+    
+  }@else if(listaPeliculas.length === 0) {
+    <p>No hay peliculas para mostrar</p>
+  
+  }@else {
+    @for (pelicula of listaPeliculas; track $index) {
+      <div class="cardPelicula">
+          <img [src]="pelicula.poster"  width="169" height="250"/>
+        <p>{{$index}} index</p>
+        <p>Titulo {{pelicula.titulo}}</p>
+        <p>Fecha {{pelicula.fechaLanzamiento}}</p>
+        <button mat-flat-button>Basic</button>
+      </div>
+    }
+  }

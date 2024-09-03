@@ -1,1 +1,76 @@
 /* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+*{
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+}
+
+:root{
+  --nav-width: 92px;/**/
+  
+  /*===== Colores =====*/
+  --first-color: #0C5DF4;
+  --bg-color: #12192C;
+  --bg-color-principal-secundario: #1f2637;
+  --bg-color-secundario: #daa520;
+  --sub-color: #B6CEFC;
+  --white-color: #FFF;
+    
+  /*===== Fuente y tipografia =====*/
+  --body-font: 'Poppins', sans-serif;
+  --normal-font-size: 1rem;
+  --small-font-size: .875rem;
+}
+
+
+
+
+
+.pagina{
+  width: 100%;
+}
+
+.ruta_contendor{
+  display: flex;
+  align-items: center;
+
+  margin-bottom: 15px;
+}
+
+.ruta_contendor img{
+  width: 30px;
+  margin-right: 5px;
+}
+
+.ruta_contendor h5{
+  color: rgb(89, 94, 110);
+}
+
+
+.icono_contenedor{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+
+/*Animacion*/
+.animacion {
+  position: relative; 
+  animation: slideInLeft 1s ease forwards;
+}
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-5%);
+    opacity: 0; 
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

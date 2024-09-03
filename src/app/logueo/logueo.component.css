@@ -1,0 +1,107 @@
+.pagina_logueo{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-color);
+    color: white;
+    color: rgb(89, 94, 110);
+}
+
+.contenedor_logueo{
+    background-color: var(--bg-color-principal-secundario);
+    border-radius: 15px;
+    display: flex;
+    width: 90%;
+    max-width: 800px;
+}
+
+.contenedor_imagen_logo{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    width: 50%;
+}
+
+.contenedor_imagen_logo img{
+    width: 60%;
+}
+
+.contenedor_formulario_logueo{
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    padding: 15px;
+}
+.contenedor_formulario_logueo h2{
+    margin-top: 50px;
+    padding-left: 7px;
+}
+.contenedor_formulario_logueo form{
+   margin: 50px 0px;
+   width: 90%;
+   padding: 10px;
+}
+
+.input_contenedor_logueo{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.input_contenedor_logueo input{
+    margin-top: 10px;
+    border: none;
+    height: 25px;
+    border-radius: 15px;
+    background-color: rgb(51, 55, 75);
+    padding: 15px;
+    color: rgb(206, 206, 206);
+    outline: none;
+}
+
+.input_contenedor_logueo input:focus {
+    box-shadow: 0 0 5px 2px rgba(22, 22, 22, 0.5); /* Aplica la sombra gris al enfocar */
+    transform: scale(1.03);
+}
+
+.btn_amarillo{
+    border: none;
+    border-radius: 15px;
+    background-color: var(--bg-color-secundario);
+    width: 150px;
+    height: 30px;
+    color: rgb(238, 238, 238);
+    margin-top: 10px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.derechos_logueo{
+    text-align: center;
+}
+
+
+@media all and (max-width:775px){
+
+    .contenedor_imagen_logo{
+        width: 100%;
+    }
+
+    .contenedor_logueo{
+        padding-top: 20px;
+        flex-direction: column;
+    }
+
+    .contenedor_formulario_logueo{
+        width: 100%;
+        align-items: center;
+    }
+
+    .contenedor_formulario_logueo h2{
+        padding-left: 0px;
+    }
+}
