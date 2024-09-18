@@ -28,8 +28,6 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 
 
-
-
 .pagina{
   width: 100%;
 }
@@ -50,11 +48,28 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   color: rgb(89, 94, 110);
 }
 
-
 .icono_contenedor{
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.boton_amarillo {
+  background-color: var(--bg-color-secundario) !important; 
+  color: white !important;
+}
+/* Estilos para el botón deshabilitado */
+.boton_amarillo:disabled,
+.boton_amarillo[disabled] {
+  background-color: #d3b301ab !important; /* Un amarillo más claro */
+  color: #ffffff !important; /* Un gris oscuro para el texto */
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+/* Para asegurarnos de que los estilos se apliquen incluso con la especificidad de Angular Material */
+.mat-flat-button.mat-button-disabled.mat-button-disabled.boton_amarillo {
+  background-color: #d3b301ab !important;
+  color: #ffffff !important;
 }
 
 

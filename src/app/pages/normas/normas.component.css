@@ -1,0 +1,26 @@
+.full-width {
+    width: 100%;  
+    max-width: 1000px;
+    margin-bottom: 17px;
+}
+  
+.contenedor_formulario{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.contenedor_formulario h2{
+    color: rgb(89, 94, 110);
+    margin-bottom: 30px;
+    text-align: start;
+}
+
+.contenedor_boton{
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    justify-content: end;
+}
+
+

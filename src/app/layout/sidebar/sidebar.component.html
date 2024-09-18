@@ -1,0 +1,111 @@
+
+
+
+<div class="layout" id="body-pd">  <!-- Asi como esta esta bien o podria poner esta clase en app.component.html y llamar dentro 
+    al sidebar y luego l clase contenidoVariable y dentro roter-oulet, mas adelante seguro lo cambio por la creacion del login -->
+
+    <div class="l-navbar" id="navbar">
+        <nav class="nav">
+            <div>
+
+                
+                <div class="nav__brand">
+                    <mat-icon name="menu-outline" class="nav__toggle" id="nav-toggle">menu</mat-icon>
+                    
+                    <div class="nav__logo">
+                        <img src="logo-oij.ico" alt="" style="width: 40px; margin-right: 5px; ">
+                        <a mat-button class="nav__logo__nombre">Gestor <br> Documental</a>
+                    </div>
+
+                    
+                
+                </div>
+                <div class="nav__list">
+
+                    <a mat-button routerLink="/consultas" class="nav__link active">
+                        <mat-icon name="home-outline" class="nav__icon">search</mat-icon>
+                        <span class="nav__name">Consultas</span>
+                    </a>
+
+                    <a mat-button routerLink="/documentos" class="nav__link">
+                        <mat-icon name="folder-outline" class="nav__icon">description</mat-icon>
+                        <span class="nav__name">Documentos</span>
+                    </a>
+
+                
+
+                    <div  class="nav__link_collapse collapse">
+                        <mat-icon name="pie-chart-outline" class="nav__icon">leaderboard</mat-icon>
+                        <span class="nav__name">Reportes</span>
+
+                        <mat-icon class="collapse__link">keyboard_arrow_down</mat-icon>
+
+                        <ul class="collapse__menu">
+                            <a routerLink="pruebas" class="collapse__sublink nav__link">• Pruebas</a>
+                            <a href="#" class="collapse__sublink nav__link">• Pruebas 2</a>
+                            <a href="#" class="collapse__sublink nav__link">• Pruebas 3</a>
+                        </ul>
+                    </div>
+
+                    <a routerLink="/oficinas" class="nav__link">
+                        <mat-icon name="pie-chart-outline" class="nav__icon">apartment</mat-icon>
+                        <span class="nav__name">Oficinas</span>
+                    </a>
+
+           
+                    <a routerLink="/normas" class="nav__link">
+                        <mat-icon name="pie-chart-outline" class="nav__icon">article</mat-icon>
+                        <span class="nav__name">Normas</span>
+                    </a>
+
+                    
+
+                    <a routerLink="/etapas" class="nav__link">
+                        <mat-icon name="pie-chart-outline" class="nav__icon">insert_chart</mat-icon>
+                        <span class="nav__name">Etapas</span>
+                    </a>
+
+
+                    <a routerLink="/clasificaciones" class="nav__link">
+                        <mat-icon name="pie-chart-outline" class="nav__icon">schema</mat-icon>
+                        <span class="nav__name">Clasificaciones</span>
+                    </a>
+
+                    <a routerLink="/subclasificaciones" class="nav__link">
+                        <mat-icon name="pie-chart-outline" class="nav__icon">account_tree</mat-icon>
+                        <span class="nav__name">Sub Clasificaciones</span>
+                    </a>
+
+                    <a routerLink="/categorias" class="nav__link">
+                        <mat-icon name="pie-chart-outline" class="nav__icon">category</mat-icon>
+                        <span class="nav__name">Categorías</span>
+                    </a>
+
+                    <a routerLink="/doctos" class="nav__link">
+                        <mat-icon name="pie-chart-outline" class="nav__icon">receipt_long</mat-icon>
+                        <span class="nav__name">DocTos</span>
+                    </a>
+
+
+                </div>
+            </div>
+
+            <a routerLink="/logueo" class="nav__link">
+                <mat-icon name="log-out-outline" class="nav__icon">logout</mat-icon>
+                <span class="nav__name">Cerrar Sesión</span>
+            </a>
+        </nav>
+    </div>
+
+
+    <div class="contenedor_paginas">
+        <div class="contenedor_pagina">
+
+            <router-outlet></router-outlet>
+            
+        </div>
+    </div>
+
+</div>
+
+

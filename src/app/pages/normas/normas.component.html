@@ -1,0 +1,45 @@
+
+<div class="pagina animacion">
+
+    <div class="ruta_contendor">
+        <img src="logo-oij.ico" alt="logo_oij">
+        <h5>Normas</h5>
+    </div>
+
+   
+   
+
+    <form (submit)="guardarCambios()" [formGroup]="formulario">
+
+        <div class="contenedor_formulario">
+
+            <h2>Mantenimiento de Normas</h2>
+
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Nombre</mat-label>
+                <input matInput [formControl]="formulario.controls.nombre">
+                <mat-error>{{obtenerErrorCamposRequeridos()}}</mat-error>
+            </mat-form-field>
+
+
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Descripción</mat-label>
+                <textarea matInput formControlName="descripcion" ></textarea>
+                <mat-error>{{obtenerErrorCamposRequeridos()}}</mat-error>
+            </mat-form-field>
+
+            <div class="contenedor_boton">
+                <button mat-flat-button type="submit"  class="boton_amarillo" [disabled]="formulario.invalid">Guardar</button>
+            </div>
+
+            
+
+
+        </div>
+ 
+
+    </form>
+
+    
+
+</div>
