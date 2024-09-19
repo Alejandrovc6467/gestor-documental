@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LogueoComponent } from './logueo.component';
+import { TipodocumentosComponent } from './tipodocumentos.component';
 
-describe('LogueoComponent', () => {
-  let component: LogueoComponent;
-  let fixture: ComponentFixture<LogueoComponent>;
+describe('TipodocumentosComponent', () => {
+  let component: TipodocumentosComponent;
+  let fixture: ComponentFixture<TipodocumentosComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LogueoComponent]
+      imports: [TipodocumentosComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(LogueoComponent);
+    fixture = TestBed.createComponent(TipodocumentosComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

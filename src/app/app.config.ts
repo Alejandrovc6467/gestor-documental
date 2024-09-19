@@ -7,3 +7,5 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 export const appConfig: ApplicationConfig = {
   providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes, withComponentInputBinding()), provideAnimationsAsync()]
 };
+
+// provideRouter(routes, withComponentInputBinding()), dependecia requerida para el ruteo

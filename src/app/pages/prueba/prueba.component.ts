@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ListadoPeliculasComponent } from '../../shared/listado-peliculas/listado-peliculas.component';
+import { ListadoPeliculasComponent } from '../../shared/components/listado-peliculas/listado-peliculas.component';
 
 @Component({
   selector: 'app-prueba',

@@ -44,6 +44,8 @@ export class NormasComponent {
     if (nombre.hasError('required')) {
       return 'El campo nombre es obligatorio';
     }
+
+    //hacer un metodo para cada input
   
     if (descripcion.hasError('required')) {
       return 'El campo descripción es obligatorio';

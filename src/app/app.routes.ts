@@ -9,10 +9,13 @@ import { ClasificacionesComponent } from './pages/clasificaciones/clasificacione
 import { SubclasificacionesComponent } from './pages/subclasificaciones/subclasificaciones.component';
 import { CategoriasComponent } from './pages/categorias/categorias.component';
 import { DoctosComponent } from './pages/doctos/doctos.component';
-import { LogueoComponent } from './logueo/logueo.component';
 import { DocumentoversionesComponent } from './pages/documentoversiones/documentoversiones.component';
 import { NormaetapasComponent } from './pages/normaetapas/normaetapas.component';
 import { PruebaComponent } from './pages/prueba/prueba.component';
+import { TipodocumentosComponent } from './pages/tipodocumentos/tipodocumentos.component';
+import { UsuarionormaComponent } from './pages/usuarionorma/usuarionorma.component';
+import { RolesComponent } from './pages/roles/roles.component';
+import { IniciosesionprincipalComponent } from './pages/iniciosesionprincipal/iniciosesionprincipal.component';
 
 
 
@@ -34,6 +37,10 @@ export const routes: Routes = [
     {path: 'subclasificaciones', component:SubclasificacionesComponent},
     {path: 'categorias', component:CategoriasComponent},
     {path: 'doctos', component:DoctosComponent},
+    {path: 'tipodocumentos', component:TipodocumentosComponent},
+    {path: 'usuarionorma', component:UsuarionormaComponent},
+    {path: 'roles', component:RolesComponent},
+
 
 
     
@@ -41,7 +48,7 @@ export const routes: Routes = [
 
 
 
-    {path: 'logueo', component:LogueoComponent},
+    {path: 'iniciosesionprincipal', component:IniciosesionprincipalComponent},
     //si la ruta  no existe redirecciona a consultas
     {path: '**', component:ConsultasComponent},
   

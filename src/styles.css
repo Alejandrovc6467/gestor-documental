@@ -54,6 +54,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   align-items: center;
 }
 
+
+
+
+/*configuraciones para los botones de guardar en general*/
 .boton_amarillo {
   background-color: var(--bg-color-secundario) !important; 
   color: white !important;
@@ -71,6 +75,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   background-color: #d3b301ab !important;
   color: #ffffff !important;
 }
+
 
 
 
