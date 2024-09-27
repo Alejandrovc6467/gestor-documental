@@ -13,9 +13,8 @@ import { DocumentoversionesComponent } from './pages/documentoversiones/document
 import { NormaetapasComponent } from './pages/normaetapas/normaetapas.component';
 import { PruebaComponent } from './pages/prueba/prueba.component';
 import { TipodocumentosComponent } from './pages/tipodocumentos/tipodocumentos.component';
-import { UsuarionormaComponent } from './pages/usuarionorma/usuarionorma.component';
-import { RolesComponent } from './pages/roles/roles.component';
 import { IniciosesionprincipalComponent } from './pages/iniciosesionprincipal/iniciosesionprincipal.component';
+import { UsuariosComponent } from './pages/usuarios/usuarios.component';
 
 
 
@@ -38,8 +37,8 @@ export const routes: Routes = [
     {path: 'categorias', component:CategoriasComponent},
     {path: 'doctos', component:DoctosComponent},
     {path: 'tipodocumentos', component:TipodocumentosComponent},
-    {path: 'usuarionorma', component:UsuarionormaComponent},
-    {path: 'roles', component:RolesComponent},
+    {path: 'usuarios', component:UsuariosComponent},
+ 
 
 
 

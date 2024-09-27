@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ListadoPeliculasComponent } from '../../shared/components/listado-peliculas/listado-peliculas.component';
+import { ListadoPeliculasComponent } from '../../Core/components/listado-peliculas/listado-peliculas.component';
 
 @Component({
   selector: 'app-prueba',
@@ -68,3 +68,69 @@ export class PruebaComponent implements OnInit {
  listaPeliculasExtrenos!: any [];
 
 }
+
+
+/*
+
+*************** Apuntes mios
+
+RECUERDE el let y const
+
+// Definición de tipos de variables
+
+  // Variable de tipo string
+  nombre: string = 'Angular';
+
+  // Variable de tipo number
+  version: number = 18;
+
+  // Variable de tipo boolean
+  esActivo: boolean = true;
+
+  // Variable de tipo array de números
+  numeros: number[] = [1, 2, 3, 4, 5];
+
+  // Variable de tipo array de strings
+  nombres: string[] = ['Ana', 'Carlos', 'Pedro'];
+
+  // Variable de tipo objeto con una estructura definida
+  usuario: { nombre: string, edad: number, esActivo: boolean } = {
+    nombre: 'Juan',
+    edad: 30,
+    esActivo: true
+  };
+
+  // Variable de tipo any (puede almacenar cualquier tipo)
+  cualquierValor: any = 'Texto o número';
+
+  // Variable de tipo null o string (tipo opcional)
+  mensaje: string | null = null;
+
+  // Función con parámetros tipados y un valor de retorno tipado
+  saludar(nombre: string): string {
+    return `Hola, ${nombre}!`;
+  }
+
+
+
+  ******** Ejemplo de ! y ?
+
+  class Usuario {
+   nombre?: string;  // El nombre es opcional
+  }
+
+  const usuario = new Usuario();
+
+  // Usamos ? para acceder de forma segura
+  console.log(usuario.nombre?.toUpperCase());  // Si nombre es undefined, no falla
+
+  // Usamos ! para asegurar que el valor no es null ni undefined
+  usuario.nombre = 'Juan';
+  console.log(usuario.nombre!.toUpperCase());  // Aquí garantizamos que no es null
+
+
+
+
+
+
+*/
