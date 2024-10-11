@@ -8,9 +8,12 @@ import { MatInputModule } from '@angular/material/input';
 import { CategoriaDTO } from '../../Core/models/CategoriaDTO';
 import { CategoriasService } from '../../Core/services/categorias.service';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
+import Swal from 'sweetalert2';
+
+
 
 @Component({
   selector: 'app-categorias',
@@ -24,7 +27,7 @@ export class CategoriasComponent implements OnInit {
   categoriasService = inject(CategoriasService);
   listaCategorias! : CategoriaDTO[];
   listCategoriasdataSource = new MatTableDataSource<CategoriaDTO>([]);
-  displayedColumns: string[] = ['id', 'nombre', 'descripcion', 'acciones'];
+  displayedColumns: string[] = [ 'acciones', 'nombre', 'descripcion' ];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   textoBuscar: string = "";
   estaEditando: boolean = false;
@@ -33,15 +36,17 @@ export class CategoriasComponent implements OnInit {
 
   ngOnInit(): void {
     this.obtenerCategoriasCargarTabla();
+    this.formulario.updateValueAndValidity();
   }
   
   constructor(){}
 
   private formbuilder = inject(FormBuilder);
   formulario = this.formbuilder.group({
-    nombre: ['', Validators.required],
-    descripcion: ['', Validators.required]
-  })
+    nombre: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
+    descripcion: ['', [Validators.required]]
+  });
+
 
 
   //CRUD **********************************************************
@@ -60,17 +65,24 @@ export class CategoriasComponent implements OnInit {
 
   crearCategoria(){
     
-    if(!this.formulario.valid){
+    if(this.formulario.invalid){
       alert("Formulario invalido");
+    }else{
+
+      const categoria = this.formulario.value as CategoriaDTO; 
+      console.log(categoria);
+  
+      this.categoriasService.crearCategoria(categoria).subscribe(response => {
+        console.log(response);
+        this.obtenerCategoriasCargarTabla();
+        this.formulario.reset();
+        this.limpiarErroresFormulario();
+        Swal.fire('Creada!', 'La categoría ha sido creada.', 'success');
+      });
+
     }
 
-    const categoria = this.formulario.value as CategoriaDTO; 
-    console.log(categoria);
-
-    this.categoriasService.crearCategoria(categoria).subscribe(response => {
-      console.log(response);
-      this.obtenerCategoriasCargarTabla();
-    });
+  
   
   }
 
@@ -84,7 +96,9 @@ export class CategoriasComponent implements OnInit {
       this.categoriasService.actualizarCategoria(categoriaActualizada).subscribe(response => {
         console.log(response);
         this.obtenerCategoriasCargarTabla();
-        this.cancelarEdicion(); // Volver al estado inicial después de editar
+        this.cancelarEdicion();
+        this.limpiarErroresFormulario();
+        Swal.fire('Editada!', 'La categoría ha sido editada.', 'success');
       });
   }
 
@@ -97,14 +111,19 @@ export class CategoriasComponent implements OnInit {
       nombre: element.nombre,
       descripcion: element.descripcion
     });
+    this.limpiarErroresFormulario();
   }
 
   cancelarEdicion() {
     this.estaEditando = false;
     this.categoriaSeleccionada = null;
     this.formulario.reset(); // Limpiar el formulario
+    this.formulario.markAsPristine();  // Marcar como 'pristino'
+    this.formulario.markAsUntouched(); // Marcar como 'intacto'
+    this.formulario.updateValueAndValidity(); // Recalcular estado de validez
   }
 
+  /*
   eliminarCategoria(idEliminar:number){
 
     this.categoriasService.eliminarCategoria(idEliminar).subscribe( response => {
@@ -113,6 +132,32 @@ export class CategoriasComponent implements OnInit {
     });
     
   }
+    */
+
+  eliminarCategoria(idEliminar: number) {
+    // Mostrar el SweetAlert para confirmar la eliminación
+    Swal.fire({
+        title: '¿Desea eliminar la categoría?',
+        text: 'Esta acción no se puede deshacer.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Eliminar'
+     
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Si el usuario confirma, proceder con la eliminación
+            this.categoriasService.eliminarCategoria(idEliminar).subscribe(response => {
+                console.log(response);
+                this.obtenerCategoriasCargarTabla();
+                Swal.fire('Eliminado!', 'La categoría ha sido eliminada.', 'success');
+            });
+        }
+    });
+  }
+
 
   
 
@@ -130,13 +175,7 @@ export class CategoriasComponent implements OnInit {
     this.listCategoriasdataSource.paginator = this.paginator;
   }
   
-  onInputChange(){
-    /*
-    setTimeout(()=>{
-      console.log('fgdfgdfgd', this.textoBuscar);
-    },1000);
-    */
-    //console.log('fgdfgdfgd', this.textoBuscar);
+  realizarBusqueda() {
     this.filtrarData();
   }
 
@@ -155,22 +194,55 @@ export class CategoriasComponent implements OnInit {
     this.setTable(dataFiltrada);
   }
 
+  limpiarFormulario() {
+    this.formulario.reset(); // Resetea los campos del formulario
+    this.formulario.markAsPristine();  // Marcar como 'pristino'
+    this.formulario.markAsUntouched(); // Marcar como 'intacto'
+    this.formulario.updateValueAndValidity(); // Recalcular estado de validez
+    this.limpiarErroresFormulario(); // Eliminar los errores
+  }
+
+
+ 
+  onSearchChange(event: any) {
+    const filterValue = event.target.value?.trim().toLowerCase() || '';
+    if (!filterValue) {
+      // Si esta vacio, mostrar toda la lista
+      this.setTable(this.listaCategorias);
+      return;
+    }
+    //pude haber hecho todo el filtro aqui, pero se requeria la necesidad del boton buscar
+  }
+
 
   // validaciones **********************************************************
-  obtenerErrorCamposRequeridos() {
-
-    const nombre = this.formulario.controls.nombre;
+  obtenerErrorDescripcion() {
     const descripcion = this.formulario.controls.descripcion;
-  
-    if (nombre.hasError('required')) {
-      return 'El campo nombre es obligatorio';
-    }
-    //hacer un metodo para cada input
     if (descripcion.hasError('required')) {
       return 'El campo descripción es obligatorio';
     }
+    return '';
+  }
 
-    return ''; // Retorna vacío si no hay errores
+  obtenerErrorNombre(){
+    const nombre = this.formulario.controls.nombre;
+   
+    if (nombre.hasError('required')) {
+      return 'El campo nombre es obligatorio';
+    }
+
+    
+    if (nombre.hasError('pattern')) {
+      return 'El campo nombre solo puede contener letras';
+    }
+    
+    return ''; 
+  }
+
+  limpiarErroresFormulario() {
+    Object.keys(this.formulario.controls).forEach(key => {
+      this.formulario.get(key)?.setErrors(null); // Eliminar los errores de cada control
+    });
   }
 
 

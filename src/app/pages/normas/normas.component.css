@@ -20,7 +20,12 @@
     width: 100%;
     max-width: 1000px;
     display: flex;
-    justify-content: end;
+    justify-content: start;
 }
 
-
+.buscar-input {
+    margin-left: auto; /* Empuja el input hacia la derecha */
+    width: 300px; /* Ancho opcional para el input */
+    display: flex;
+    justify-content: flex-end;
+}
