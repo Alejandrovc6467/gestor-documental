@@ -4,3 +4,7 @@ export interface SubclasificacionDTO {
     descripcion: string;
     clasificacionId: number;
 }
+
+export interface SubclasificacionExtendidaDTO extends SubclasificacionDTO {
+    clasificacionNombre: string;
+  }

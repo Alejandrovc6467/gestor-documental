@@ -10,7 +10,7 @@ export class ClasificacionesService {
 
 
   private http = inject(HttpClient);
-  private urlBase = "http://gestordocumental.somee.com/api/Categoria";// esto se haria mas profesional creando un enviroment, que son ambiemtes de desarrolo uno para pruebas y otro para produccion
+  private urlBase = "http://gestordocumental.somee.com/api/Clasificacion";// esto se haria mas profesional creando un enviroment, que son ambiemtes de desarrolo uno para pruebas y otro para produccion
 
 
   constructor() { }

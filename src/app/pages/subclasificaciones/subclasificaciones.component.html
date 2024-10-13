@@ -13,6 +13,17 @@
             <h2>Mantenimiento de SubClasificaciones</h2>
 
             <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Clasificación</mat-label>
+                <mat-select [formControl]="formulario.controls.clasificacionId">
+                  <mat-option *ngFor="let clasificacion of clasificaciones" [value]="clasificacion.id">
+                    {{ clasificacion.nombre }}
+                  </mat-option>
+                </mat-select>
+                <mat-error>{{ obtenerErrorClasificacionId() }}</mat-error>
+              </mat-form-field>
+
+            
+            <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Nombre</mat-label>
                 <input matInput [formControl]="formulario.controls.nombre">
                 <mat-error>{{obtenerErrorNombre()}}</mat-error>
@@ -71,10 +82,10 @@
           <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
         </ng-container>
 
-        <ng-container matColumnDef="clasificacionId">
-            <th mat-header-cell *matHeaderCellDef> Clasificacion </th>
-            <td mat-cell *matCellDef="let element"> {{element.clasificacionId}} </td>
-        </ng-container>
+        <ng-container matColumnDef="clasificacion">
+            <th mat-header-cell *matHeaderCellDef> Clasificación </th>
+            <td mat-cell *matCellDef="let element"> {{element.clasificacionNombre}} </td>
+          </ng-container>
 
         
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
