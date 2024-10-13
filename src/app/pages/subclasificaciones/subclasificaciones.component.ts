@@ -1,14 +1,17 @@
 
 
 
-
+import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { SubclasificacionDTO } from '../../Core/models/SubclasificacionDTO';
+import { MatSelectModule } from '@angular/material/select';
+import { SubclasificacionDTO,SubclasificacionExtendidaDTO } from '../../Core/models/SubclasificacionDTO';
+import { ClasificacionDTO } from '../../Core/models/ClasificacionDTO';
 import { SubclasificacionesService } from '../../Core/services/subclasificaciones.service';
+import { ClasificacionesService } from '../../Core/services/clasificaciones.service';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,7 +23,7 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-subclasificaciones',
   standalone: true,
-  imports: [MatButtonModule,  MatFormFieldModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule],
+  imports: [CommonModule,MatButtonModule,  MatFormFieldModule, MatSelectModule,ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule],
   templateUrl: './subclasificaciones.component.html',
   styleUrl: './subclasificaciones.component.css'
 })
@@ -28,9 +31,11 @@ export class SubclasificacionesComponent implements OnInit {
   
   
   subclasificaionesService = inject(SubclasificacionesService);
+  clasificacionesService = inject(ClasificacionesService);
   listaCategorias! : SubclasificacionDTO[];
-  listCategoriasdataSource = new MatTableDataSource<SubclasificacionDTO>([]);
-  displayedColumns: string[] = [ 'acciones', 'nombre', 'descripcion', 'clasificacionId' ];
+  clasificaciones!: ClasificacionDTO[];
+  listCategoriasdataSource = new MatTableDataSource<SubclasificacionExtendidaDTO>([]);
+  displayedColumns: string[] = [ 'acciones', 'nombre', 'descripcion', 'clasificacion' ];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   textoBuscar: string = "";
   estaEditando: boolean = false;
@@ -38,8 +43,10 @@ export class SubclasificacionesComponent implements OnInit {
 
 
   ngOnInit(): void {
-   // this.obtenerCategoriasCargarTabla();
-    //this.formulario.updateValueAndValidity();
+    //this.obtenerCategoriasCargarTabla();
+    this.formulario.updateValueAndValidity();
+    this.obtenerClasificaciones();
+   
   }
   
   constructor(){}
@@ -51,7 +58,10 @@ export class SubclasificacionesComponent implements OnInit {
     clasificacionId: [0, [Validators.required]]
   });
 
-
+  obtenerClasificaciones(){
+    this.clasificacionesService.obtenerClasificaciones().subscribe(response => {
+      this.clasificaciones = response;
+    })};
 
   //CRUD **********************************************************
   obtenerCategorias(){
@@ -135,16 +145,6 @@ export class SubclasificacionesComponent implements OnInit {
     this.formulario.updateValueAndValidity(); // Recalcular estado de validez
   }
 
-  /*
-  eliminarCategoria(idEliminar:number){
-
-    this.subclasificaionesService.eliminarCategoria(idEliminar).subscribe( response => {
-      console.log(response);
-      this.obtenerCategoriasCargarTabla();
-    });
-    
-  }
-    */
 
   eliminarCategoria(idEliminar: number) {
     // Mostrar el SweetAlert para confirmar la eliminación
@@ -183,8 +183,18 @@ export class SubclasificacionesComponent implements OnInit {
   }
 
   setTable(data:SubclasificacionDTO[]){
-    this.listCategoriasdataSource = new MatTableDataSource<SubclasificacionDTO>(data);
-    this.listCategoriasdataSource.paginator = this.paginator;
+   // Mapear los datos para agregar el nombre de la clasificación
+  const dataConClasificacionNombre: SubclasificacionExtendidaDTO[] = data.map(subcategoria => {
+    const clasificacion = this.clasificaciones.find(clas => clas.id === subcategoria.clasificacionId);
+    return {
+      ...subcategoria,
+      clasificacionNombre: clasificacion ? clasificacion.nombre : 'Sin Clasificación'
+    };
+  });
+
+  // Configurar el DataSource con los datos modificados
+  this.listCategoriasdataSource = new MatTableDataSource<SubclasificacionExtendidaDTO>(dataConClasificacionNombre);
+  this.listCategoriasdataSource.paginator = this.paginator;
   }
   
   realizarBusqueda() {
@@ -257,5 +267,14 @@ export class SubclasificacionesComponent implements OnInit {
     });
   }
 
+  obtenerErrorClasificacionId() {
+    const clasificacionId = this.formulario.controls.clasificacionId;
+  
+    if (clasificacionId.hasError('required')) {
+      return 'El campo clasificación es obligatorio';
+    }
+  
+    return '';
+  }
 
 }
