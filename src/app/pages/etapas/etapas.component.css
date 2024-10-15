@@ -39,3 +39,34 @@
     display: flex;
     justify-content: flex-end;
 }
+
+
+.formulario-contenedor-doble{
+    display: flex;
+    /* background-color: red; */
+    justify-content: space-between;
+    align-content: space-between;
+    width: 100%;
+    max-width: 1000px;
+   
+}
+
+.contenedor-doble-input{
+    width: 100%;
+    /* background-color: blueviolet; */
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+   
+
+}
+
+
+
+.full-widthdoble {
+    width: 100%;  
+    max-width: 1000px;
+    /* background-color: green; */
+    padding: 10px;
+}

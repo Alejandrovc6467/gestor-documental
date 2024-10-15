@@ -32,14 +32,14 @@ export class SubclasificacionesComponent implements OnInit {
   
   subclasificaionesService = inject(SubclasificacionesService);
   clasificacionesService = inject(ClasificacionesService);
-  listaCategorias! : SubclasificacionDTO[];
+  listaSubclasificaciones! : SubclasificacionDTO[];
   clasificaciones!: ClasificacionDTO[];
   listCategoriasdataSource = new MatTableDataSource<SubclasificacionExtendidaDTO>([]);
   displayedColumns: string[] = [ 'acciones', 'nombre', 'descripcion', 'clasificacion' ];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   textoBuscar: string = "";
   estaEditando: boolean = false;
-  categoriaSeleccionada!: SubclasificacionDTO | null;
+  subclasificaionSeleccionada!: SubclasificacionDTO | null;
 
 
   ngOnInit(): void {
@@ -62,10 +62,12 @@ export class SubclasificacionesComponent implements OnInit {
       this.clasificaciones = response;
     })};
 
+
+
   //CRUD **********************************************************
   obtenerCategorias(){
     this.subclasificaionesService.obtenerSubclasificaciones().subscribe(response => {
-      this.listaCategorias = response;
+      this.listaSubclasificaciones = response;
     });
 
 
@@ -108,15 +110,18 @@ export class SubclasificacionesComponent implements OnInit {
   }
 
   actualizarCategoria() {
-    if (!this.categoriaSeleccionada) return;
-      const categoriaActualizada: SubclasificacionDTO = {
-        id: this.categoriaSeleccionada.id,
+
+    if (!this.subclasificaionSeleccionada) return;
+      const subclasificacionActualizada: SubclasificacionDTO = {
+        id: this.subclasificaionSeleccionada.id,
         nombre: this.formulario.value.nombre!,
         descripcion: this.formulario.value.descripcion!,
         clasificacionID: this.formulario.value.clasificacionID!,
-        eliminado: this.categoriaSeleccionada.eliminado
+        eliminado: false
       };
-      this.subclasificaionesService.actualizarSubclasificacion(categoriaActualizada).subscribe(response => {
+
+      console.log(this.subclasificaionSeleccionada);
+      this.subclasificaionesService.actualizarSubclasificacion(subclasificacionActualizada).subscribe(response => {
         console.log(response);
         this.obtenerCategoriasCargarTabla();
         this.cancelarEdicion();
@@ -128,18 +133,19 @@ export class SubclasificacionesComponent implements OnInit {
   editarCategoria(element: SubclasificacionDTO) {
     // Método para cargar los datos de la categoría seleccionada y activar el modo de edición
     this.estaEditando = true;
-    this.categoriaSeleccionada = element;
+    this.subclasificaionSeleccionada = element;
     // Cargar los datos de la categoría en el formulario
     this.formulario.patchValue({
       nombre: element.nombre,
-      descripcion: element.descripcion
+      descripcion: element.descripcion,
+      clasificacionID: element.clasificacionID
     });
     this.limpiarErroresFormulario();
   }
 
   cancelarEdicion() {
     this.estaEditando = false;
-    this.categoriaSeleccionada = null;
+    this.subclasificaionSeleccionada = null;
     this.formulario.reset(); // Limpiar el formulario
     this.formulario.markAsPristine();  // Marcar como 'pristino'
     this.formulario.markAsUntouched(); // Marcar como 'intacto'
@@ -150,7 +156,7 @@ export class SubclasificacionesComponent implements OnInit {
   eliminarCategoria(idEliminar: number) {
     // Mostrar el SweetAlert para confirmar la eliminación
     Swal.fire({
-        title: '¿Desea eliminar la categoría?',
+        title: '¿Desea eliminar la Subclasificación?',
         text: 'Esta acción no se puede deshacer.',
         icon: 'warning',
         showCancelButton: true,
@@ -165,7 +171,7 @@ export class SubclasificacionesComponent implements OnInit {
             this.subclasificaionesService.eliminarSubclasificacion(idEliminar).subscribe(response => {
                 console.log(response);
                 this.obtenerCategoriasCargarTabla();
-                Swal.fire('Eliminado!', 'La categoría ha sido eliminada.', 'success');
+                Swal.fire('Eliminado!', 'La Subclasificación ha sido eliminada.', 'success');
             });
         }
     });
@@ -178,23 +184,29 @@ export class SubclasificacionesComponent implements OnInit {
 
   obtenerCategoriasCargarTabla(){
     this.subclasificaionesService.obtenerSubclasificaciones().subscribe(response => {
-      this.listaCategorias = response;
-      this.setTable(this.listaCategorias);
+      this.listaSubclasificaciones = response;
+      this.setTable(this.listaSubclasificaciones);
     });
   }
 
   setTable(data:SubclasificacionDTO[]){
-   // Mapear los datos para agregar el nombre de la clasificación
-  const dataConClasificacionNombre: SubclasificacionExtendidaDTO[] = data.map(subcategoria => {
-    const clasificacion = this.clasificaciones.find(clas => clas.id === subcategoria.clasificacionID);
-    return {
-      ...subcategoria,
-      clasificacionNombre: clasificacion ? clasificacion.nombre : 'Sin Clasificación'
-    };
-  });
-  // Configurar el DataSource con los datos modificados
-  this.listCategoriasdataSource = new MatTableDataSource<SubclasificacionExtendidaDTO>(dataConClasificacionNombre);
-  this.listCategoriasdataSource.paginator = this.paginator;
+
+    //voy simular una espera con este setTime
+    setTimeout(() => {
+
+      // Mapear los datos para agregar el nombre de la clasificación
+      const dataConClasificacionNombre: SubclasificacionExtendidaDTO[] = data.map(subclasificacion => {
+        const clasificacion = this.clasificaciones.find(clas => clas.id === subclasificacion.clasificacionID);
+        return {
+          ...subclasificacion,
+          clasificacionNombre: clasificacion ? clasificacion.nombre : 'Sin Clasificación'
+        };
+      });
+      // Configurar el DataSource con los datos modificados
+      this.listCategoriasdataSource = new MatTableDataSource<SubclasificacionExtendidaDTO>(dataConClasificacionNombre);
+      this.listCategoriasdataSource.paginator = this.paginator;
+
+    }, 3000);
   }
   
   realizarBusqueda() {
@@ -203,7 +215,7 @@ export class SubclasificacionesComponent implements OnInit {
 
   filtrarData(){
 
-    const data = this.listaCategorias.slice();
+    const data = this.listaSubclasificaciones.slice();
     if(!this.textoBuscar){
      this.setTable(data);
       return;
@@ -223,14 +235,12 @@ export class SubclasificacionesComponent implements OnInit {
     this.formulario.updateValueAndValidity(); // Recalcular estado de validez
     this.limpiarErroresFormulario(); // Eliminar los errores
   }
-
-
  
   onSearchChange(event: any) {
     const filterValue = event.target.value?.trim().toLowerCase() || '';
     if (!filterValue) {
       // Si esta vacio, mostrar toda la lista
-      this.setTable(this.listaCategorias);
+      this.setTable(this.listaSubclasificaciones);
       return;
     }
     //pude haber hecho todo el filtro aqui, pero se requeria la necesidad del boton buscar
