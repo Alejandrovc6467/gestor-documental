@@ -55,7 +55,7 @@ export class SubclasificacionesComponent implements OnInit {
   formulario = this.formbuilder.group({
     nombre: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
     descripcion: ['', [Validators.required]],
-    clasificacionId: [0, [Validators.required]]
+    clasificacionID: [0, [Validators.required]]
   });
 
   obtenerClasificaciones(){
@@ -91,6 +91,7 @@ export class SubclasificacionesComponent implements OnInit {
       // Asegurarse de que clasificacionId sea un número válido
       categoria.clasificacionID = Number(categoria.clasificacionID);
 
+      categoria.eliminado = false;
       console.log(categoria);
   
       this.subclasificaionesService.crearSubclasificacion(categoria).subscribe(response => {
@@ -113,7 +114,8 @@ export class SubclasificacionesComponent implements OnInit {
         id: this.categoriaSeleccionada.id,
         nombre: this.formulario.value.nombre!,
         descripcion: this.formulario.value.descripcion!,
-        clasificacionID: this.formulario.value.clasificacionId!
+        clasificacionID: this.formulario.value.clasificacionID!,
+        eliminado: this.categoriaSeleccionada.eliminado
       };
       this.subclasificaionesService.actualizarSubclasificacion(categoriaActualizada).subscribe(response => {
         console.log(response);
@@ -267,7 +269,7 @@ export class SubclasificacionesComponent implements OnInit {
   }
 
   obtenerErrorClasificacionId() {
-    const clasificacionId = this.formulario.controls.clasificacionId;
+    const clasificacionId = this.formulario.controls.clasificacionID;
   
     if (clasificacionId.hasError('required')) {
       return 'El campo clasificación es obligatorio';
