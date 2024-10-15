@@ -43,7 +43,7 @@ export class SubclasificacionesComponent implements OnInit {
 
 
   ngOnInit(): void {
-    //this.obtenerCategoriasCargarTabla();
+    this.obtenerCategoriasCargarTabla();
     this.formulario.updateValueAndValidity();
     this.obtenerClasificaciones();
    
@@ -89,7 +89,7 @@ export class SubclasificacionesComponent implements OnInit {
       const categoria = this.formulario.value as SubclasificacionDTO; 
       
       // Asegurarse de que clasificacionId sea un número válido
-      categoria.clasificacionId = Number(categoria.clasificacionId);
+      categoria.clasificacionID = Number(categoria.clasificacionID);
 
       console.log(categoria);
   
@@ -113,7 +113,7 @@ export class SubclasificacionesComponent implements OnInit {
         id: this.categoriaSeleccionada.id,
         nombre: this.formulario.value.nombre!,
         descripcion: this.formulario.value.descripcion!,
-        clasificacionId: this.formulario.value.clasificacionId!
+        clasificacionID: this.formulario.value.clasificacionId!
       };
       this.subclasificaionesService.actualizarSubclasificacion(categoriaActualizada).subscribe(response => {
         console.log(response);
@@ -185,13 +185,12 @@ export class SubclasificacionesComponent implements OnInit {
   setTable(data:SubclasificacionDTO[]){
    // Mapear los datos para agregar el nombre de la clasificación
   const dataConClasificacionNombre: SubclasificacionExtendidaDTO[] = data.map(subcategoria => {
-    const clasificacion = this.clasificaciones.find(clas => clas.id === subcategoria.clasificacionId);
+    const clasificacion = this.clasificaciones.find(clas => clas.id === subcategoria.clasificacionID);
     return {
       ...subcategoria,
       clasificacionNombre: clasificacion ? clasificacion.nombre : 'Sin Clasificación'
     };
   });
-
   // Configurar el DataSource con los datos modificados
   this.listCategoriasdataSource = new MatTableDataSource<SubclasificacionExtendidaDTO>(dataConClasificacionNombre);
   this.listCategoriasdataSource.paginator = this.paginator;
