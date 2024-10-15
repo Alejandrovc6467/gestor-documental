@@ -51,12 +51,14 @@ export class DocumentosComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   textoBuscar: string = "";
+  textoBuscarRelaciones: string = "";
   estaEditando: boolean = false;
   categoriaSeleccionada!: CategoriaDTO | null;
 
 
   ngOnInit(): void {
     this.obtenerCategoriasCargarTabla();
+    this.obtenerClasificaciones();
     this.formulario.updateValueAndValidity();
   }
   

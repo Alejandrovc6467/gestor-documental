@@ -205,7 +205,7 @@
             </div>
             
 
-            <!-- Este es un comentario en HTML 
+          
             <div class="formulario-contenedor-doble">
 
                 <div class="contenedor-doble-input">
@@ -225,7 +225,7 @@
                 <div class="contenedor-doble-input">
                     <mat-form-field appearance="outline" class="full-widthdoble">
                         <mat-label>Doc relacionado</mat-label>
-                        <input matInput [formControl]="formulario.controls.nombre">
+                        <input matInput formControlName="palabrasClave">
                         <mat-error>{{obtenerErrorNombre()}}</mat-error>
                     </mat-form-field>
                 </div>
@@ -237,15 +237,18 @@
                 <button mat-flat-button type="button" class="boton_amarillo" (click)="cancelarEdicion()"> Relacionar </button>
             </div>
 
-                    -->
+                    
             
 
 
             <div class="contenedorTablaRelaciones">
 
                 <mat-form-field appearance="outline" class="buscar-input">
-                    <mat-label>Buscar <mat-icon name="pie-chart-outline" class="nav__icon">search</mat-icon> </mat-label>
-                    <input matInput placeholder="Ingresa un texto" [(ngModel)]="textoBuscar"     (input)="onSearchChange($event)">
+                    <mat-label>Buscar <mat-icon name="pie-chart-outline" class="nav__icon">search</mat-icon></mat-label>
+                    <input matInput placeholder="Ingresa un texto" 
+                           [(ngModel)]="textoBuscarRelaciones" 
+                           [ngModelOptions]="{standalone: true}"
+                           (input)="onSearchChange($event)">
                 </mat-form-field>
     
 
