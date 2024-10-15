@@ -8,19 +8,25 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { CategoriaDTO } from '../../Core/models/CategoriaDTO';
+import { ClasificacionDTO } from '../../Core/models/ClasificacionDTO';
 import { CategoriasService } from '../../Core/services/categorias.service';
+import { ClasificacionesService } from '../../Core/services/clasificaciones.service';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatRadioModule} from '@angular/material/radio';
+
 import Swal from 'sweetalert2';
+import { MatSelectModule } from '@angular/material/select';
 
 
 
 @Component({
   selector: 'app-documentos',
   standalone: true,
-  imports: [RouterLink, MatButtonModule,  MatFormFieldModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule],
+  imports: [RouterLink, MatButtonModule,  MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule, MatCheckboxModule, MatRadioModule ],
   templateUrl: './documentos.component.html',
   styleUrl: './documentos.component.css'
 })
@@ -30,10 +36,20 @@ export class DocumentosComponent implements OnInit {
   id = 7;
 
   categoriasService = inject(CategoriasService);
+  clasificacionesService = inject(ClasificacionesService);
   listaCategorias! : CategoriaDTO[];
+  clasificaciones!: ClasificacionDTO[];
+
+  //tabla Relaciones
+  listaRelacionesdataSource = new MatTableDataSource<CategoriaDTO>([]);
+  displayedColumnsRelaciones: string[] = [ 'acciones', 'docto', 'docrelacionado'];
+  @ViewChild(MatPaginator) paginatorRelaciones!: MatPaginator;
+
+  //tablaDocumentos
   listCategoriasdataSource = new MatTableDataSource<CategoriaDTO>([]);
-  displayedColumns: string[] = [ 'acciones', 'nombre', 'descripcion' ];
+  displayedColumns: string[] = [ 'acciones', 'categoria', 'tipo', 'norma', 'codigo', 'documento' , 'version', 'oficina', 'docto' , 'clasificacion', 'vigencia' ];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+
   textoBuscar: string = "";
   estaEditando: boolean = false;
   categoriaSeleccionada!: CategoriaDTO | null;
@@ -49,10 +65,27 @@ export class DocumentosComponent implements OnInit {
   private formbuilder = inject(FormBuilder);
   formulario = this.formbuilder.group({
     nombre: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
-    descripcion: ['', [Validators.required]]
+    descripcion: ['', [Validators.required]],
+    clasificacionId: [0, [Validators.required]],
+    descargable: [false],  // Agregar campo 'descargable'
+    activo: [false]     
   });
 
 
+  private formbuilderRelaciones = inject(FormBuilder);
+  formularioRelaciones = this.formbuilderRelaciones.group({
+    nombre: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
+    descripcion: ['', [Validators.required]],
+    clasificacionId: [0, [Validators.required]],
+    descargable: [false],  // Agregar campo 'descargable'
+    activo: [false]     
+  });
+
+
+  obtenerClasificaciones(){
+    this.clasificacionesService.obtenerClasificaciones().subscribe(response => {
+      this.clasificaciones = response;
+    })};
 
   //CRUD **********************************************************
   obtenerCategorias(){
@@ -249,6 +282,18 @@ export class DocumentosComponent implements OnInit {
       this.formulario.get(key)?.setErrors(null); // Eliminar los errores de cada control
     });
   }
+
+  
+  obtenerErrorClasificacionId() {
+    const clasificacionId = this.formulario.controls.clasificacionId;
+  
+    if (clasificacionId.hasError('required')) {
+      return 'El campo clasificación es obligatorio';
+    }
+  
+    return '';
+  }
+
 
 
 }

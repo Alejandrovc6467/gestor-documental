@@ -1,8 +1,17 @@
-.full-width {
-    width: 100%;  
+.full-widthdoble {
+    width: 80%;  
     max-width: 1000px;
     margin-bottom: 17px;
 }
+
+
+.full-width {
+    width: 80%;  
+    max-width: 1000px;
+    margin-bottom: 17px;
+    padding: 10px;
+}
+  
   
 .contenedor_formulario{
     display: flex;
@@ -18,6 +27,13 @@
 
 .contenedor_boton{
     width: 100%;
+    max-width: 2000px;
+    display: flex;
+    justify-content: start;
+}
+
+.contenedor_boton_relaciones{
+    width: 100%;
     max-width: 1000px;
     display: flex;
     justify-content: start;
@@ -28,4 +44,103 @@
     width: 300px; /* Ancho opcional para el input */
     display: flex;
     justify-content: flex-end;
+}
+
+
+.formulario-contenedor-doble{
+    display: flex;
+    /* background-color: red; */
+    justify-content: space-between;
+    align-content: space-between;
+    width: 100%;
+    max-width: 1000px;
+   
+}
+
+.contenedor-doble-input{
+    width: 100%;
+    /* background-color: blueviolet; */
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+   
+
+}
+
+.full-widthdoble {
+    width: 100%;  
+    max-width: 1000px;
+    /* background-color: green; */
+    padding: 10px;
+}
+
+.checkbox-group {
+
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    align-content: start;
+    padding-left: 15px;
+    padding-bottom: 20px;
+  }
+  
+  .checkbox-group mat-checkbox {
+    margin-right: 50px;
+    
+  }
+
+
+
+
+.divider {
+    margin: 20px 0; /* Ajusta la separación vertical de la línea */
+    border: none;
+    border-top: 1px solid #ccc;
+    width: 100%;
+    max-width: 2000px;
+}
+  
+.relacionar-documentos {
+    width: 100%;
+    max-width: 2000px;
+    text-align: left; 
+    font-weight: bold;
+    margin-top: -10px; 
+    margin-bottom: 50px;
+    color: gray;
+}
+  
+
+.divider_relaciones {
+    margin: 20px 0; /* Ajusta la separación vertical de la línea */
+    border: none;
+    border-top: 1px solid #ccc;
+    width: 100%;
+    max-width: 1200px;
+}
+  
+.relacionar-documentos_relaciones {
+    width: 100%;
+    max-width: 1200px;
+    text-align: left; 
+    font-weight: bold;
+    margin-top: -10px; 
+    margin-bottom: 50px;
+    color: gray;
+}
+  
+
+
+
+
+.contenedorTablaRelaciones{
+    width: 100%;
+    max-width: 1200px;
+    margin-bottom: 100px;
+}
+
+.paginadorTablaRelaciones{
+    width: 100%;
+    text-align: right;
 }

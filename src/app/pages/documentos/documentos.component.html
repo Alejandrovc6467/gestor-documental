@@ -15,11 +15,107 @@
 
             <h2>Mantenimiento de Documentos</h2>
 
+
+            <div class="formulario-contenedor-doble">
+
+                <div class="contenedor-doble-input">
+                    <mat-form-field appearance="outline" class="full-widthdoble">
+                        <mat-label>Doc SG</mat-label>
+                        <mat-select [formControl]="formulario.controls.clasificacionId">
+                            @for (clasificacion of clasificaciones; track clasificacion.id) {
+                                <mat-option [value]="clasificacion.id">
+                                  {{ clasificacion.nombre }}
+                                </mat-option>
+                              }
+                        </mat-select>
+                        <mat-error>{{ obtenerErrorClasificacionId() }}</mat-error>
+                    </mat-form-field>
+                </div>
+                
+                <div class="contenedor-doble-input">
+                    <mat-form-field appearance="outline" class="full-widthdoble">
+                        <mat-label>Categoría</mat-label>
+                        <mat-select [formControl]="formulario.controls.clasificacionId">
+                            @for (clasificacion of clasificaciones; track clasificacion.id) {
+                                <mat-option [value]="clasificacion.id">
+                                  {{ clasificacion.nombre }}
+                                </mat-option>
+                              }
+                        </mat-select>
+                        <mat-error>{{ obtenerErrorClasificacionId() }}</mat-error>
+                    </mat-form-field>
+                </div>
+    
+            
+            </div>
+
+            <div class="formulario-contenedor-doble">
+
+                <div class="contenedor-doble-input">
+                    <mat-form-field appearance="outline" class="full-widthdoble">
+                        <mat-label>Norma</mat-label>
+                        <mat-select [formControl]="formulario.controls.clasificacionId">
+                            @for (clasificacion of clasificaciones; track clasificacion.id) {
+                                <mat-option [value]="clasificacion.id">
+                                  {{ clasificacion.nombre }}
+                                </mat-option>
+                              }
+                        </mat-select>
+                        <mat-error>{{ obtenerErrorClasificacionId() }}</mat-error>
+                    </mat-form-field>
+                </div>
+                
+                <div class="contenedor-doble-input">
+                    <mat-form-field appearance="outline" class="full-widthdoble">
+                        <mat-label>Etapa</mat-label>
+                        <mat-select [formControl]="formulario.controls.clasificacionId">
+                            @for (clasificacion of clasificaciones; track clasificacion.id) {
+                                <mat-option [value]="clasificacion.id">
+                                  {{ clasificacion.nombre }}
+                                </mat-option>
+                              }
+                        </mat-select>
+                        <mat-error>{{ obtenerErrorClasificacionId() }}</mat-error>
+                    </mat-form-field>
+                </div>
+    
+            
+            </div>
+
+            
+
             <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Nombre</mat-label>
+                <mat-label>Asunto Título</mat-label>
                 <input matInput [formControl]="formulario.controls.nombre">
                 <mat-error>{{obtenerErrorNombre()}}</mat-error>
             </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Codigo</mat-label>
+                <input matInput [formControl]="formulario.controls.nombre">
+                <mat-error>{{obtenerErrorNombre()}}</mat-error>
+            </mat-form-field>
+
+
+          
+            <mat-form-field appearance="outline" class="full-widthdoble">
+                <mat-label>Oficina</mat-label>
+                    <mat-select [formControl]="formulario.controls.clasificacionId">
+                        @for (clasificacion of clasificaciones; track clasificacion.id) {
+                            <mat-option [value]="clasificacion.id">
+                              {{ clasificacion.nombre }}
+                            </mat-option>
+                        }
+                    </mat-select>
+                <mat-error>{{ obtenerErrorClasificacionId() }}</mat-error>
+            </mat-form-field>
+            
+                        
+            <div class="checkbox-group">
+                <mat-checkbox formControlName="descargable">Descargable</mat-checkbox>
+                <mat-checkbox formControlName="activo">Activo</mat-checkbox>
+            </div>
+
 
 
             <mat-form-field appearance="outline" class="full-width">
@@ -27,6 +123,179 @@
                 <textarea matInput formControlName="descripcion" ></textarea>
                 <mat-error>{{obtenerErrorDescripcion()}}</mat-error>
             </mat-form-field>
+
+
+            <div class="formulario-contenedor-doble">
+
+                <div class="contenedor-doble-input">
+                    <mat-form-field appearance="outline" class="full-widthdoble">
+                        <mat-label>Docto</mat-label>
+                        <mat-select [formControl]="formulario.controls.clasificacionId">
+                            @for (clasificacion of clasificaciones; track clasificacion.id) {
+                                <mat-option [value]="clasificacion.id">
+                                  {{ clasificacion.nombre }}
+                                </mat-option>
+                              }
+                        </mat-select>
+                        <mat-error>{{ obtenerErrorClasificacionId() }}</mat-error>
+                    </mat-form-field>
+                </div>
+                
+                <div class="contenedor-doble-input">
+                    <mat-form-field appearance="outline" class="full-widthdoble">
+                        <mat-label>Clasificación</mat-label>
+                        <mat-select [formControl]="formulario.controls.clasificacionId">
+                            @for (clasificacion of clasificaciones; track clasificacion.id) {
+                                <mat-option [value]="clasificacion.id">
+                                  {{ clasificacion.nombre }}
+                                </mat-option>
+                              }
+                        </mat-select>
+                        <mat-error>{{ obtenerErrorClasificacionId() }}</mat-error>
+                    </mat-form-field>
+                </div>
+    
+            
+            </div>
+
+
+
+            <div class="formulario-contenedor-doble">
+
+                <div class="contenedor-doble-input">
+                    <mat-form-field appearance="outline" class="full-widthdoble">
+                        <mat-label>Subclasificacíon</mat-label>
+                        <mat-select [formControl]="formulario.controls.clasificacionId">
+                            @for (clasificacion of clasificaciones; track clasificacion.id) {
+                                <mat-option [value]="clasificacion.id">
+                                  {{ clasificacion.nombre }}
+                                </mat-option>
+                              }
+                        </mat-select>
+                        <mat-error>{{ obtenerErrorClasificacionId() }}</mat-error>
+                    </mat-form-field>
+                </div>
+                
+                <div class="contenedor-doble-input">
+                    <mat-form-field appearance="outline" class="full-widthdoble">
+                        <mat-label>Vigencia</mat-label>
+                        <input matInput [formControl]="formulario.controls.nombre">
+                        <mat-error>{{obtenerErrorNombre()}}</mat-error>
+                    </mat-form-field>
+                </div>
+    
+            
+            </div>
+
+
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Palabras Clave</mat-label>
+                <input matInput [formControl]="formulario.controls.nombre">
+                <mat-error>{{obtenerErrorNombre()}}</mat-error>
+            </mat-form-field>
+
+
+
+
+            <!-- Línea horizontal para separación -->
+            <hr class="divider_relaciones">
+            <!-- Texto "Relacionar documentos" alineado a la izquierda -->
+            <div class="relacionar-documentos_relaciones">
+                Relacionar Documentos
+            </div>
+            
+
+
+            <div class="formulario-contenedor-doble">
+
+                <div class="contenedor-doble-input">
+                    <mat-form-field appearance="outline" class="full-widthdoble">
+                        <mat-label>Docto</mat-label>
+                        <mat-select [formControl]="formulario.controls.clasificacionId">
+                            @for (clasificacion of clasificaciones; track clasificacion.id) {
+                                <mat-option [value]="clasificacion.id">
+                                  {{ clasificacion.nombre }}
+                                </mat-option>
+                              }
+                        </mat-select>
+                        <mat-error>{{ obtenerErrorClasificacionId() }}</mat-error>
+                    </mat-form-field>
+                </div>
+                
+                <div class="contenedor-doble-input">
+                    <mat-form-field appearance="outline" class="full-widthdoble">
+                        <mat-label>Doc relacionado</mat-label>
+                        <input matInput [formControl]="formulario.controls.nombre">
+                        <mat-error>{{obtenerErrorNombre()}}</mat-error>
+                    </mat-form-field>
+                </div>
+    
+            
+            </div>
+
+            <div class="contenedor_boton_relaciones">
+                <button mat-flat-button type="button" class="boton_amarillo" (click)="cancelarEdicion()"> Relacionar </button>
+            </div>
+
+                    
+            
+
+
+            <div class="contenedorTablaRelaciones">
+
+                <mat-form-field appearance="outline" class="buscar-input">
+                    <mat-label>Buscar <mat-icon name="pie-chart-outline" class="nav__icon">search</mat-icon> </mat-label>
+                    <input matInput placeholder="Ingresa un texto" [(ngModel)]="textoBuscar"     (input)="onSearchChange($event)">
+                </mat-form-field>
+    
+
+                <table mat-table [dataSource]="listaRelacionesdataSource" class="mat-elevation-z8">
+
+                    <ng-container matColumnDef="acciones">
+                        <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                        <td mat-cell *matCellDef="let element"> 
+                            <button mat-flat-button (click)="editarCategoria(element)">Editar</button>
+                            <button mat-flat-button (click)="eliminarCategoria(element.id)" >Eliminar</button>
+                        </td>
+                    </ng-container>
+    
+                    <ng-container matColumnDef="docto">
+                    <th mat-header-cell *matHeaderCellDef> docto </th>
+                    <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+                    </ng-container>
+                
+                    <ng-container matColumnDef="docrelacionado">
+                    <th mat-header-cell *matHeaderCellDef> docrelacionado </th>
+                    <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
+                    </ng-container>
+    
+                    
+                    <tr mat-header-row *matHeaderRowDef="displayedColumnsRelaciones"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumnsRelaciones;"></tr>
+    
+                </table>
+    
+                <div class="paginadorTablaRelaciones">
+                    <mat-paginator [pageSizeOptions]="[5, 10, 20]"
+                        showFirstLastButtons
+                        aria-label="Select page of periodic elements">
+                    </mat-paginator>
+                </div>
+               
+            </div>
+
+            
+
+
+             <!-- Línea horizontal para separación -->
+             <hr class="divider">
+             <!-- Texto "Relacionar documentos" alineado a la izquierda -->
+             <div class="relacionar-documentos">
+                Documentos
+             </div>
+             
+
+
 
             <div class="contenedor_boton">
                
@@ -45,8 +314,7 @@
    
     </form>
 
-
-
+        
 
 
     <mat-form-field appearance="outline" class="buscar-input">
@@ -64,15 +332,57 @@
             </td>
         </ng-container>
 
-        <ng-container matColumnDef="nombre">
-          <th mat-header-cell *matHeaderCellDef> Nombre </th>
+        <ng-container matColumnDef="categoria">
+          <th mat-header-cell *matHeaderCellDef> Categoría </th>
           <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
         </ng-container>
       
-        <ng-container matColumnDef="descripcion">
-          <th mat-header-cell *matHeaderCellDef> Descripción </th>
+        <ng-container matColumnDef="tipo">
+          <th mat-header-cell *matHeaderCellDef> Tipo </th>
           <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
         </ng-container>
+
+        <ng-container matColumnDef="norma">
+            <th mat-header-cell *matHeaderCellDef> Norma </th>
+            <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="codigo">
+            <th mat-header-cell *matHeaderCellDef> Código </th>
+            <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="documento">
+            <th mat-header-cell *matHeaderCellDef> Documento </th>
+            <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="version">
+            <th mat-header-cell *matHeaderCellDef> Versión </th>
+            <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="oficina">
+            <th mat-header-cell *matHeaderCellDef> Oficina </th>
+            <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="docto">
+            <th mat-header-cell *matHeaderCellDef> Docto </th>
+            <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="clasificacion">
+            <th mat-header-cell *matHeaderCellDef> Clasificacion </th>
+            <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="vigencia">
+            <th mat-header-cell *matHeaderCellDef> Vigencia </th>
+            <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
+        </ng-container>
+
+          
 
         
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
