@@ -3,6 +3,7 @@ export interface SubclasificacionDTO {
     nombre: string;
     descripcion: string;
     clasificacionID: number;
+    eliminado: boolean;
 }
 
 export interface SubclasificacionExtendidaDTO extends SubclasificacionDTO {
