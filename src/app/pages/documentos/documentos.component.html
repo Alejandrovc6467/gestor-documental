@@ -21,7 +21,7 @@
                 <div class="contenedor-doble-input">
                     <mat-form-field appearance="outline" class="full-widthdoble">
                         <mat-label>Doc SG</mat-label>
-                        <mat-select [formControl]="formulario.controls.clasificacionId">
+                        <mat-select formControlName="docsgId">
                             @for (clasificacion of clasificaciones; track clasificacion.id) {
                                 <mat-option [value]="clasificacion.id">
                                   {{ clasificacion.nombre }}
@@ -35,7 +35,7 @@
                 <div class="contenedor-doble-input">
                     <mat-form-field appearance="outline" class="full-widthdoble">
                         <mat-label>Categoría</mat-label>
-                        <mat-select [formControl]="formulario.controls.clasificacionId">
+                        <mat-select formControlName="categoriaId">
                             @for (clasificacion of clasificaciones; track clasificacion.id) {
                                 <mat-option [value]="clasificacion.id">
                                   {{ clasificacion.nombre }}
@@ -54,7 +54,7 @@
                 <div class="contenedor-doble-input">
                     <mat-form-field appearance="outline" class="full-widthdoble">
                         <mat-label>Norma</mat-label>
-                        <mat-select [formControl]="formulario.controls.clasificacionId">
+                        <mat-select formControlName="normaId">
                             @for (clasificacion of clasificaciones; track clasificacion.id) {
                                 <mat-option [value]="clasificacion.id">
                                   {{ clasificacion.nombre }}
@@ -68,7 +68,7 @@
                 <div class="contenedor-doble-input">
                     <mat-form-field appearance="outline" class="full-widthdoble">
                         <mat-label>Etapa</mat-label>
-                        <mat-select [formControl]="formulario.controls.clasificacionId">
+                        <mat-select formControlName="etapaId">
                             @for (clasificacion of clasificaciones; track clasificacion.id) {
                                 <mat-option [value]="clasificacion.id">
                                   {{ clasificacion.nombre }}
@@ -86,13 +86,13 @@
 
             <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Asunto Título</mat-label>
-                <input matInput [formControl]="formulario.controls.nombre">
+                <input matInput formControlName="asunto">
                 <mat-error>{{obtenerErrorNombre()}}</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Codigo</mat-label>
-                <input matInput [formControl]="formulario.controls.nombre">
+                <input matInput formControlName="codigo">
                 <mat-error>{{obtenerErrorNombre()}}</mat-error>
             </mat-form-field>
 
@@ -100,7 +100,7 @@
           
             <mat-form-field appearance="outline" class="full-widthdoble">
                 <mat-label>Oficina</mat-label>
-                    <mat-select [formControl]="formulario.controls.clasificacionId">
+                    <mat-select formControlName="oficinaId">
                         @for (clasificacion of clasificaciones; track clasificacion.id) {
                             <mat-option [value]="clasificacion.id">
                               {{ clasificacion.nombre }}
@@ -130,7 +130,7 @@
                 <div class="contenedor-doble-input">
                     <mat-form-field appearance="outline" class="full-widthdoble">
                         <mat-label>Docto</mat-label>
-                        <mat-select [formControl]="formulario.controls.clasificacionId">
+                        <mat-select formControlName="doctoId">
                             @for (clasificacion of clasificaciones; track clasificacion.id) {
                                 <mat-option [value]="clasificacion.id">
                                   {{ clasificacion.nombre }}
@@ -144,7 +144,7 @@
                 <div class="contenedor-doble-input">
                     <mat-form-field appearance="outline" class="full-widthdoble">
                         <mat-label>Clasificación</mat-label>
-                        <mat-select [formControl]="formulario.controls.clasificacionId">
+                        <mat-select formControlName="clasificacionId">
                             @for (clasificacion of clasificaciones; track clasificacion.id) {
                                 <mat-option [value]="clasificacion.id">
                                   {{ clasificacion.nombre }}
@@ -165,7 +165,7 @@
                 <div class="contenedor-doble-input">
                     <mat-form-field appearance="outline" class="full-widthdoble">
                         <mat-label>Subclasificacíon</mat-label>
-                        <mat-select [formControl]="formulario.controls.clasificacionId">
+                        <mat-select formControlName="subclasificacionId">
                             @for (clasificacion of clasificaciones; track clasificacion.id) {
                                 <mat-option [value]="clasificacion.id">
                                   {{ clasificacion.nombre }}
@@ -179,7 +179,7 @@
                 <div class="contenedor-doble-input">
                     <mat-form-field appearance="outline" class="full-widthdoble">
                         <mat-label>Vigencia</mat-label>
-                        <input matInput [formControl]="formulario.controls.nombre">
+                        <input matInput formControlName="vigencia">
                         <mat-error>{{obtenerErrorNombre()}}</mat-error>
                     </mat-form-field>
                 </div>
@@ -190,7 +190,7 @@
 
             <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Palabras Clave</mat-label>
-                <input matInput [formControl]="formulario.controls.nombre">
+                <input matInput formControlName="palabrasClave">
                 <mat-error>{{obtenerErrorNombre()}}</mat-error>
             </mat-form-field>
 
@@ -205,7 +205,7 @@
             </div>
             
 
-
+            <!-- Este es un comentario en HTML 
             <div class="formulario-contenedor-doble">
 
                 <div class="contenedor-doble-input">
@@ -237,7 +237,7 @@
                 <button mat-flat-button type="button" class="boton_amarillo" (click)="cancelarEdicion()"> Relacionar </button>
             </div>
 
-                    
+                    -->
             
 
 
