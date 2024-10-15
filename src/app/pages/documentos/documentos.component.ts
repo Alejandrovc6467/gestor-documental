@@ -127,6 +127,7 @@ export class DocumentosComponent implements OnInit {
   }
 
   actualizarCategoria() {
+    /*
     if (!this.categoriaSeleccionada) return;
       const categoriaActualizada: CategoriaDTO = {
         id: this.categoriaSeleccionada.id,
@@ -140,9 +141,11 @@ export class DocumentosComponent implements OnInit {
         this.limpiarErroresFormulario();
         Swal.fire('Editada!', 'La categoría ha sido editada.', 'success');
       });
+      */
   }
 
   editarCategoria(element: CategoriaDTO) {
+    /*
     // Método para cargar los datos de la categoría seleccionada y activar el modo de edición
     this.estaEditando = true;
     this.categoriaSeleccionada = element;
@@ -152,6 +155,7 @@ export class DocumentosComponent implements OnInit {
       descripcion: element.descripcion
     });
     this.limpiarErroresFormulario();
+    */
   }
 
   cancelarEdicion() {
@@ -265,6 +269,7 @@ export class DocumentosComponent implements OnInit {
   }
 
   obtenerErrorNombre(){
+    /*
     const nombre = this.formulario.controls.nombre;
    
     if (nombre.hasError('required')) {
@@ -277,6 +282,7 @@ export class DocumentosComponent implements OnInit {
     }
     
     return ''; 
+    */
   }
 
   limpiarErroresFormulario() {
