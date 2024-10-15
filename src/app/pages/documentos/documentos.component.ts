@@ -105,8 +105,10 @@ export class DocumentosComponent implements OnInit {
     });
   }
 
-  crearCategoria(){
+  crearDocumento(){
+    console.log(this.formulario.value);
     
+    /*
     if(this.formulario.invalid){
       alert("Formulario invalido");
     }else{
@@ -123,6 +125,7 @@ export class DocumentosComponent implements OnInit {
       });
 
     }
+      */
 
   
   

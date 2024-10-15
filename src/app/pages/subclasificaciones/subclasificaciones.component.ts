@@ -43,10 +43,9 @@ export class SubclasificacionesComponent implements OnInit {
 
 
   ngOnInit(): void {
+    this.obtenerClasificaciones();
     this.obtenerCategoriasCargarTabla();
     this.formulario.updateValueAndValidity();
-    this.obtenerClasificaciones();
-   
   }
   
   constructor(){}
