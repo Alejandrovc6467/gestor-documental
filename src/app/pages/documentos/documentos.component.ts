@@ -64,23 +64,25 @@ export class DocumentosComponent implements OnInit {
 
   private formbuilder = inject(FormBuilder);
   formulario = this.formbuilder.group({
-    nombre: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
+    docsgId: ['', [Validators.required]],
+    categoriaId: ['', [Validators.required]],
+    normaId: ['', [Validators.required]],
+    etapaId: ['', [Validators.required]],
+    asunto: ['', [Validators.required]],
+    codigo: ['', [Validators.required]],
+    oficinaId: ['', [Validators.required]],
+    descargable: [false],
+    activo: [false],
     descripcion: ['', [Validators.required]],
-    clasificacionId: [0, [Validators.required]],
-    descargable: [false],  // Agregar campo 'descargable'
-    activo: [false]     
+    doctoId: ['', [Validators.required]],
+    clasificacionId: ['', [Validators.required]],
+    subclasificacionId: ['', [Validators.required]],
+    vigencia: ['', [Validators.required]],
+    palabrasClave: ['', [Validators.required]]
   });
 
 
-  private formbuilderRelaciones = inject(FormBuilder);
-  formularioRelaciones = this.formbuilderRelaciones.group({
-    nombre: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
-    descripcion: ['', [Validators.required]],
-    clasificacionId: [0, [Validators.required]],
-    descargable: [false],  // Agregar campo 'descargable'
-    activo: [false]     
-  });
-
+ 
 
   obtenerClasificaciones(){
     this.clasificacionesService.obtenerClasificaciones().subscribe(response => {
