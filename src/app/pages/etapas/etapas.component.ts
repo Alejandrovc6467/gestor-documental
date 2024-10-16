@@ -26,10 +26,10 @@ import Swal from 'sweetalert2';
 export class EtapasComponent implements OnInit{
   etapasService = inject(EtapasService);
   normasService = inject(NormasService);
-  listaCategorias! : EtapaDTO[];
-  normas!: NormaDTO[];
-  listCategoriasdataSource = new MatTableDataSource<EtapaExtendidaDTO>([]);
-  displayedColumns: string[] = [ 'acciones', 'nombre', 'descripcion', 'clasificacion', 'color'];
+  listaEtapas! : EtapaDTO[];
+  listaNormas!: NormaDTO[];
+  listEtapasDataSource = new MatTableDataSource<EtapaExtendidaDTO>([]);
+  displayedColumns: string[] = [ 'acciones', 'color', 'nombre', 'descripcion', 'norma', 'etapapadre'];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   textoBuscar: string = "";
   estaEditando: boolean = false;
@@ -37,7 +37,7 @@ export class EtapasComponent implements OnInit{
 
 
   ngOnInit(): void {
-    //this.obtenerCategoriasCargarTabla();
+    this.obtenerCategoriasCargarTabla();
     this.formulario.updateValueAndValidity();
     this.obtenerNormas();
     this.obtenerEtapas();
@@ -50,19 +50,21 @@ export class EtapasComponent implements OnInit{
   formulario = this.formbuilder.group({
     nombre: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
     descripcion: ['', [Validators.required]],
-    clasificacionId: [0, [Validators.required]],
-    color: ['#ff0000', [Validators.required]]
+    color: ['#ff0000', [Validators.required]],
+    etapaPadreID: [0, [Validators.required]],
+    normaID: [0, [Validators.required]],
+   
   });
 
   obtenerNormas(){
     this.normasService.obtenerNormas().subscribe(response => {
-      this.normas = response;
+      this.listaNormas = response;
     })};
 
   //CRUD **********************************************************
   obtenerCategorias(){
     this.etapasService.obtenerEtapas().subscribe(response => {
-      this.listaCategorias = response;
+      this.listaEtapas = response;
     });
 
 
@@ -85,7 +87,8 @@ export class EtapasComponent implements OnInit{
       const etapa = this.formulario.value as EtapaDTO; 
       
       // Asegurarse de que clasificacionId sea un número válido
-      etapa.normaId = Number(etapa.normaId);
+      //etapa.normaId = Number(etapa.normaId);
+      etapa.eliminado = false;
 
       console.log(etapa);
   
@@ -94,12 +97,10 @@ export class EtapasComponent implements OnInit{
         this.obtenerCategoriasCargarTabla();
         this.formulario.reset();
         this.limpiarErroresFormulario();
-        Swal.fire('Creada!', 'La categoría ha sido creada.', 'success');
+        Swal.fire('Creada!', 'La Etapa ha sido creada.', 'success');
       });
 
     }
-
-  
   
   }
 
@@ -109,7 +110,10 @@ export class EtapasComponent implements OnInit{
         id: this.categoriaSeleccionada.id,
         nombre: this.formulario.value.nombre!,
         descripcion: this.formulario.value.descripcion!,
-        normaId: this.formulario.value.clasificacionId!
+        eliminado: false,
+        color: this.formulario.value.color!,
+        etapaPadreID: this.formulario.value.etapaPadreID!,
+        normaID: this.formulario.value.normaID!
       };
       this.etapasService.actualizarEtapa(categoriaActualizada).subscribe(response => {
         console.log(response);
@@ -143,9 +147,11 @@ export class EtapasComponent implements OnInit{
 
 
   eliminarCategoria(idEliminar: number) {
+
+    console.log(idEliminar);
     // Mostrar el SweetAlert para confirmar la eliminación
     Swal.fire({
-        title: '¿Desea eliminar la categoría?',
+        title: '¿Desea eliminar la Etapa?',
         text: 'Esta acción no se puede deshacer.',
         icon: 'warning',
         showCancelButton: true,
@@ -172,30 +178,38 @@ export class EtapasComponent implements OnInit{
   // Otros **********************************************************
   obtenerEtapas(){
     this.etapasService.obtenerEtapas().subscribe(response => {
-      this.listaCategorias = response;
+      this.listaEtapas = response;
     });
   }
 
   obtenerCategoriasCargarTabla(){
     this.etapasService.obtenerEtapas().subscribe(response => {
-      this.listaCategorias = response;
-      this.setTable(this.listaCategorias);
+      this.listaEtapas = response;
+      this.setTable(this.listaEtapas);
     });
   }
 
-  setTable(data:EtapaDTO[]){
-   // Mapear los datos para agregar el nombre de la clasificación
-  const dataConClasificacionNombre: EtapaExtendidaDTO[] = data.map(subcategoria => {
-    const clasificacion = this.normas.find(clas => clas.id === subcategoria.normaId);
-    return {
-      ...subcategoria,
-      normaNombre: clasificacion ? clasificacion.nombre : 'Sin norma'
-    };
-  });
-
-  // Configurar el DataSource con los datos modificados
-  this.listCategoriasdataSource = new MatTableDataSource<EtapaExtendidaDTO>(dataConClasificacionNombre);
-  this.listCategoriasdataSource.paginator = this.paginator;
+  setTable(data: EtapaDTO[]) {
+    setTimeout(() => {
+      // Mapear los datos para agregar el nombre de la norma y el nombre de la etapa padre
+      const dataConNormaYPadreNombre: EtapaExtendidaDTO[] = data.map(etapa => {
+        const clasificacion = this.listaNormas.find(clas => clas.id === etapa.normaID);
+  
+        // Buscar el nombre de la etapa padre si existe
+        const etapaPadre = this.listaEtapas.find(e => e.id === etapa.etapaPadreID);
+  
+        return {
+          ...etapa,
+          normaNombre: clasificacion ? clasificacion.nombre : 'Sin norma',
+          etapaPadreNombre: etapaPadre ? etapaPadre.nombre : 'Sin etapa padre'  // Asignar el nombre de la etapa padre
+        };
+      });
+  
+      // Configurar el DataSource con los datos modificados
+      this.listEtapasDataSource = new MatTableDataSource<EtapaExtendidaDTO>(dataConNormaYPadreNombre);
+      this.listEtapasDataSource.paginator = this.paginator;
+  
+    }, 3000);
   }
   
   realizarBusqueda() {
@@ -204,7 +218,7 @@ export class EtapasComponent implements OnInit{
 
   filtrarData(){
 
-    const data = this.listaCategorias.slice();
+    const data = this.listaEtapas.slice();
     if(!this.textoBuscar){
      this.setTable(data);
       return;
@@ -231,7 +245,7 @@ export class EtapasComponent implements OnInit{
     const filterValue = event.target.value?.trim().toLowerCase() || '';
     if (!filterValue) {
       // Si esta vacio, mostrar toda la lista
-      this.setTable(this.listaCategorias);
+      this.setTable(this.listaEtapas);
       return;
     }
     //pude haber hecho todo el filtro aqui, pero se requeria la necesidad del boton buscar
@@ -269,6 +283,7 @@ export class EtapasComponent implements OnInit{
   }
 
   obtenerErrorClasificacionId() {
+    /*
     const clasificacionId = this.formulario.controls.clasificacionId;
   
     if (clasificacionId.hasError('required')) {
@@ -276,5 +291,6 @@ export class EtapasComponent implements OnInit{
     }
   
     return '';
+    */
   }
 }

@@ -29,6 +29,6 @@ export class EtapasService {
   }
 
   public eliminarEtapa(id:number){
-    return this.http.delete(`${this.urlBase}/${id}`);
+    return this.http.delete(`${this.urlBase}?id=${id}`);
   }
 }
