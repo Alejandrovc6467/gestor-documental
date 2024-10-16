@@ -9,8 +9,17 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { CategoriaDTO } from '../../Core/models/CategoriaDTO';
 import { ClasificacionDTO } from '../../Core/models/ClasificacionDTO';
+
+import { TipodocumentoService } from '../../Core/services/tipodocumento.service';
 import { CategoriasService } from '../../Core/services/categorias.service';
+import {  NormasService  } from '../../Core/services/normas.service';
+import {  EtapasService  } from '../../Core/services/etapas.service';
+import {  DoctocsService  } from '../../Core/services/doctocs.service';
 import { ClasificacionesService } from '../../Core/services/clasificaciones.service';
+import { SubclasificacionesService } from '../../Core/services/subclasificaciones.service';
+import { DocumentosService } from '../../Core/services/documentos.service';
+
+
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,6 +29,12 @@ import {MatRadioModule} from '@angular/material/radio';
 
 import Swal from 'sweetalert2';
 import { MatSelectModule } from '@angular/material/select';
+import { TipodocumentoDTO } from '../../Core/models/TipodocumentoDTO';
+import { EtapaDTO } from '../../Core/models/EtapaDTO';
+import { DoctocDTO } from '../../Core/models/DoctocDTO';
+import { SubclasificacionDTO } from '../../Core/models/SubclasificacionDTO';
+import { RelacionDocumentoDTO } from '../../Core/models/RelacionDocumentoDTO';
+import { DocumentoDTO } from '../../Core/models/DocumentoDTO';
 
 
 
@@ -35,13 +50,31 @@ export class DocumentosComponent implements OnInit {
   //id!:  number;
   id = 7;
 
+  tipodocumentoService = inject(TipodocumentoService);
   categoriasService = inject(CategoriasService);
+  normasService = inject(NormasService);
+  etapasService = inject(EtapasService);
+  //falta Oficinas service, despues del modulo de seguridad
+  doctocsService = inject(DoctocsService);
   clasificacionesService = inject(ClasificacionesService);
+  subclasificacionesService = inject(SubclasificacionesService);
+  documentosService = inject(DocumentosService);
+  
+
+  listaTipoDocumentos! : TipodocumentoDTO[];
   listaCategorias! : CategoriaDTO[];
-  clasificaciones!: ClasificacionDTO[];
+  listaNormas! : CategoriaDTO[];
+  listaEtapas! : EtapaDTO[];
+  listaDoctos! : DoctocDTO[];
+  listaClasificaciones!: ClasificacionDTO[];
+  listaSubClasificaciones!: SubclasificacionDTO[];
+
+  //lista para relacionar Documentos
+  doctos: { docto: number, docRelacionado: string }[] = [];
+
 
   //tabla Relaciones
-  listaRelacionesdataSource = new MatTableDataSource<CategoriaDTO>([]);
+  listaRelacionesdataSource = new MatTableDataSource<RelacionDocumentoDTO>([]);
   displayedColumnsRelaciones: string[] = [ 'acciones', 'docto', 'docrelacionado'];
   @ViewChild(MatPaginator) paginatorRelaciones!: MatPaginator;
 
@@ -57,8 +90,15 @@ export class DocumentosComponent implements OnInit {
 
 
   ngOnInit(): void {
+
     this.obtenerCategoriasCargarTabla();
+
+    this.obtenerTipoDocumentos();
+    this.obtenerCategorias();
+    this.obtenerNormas();
+    this.obtenerDoctos();
     this.obtenerClasificaciones();
+
     this.formulario.updateValueAndValidity();
   }
   
@@ -66,33 +106,33 @@ export class DocumentosComponent implements OnInit {
 
   private formbuilder = inject(FormBuilder);
   formulario = this.formbuilder.group({
-    docsgId: ['', [Validators.required]],
-    categoriaId: ['', [Validators.required]],
-    normaId: ['', [Validators.required]],
-    etapaId: ['', [Validators.required]],
+    tipoDocumento: [0, [Validators.required]],
+    categoriaID: [0, [Validators.required]],
+    normaID: ['', [Validators.required]],
+    etapaID: [0, [Validators.required]],
     asunto: ['', [Validators.required]],
     codigo: ['', [Validators.required]],
-    oficinaId: ['', [Validators.required]],
+    oficinaID: [0, [Validators.required]],
     descargable: [false],
     activo: [false],
     descripcion: ['', [Validators.required]],
-    doctoId: ['', [Validators.required]],
-    clasificacionId: ['', [Validators.required]],
-    subclasificacionId: ['', [Validators.required]],
+    doctoID: [0, [Validators.required]],
+    clasificacionID: ['', [Validators.required]],
+    subClasificacionID: [0, [Validators.required]],
     vigencia: ['', [Validators.required]],
-    palabrasClave: ['', [Validators.required]]
+    palabraClave: ['', [Validators.required]]
   });
 
 
+  relacionDocumentoFormulario = this.formbuilder.group({
+    doctoId: [0, Validators.required],
+    docRelacionado: ['', Validators.required]
+  });
+
  
 
-  obtenerClasificaciones(){
-    this.clasificacionesService.obtenerClasificaciones().subscribe(response => {
-      this.clasificaciones = response;
-    })};
-
   //CRUD **********************************************************
-  obtenerCategorias(){
+  obtenerDocumentos(){
     this.categoriasService.obtenerCategorias().subscribe(response => {
       this.listaCategorias = response;
     });
@@ -104,31 +144,53 @@ export class DocumentosComponent implements OnInit {
       console.log(response);
     });
   }
-
-  crearDocumento(){
-    console.log(this.formulario.value);
-    
-    /*
-    if(this.formulario.invalid){
-      alert("Formulario invalido");
-    }else{
-
-      const categoria = this.formulario.value as CategoriaDTO; 
-      console.log(categoria);
   
-      this.categoriasService.crearCategoria(categoria).subscribe(response => {
-        console.log(response);
-        this.obtenerCategoriasCargarTabla();
-        this.formulario.reset();
-        this.limpiarErroresFormulario();
-        Swal.fire('Creada!', 'La categoría ha sido creada.', 'success');
-      });
-
+  crearDocumento() {
+    if (this.formulario.invalid) {
+      Swal.fire('Error', 'Por favor, complete todos los campos requeridos', 'error');
+      return;
     }
-      */
 
-  
-  
+    const documentoData = this.formulario.value as DocumentoDTO;
+    
+    const documento: DocumentoDTO = {
+      ...documentoData,
+      id: 0, // Asumiendo que el ID se asigna en el backend
+      codigo: documentoData.codigo?.toString() || '',
+      asunto: documentoData.asunto?.toString() || '',
+      descripcion: documentoData.descripcion?.toString() || '',
+      palabraClave: documentoData.palabraClave || '',
+      categoriaID: documentoData.categoriaID || 0,
+      tipoDocumento: documentoData.tipoDocumento || 0,
+      oficinaID: documentoData.oficinaID || 0,
+      vigencia: documentoData.vigencia?.toString() || '',
+      etapaID: documentoData.etapaID || 0,
+      subClasificacionID: documentoData.subClasificacionID || 0,
+      doctos: this.doctos,
+   
+      // Asegúrate de que estos campos estén presentes y con el tipo correcto
+      activo: documentoData.activo || false,
+      descargable: documentoData.descargable || false,
+      doctoID: documentoData.doctoID || 0
+    };
+
+    console.log(documento);
+
+    
+    this.documentosService.crearDocumento(documento).subscribe({
+      next: (response) => {
+        console.log(response);
+        this.formulario.reset();
+        this.doctos = []; // Limpiar la lista de doctos relacionados
+        this.limpiarErroresFormulario();
+        Swal.fire('Creado', 'El documento ha sido creado exitosamente', 'success');
+      },
+      error: (error) => {
+        console.error('Error al crear el documento:', error);
+        Swal.fire('Error', 'Hubo un problema al crear el documento', 'error');
+      }
+    });
+    
   }
 
   actualizarCategoria() {
@@ -172,17 +234,6 @@ export class DocumentosComponent implements OnInit {
     this.formulario.updateValueAndValidity(); // Recalcular estado de validez
   }
 
-  /*
-  eliminarCategoria(idEliminar:number){
-
-    this.categoriasService.eliminarCategoria(idEliminar).subscribe( response => {
-      console.log(response);
-      this.obtenerCategoriasCargarTabla();
-    });
-    
-  }
-    */
-
   eliminarCategoria(idEliminar: number) {
     // Mostrar el SweetAlert para confirmar la eliminación
     Swal.fire({
@@ -208,9 +259,95 @@ export class DocumentosComponent implements OnInit {
   }
 
 
+
+  /********************************** Cargar listas para los catalogos *********************************************************************************************/
+
+  obtenerTipoDocumentos(){
+    this.tipodocumentoService.obtenerTipoducumentos().subscribe(response => {
+      this.listaTipoDocumentos = response;
+  })};
+
+  obtenerCategorias(){
+    this.categoriasService.obtenerCategorias().subscribe(response => {
+      this.listaCategorias = response;
+  })};
+
+  obtenerNormas(){
+    this.normasService.obtenerNormas().subscribe(response => {
+      this.listaNormas = response;
+  })};
+
+  onNormaChange(normaId: number) {
+    this.obtenerEtapas(normaId);
+  }
+
+  obtenerEtapas(normaId: number) {
+    this.etapasService.obtenerEtapas().subscribe(response => {
+      this.listaEtapas = response.filter(etapa => etapa.normaID === normaId);
+    });
+  }
+
+  obtenerDoctos(){
+    this.doctocsService.obtenerDoctocs().subscribe(response => {
+      this.listaDoctos = response;
+  })};
+  
+  obtenerClasificaciones(){
+    this.clasificacionesService.obtenerClasificaciones().subscribe(response => {
+      this.listaClasificaciones = response;
+  })};
+
+  onClasificacionChange(clasificacionId: number) {
+    this.obtenerSubClasificaciones(clasificacionId);
+  }
+
+  // Método para obtener las subclasificaciones filtradas por clasificación (Al momento de elegir una clasificacion)
+  obtenerSubClasificaciones(clasificacionId: number) {
+    this.subclasificacionesService.obtenerSubclasificaciones().subscribe(response => {
+      this.listaSubClasificaciones = response.filter(subclasificacion => subclasificacion.clasificacionID === clasificacionId);
+    });
+  }
+
   
 
-  // Otros **********************************************************
+
+
+
+  /******************   Agregar relaciones documentos ****************************************************************************************************/
+ 
+  agregarRelacionDocumento() {
+    if (this.relacionDocumentoFormulario.valid) {
+      const docto = this.relacionDocumentoFormulario.get('doctoId')?.value;
+      const docRelacionado = this.relacionDocumentoFormulario.get('docRelacionado')?.value;
+
+      this.doctos.push({
+        docto: docto!,
+        docRelacionado: docRelacionado!
+      });
+
+
+      Swal.fire('Creada!', 'La relacion ha sido creada.', 'success');
+
+      // Optionally, update your data source for the relations table
+      this.actualizarTablaRelaciones();
+
+      // Reset the form after adding
+      this.relacionDocumentoFormulario.reset();
+
+      console.log(this.doctos);
+    }
+  }
+
+  actualizarTablaRelaciones() {
+    this.listaRelacionesdataSource.data = this.doctos;
+  }
+ 
+ 
+
+
+
+
+  // Otros ***********************************************************************************
 
   obtenerCategoriasCargarTabla(){
     this.categoriasService.obtenerCategorias().subscribe(response => {
@@ -251,8 +388,6 @@ export class DocumentosComponent implements OnInit {
     this.limpiarErroresFormulario(); // Eliminar los errores
   }
 
-
- 
   onSearchChange(event: any) {
     const filterValue = event.target.value?.trim().toLowerCase() || '';
     if (!filterValue) {
@@ -264,7 +399,12 @@ export class DocumentosComponent implements OnInit {
   }
 
 
-  // validaciones **********************************************************
+
+
+
+
+  // validaciones ********************************************************************************************************************
+
   obtenerErrorDescripcion() {
     const descripcion = this.formulario.controls.descripcion;
     if (descripcion.hasError('required')) {
@@ -296,9 +436,8 @@ export class DocumentosComponent implements OnInit {
     });
   }
 
-  
   obtenerErrorClasificacionId() {
-    const clasificacionId = this.formulario.controls.clasificacionId;
+    const clasificacionId = this.formulario.controls.clasificacionID;
   
     if (clasificacionId.hasError('required')) {
       return 'El campo clasificación es obligatorio';
@@ -306,6 +445,20 @@ export class DocumentosComponent implements OnInit {
   
     return '';
   }
+
+  obtenerErrorSubclasificacionId() {
+    
+  }
+
+  obtenerErrorDoctoId(){
+
+  }
+
+  obtenerErrorDocRelacionado(){
+
+  }
+ 
+
 
 
 

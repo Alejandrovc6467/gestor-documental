@@ -21,10 +21,10 @@
                 <div class="contenedor-doble-input">
                     <mat-form-field appearance="outline" class="full-widthdoble">
                         <mat-label>Doc SG</mat-label>
-                        <mat-select formControlName="docsgId">
-                            @for (clasificacion of clasificaciones; track clasificacion.id) {
-                                <mat-option [value]="clasificacion.id">
-                                  {{ clasificacion.nombre }}
+                        <mat-select formControlName="tipoDocumento">
+                            @for (tipoDocumento of listaTipoDocumentos; track tipoDocumento.id) {
+                                <mat-option [value]="tipoDocumento.id">
+                                  {{ tipoDocumento.nombre }}
                                 </mat-option>
                               }
                         </mat-select>
@@ -35,10 +35,10 @@
                 <div class="contenedor-doble-input">
                     <mat-form-field appearance="outline" class="full-widthdoble">
                         <mat-label>Categoría</mat-label>
-                        <mat-select formControlName="categoriaId">
-                            @for (clasificacion of clasificaciones; track clasificacion.id) {
-                                <mat-option [value]="clasificacion.id">
-                                  {{ clasificacion.nombre }}
+                        <mat-select formControlName="categoriaID">
+                            @for (categoria of listaCategorias; track categoria.id) {
+                                <mat-option [value]="categoria.id">
+                                  {{ categoria.nombre }}
                                 </mat-option>
                               }
                         </mat-select>
@@ -54,10 +54,10 @@
                 <div class="contenedor-doble-input">
                     <mat-form-field appearance="outline" class="full-widthdoble">
                         <mat-label>Norma</mat-label>
-                        <mat-select formControlName="normaId">
-                            @for (clasificacion of clasificaciones; track clasificacion.id) {
-                                <mat-option [value]="clasificacion.id">
-                                  {{ clasificacion.nombre }}
+                        <mat-select formControlName="normaID" (selectionChange)="onNormaChange($event.value)">
+                            @for (norma of listaNormas; track norma.id) {
+                                <mat-option [value]="norma.id">
+                                  {{ norma.nombre }}
                                 </mat-option>
                               }
                         </mat-select>
@@ -68,10 +68,10 @@
                 <div class="contenedor-doble-input">
                     <mat-form-field appearance="outline" class="full-widthdoble">
                         <mat-label>Etapa</mat-label>
-                        <mat-select formControlName="etapaId">
-                            @for (clasificacion of clasificaciones; track clasificacion.id) {
-                                <mat-option [value]="clasificacion.id">
-                                  {{ clasificacion.nombre }}
+                        <mat-select formControlName="etapaID">
+                            @for (etapa of listaEtapas; track etapa.id) {
+                                <mat-option [value]="etapa.id">
+                                  {{ etapa.nombre }}
                                 </mat-option>
                               }
                         </mat-select>
@@ -100,8 +100,8 @@
           
             <mat-form-field appearance="outline" class="full-widthdoble">
                 <mat-label>Oficina</mat-label>
-                    <mat-select formControlName="oficinaId">
-                        @for (clasificacion of clasificaciones; track clasificacion.id) {
+                    <mat-select formControlName="oficinaID">
+                        @for (clasificacion of listaClasificaciones; track clasificacion.id) {
                             <mat-option [value]="clasificacion.id">
                               {{ clasificacion.nombre }}
                             </mat-option>
@@ -130,10 +130,10 @@
                 <div class="contenedor-doble-input">
                     <mat-form-field appearance="outline" class="full-widthdoble">
                         <mat-label>Docto</mat-label>
-                        <mat-select formControlName="doctoId">
-                            @for (clasificacion of clasificaciones; track clasificacion.id) {
-                                <mat-option [value]="clasificacion.id">
-                                  {{ clasificacion.nombre }}
+                        <mat-select formControlName="doctoID">
+                            @for (docto of listaDoctos; track docto.id) {
+                                <mat-option [value]="docto.id">
+                                  {{ docto.nombre }}
                                 </mat-option>
                               }
                         </mat-select>
@@ -143,17 +143,17 @@
                 
                 <div class="contenedor-doble-input">
                     <mat-form-field appearance="outline" class="full-widthdoble">
-                        <mat-label>Clasificación</mat-label>
-                        <mat-select formControlName="clasificacionId">
-                            @for (clasificacion of clasificaciones; track clasificacion.id) {
-                                <mat-option [value]="clasificacion.id">
-                                  {{ clasificacion.nombre }}
-                                </mat-option>
-                              }
-                        </mat-select>
-                        <mat-error>{{ obtenerErrorClasificacionId() }}</mat-error>
+                      <mat-label>Clasificación</mat-label>
+                      <mat-select formControlName="clasificacionID" (selectionChange)="onClasificacionChange($event.value)">
+                        @for (clasificacion of listaClasificaciones; track clasificacion.id) {
+                            <mat-option [value]="clasificacion.id">
+                              {{ clasificacion.nombre }}
+                            </mat-option>
+                          }
+                      </mat-select>
+                      <mat-error>{{ obtenerErrorClasificacionId() }}</mat-error>
                     </mat-form-field>
-                </div>
+                  </div>
     
             
             </div>
@@ -164,17 +164,17 @@
 
                 <div class="contenedor-doble-input">
                     <mat-form-field appearance="outline" class="full-widthdoble">
-                        <mat-label>Subclasificacíon</mat-label>
-                        <mat-select formControlName="subclasificacionId">
-                            @for (clasificacion of clasificaciones; track clasificacion.id) {
-                                <mat-option [value]="clasificacion.id">
-                                  {{ clasificacion.nombre }}
-                                </mat-option>
-                              }
-                        </mat-select>
-                        <mat-error>{{ obtenerErrorClasificacionId() }}</mat-error>
+                      <mat-label>Subclasificación</mat-label>
+                      <mat-select formControlName="subClasificacionID">
+                        @for (subclasificacion of listaSubClasificaciones; track subclasificacion.id) {
+                            <mat-option [value]="subclasificacion.id">
+                                {{ subclasificacion.nombre }}
+                            </mat-option>
+                        }
+                      </mat-select>
+                      <mat-error>{{ obtenerErrorSubclasificacionId() }}</mat-error>
                     </mat-form-field>
-                </div>
+                  </div>
                 
                 <div class="contenedor-doble-input">
                     <mat-form-field appearance="outline" class="full-widthdoble">
@@ -190,55 +190,52 @@
 
             <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Palabras Clave</mat-label>
-                <input matInput formControlName="palabrasClave">
+                <input matInput formControlName="palabraClave">
                 <mat-error>{{obtenerErrorNombre()}}</mat-error>
             </mat-form-field>
 
 
 
 
-            <!-- Línea horizontal para separación -->
+            <!-- Línea horizontal para separación ---------------------------------------------------------------------->
             <hr class="divider_relaciones">
             <!-- Texto "Relacionar documentos" alineado a la izquierda -->
             <div class="relacionar-documentos_relaciones">
                 Relacionar Documentos
             </div>
             
-
           
-            <div class="formulario-contenedor-doble">
-
-                <div class="contenedor-doble-input">
+            <form [formGroup]="relacionDocumentoFormulario" (ngSubmit)="agregarRelacionDocumento()" class="formularioRelacionarDocumentos">
+                <div class="formulario-contenedor-doble">
+                  <div class="contenedor-doble-input">
                     <mat-form-field appearance="outline" class="full-widthdoble">
-                        <mat-label>Docto</mat-label>
-                        <mat-select formControlName="clasificacionId">
-                            @for (clasificacion of clasificaciones; track clasificacion.id) {
-                                <mat-option [value]="clasificacion.id">
-                                  {{ clasificacion.nombre }}
-                                </mat-option>
-                              }
-                        </mat-select>
-                        <mat-error>{{ obtenerErrorClasificacionId() }}</mat-error>
+                      <mat-label>Docto</mat-label>
+                      <mat-select formControlName="doctoId">
+                        @for (doctoc of listaDoctos; track doctoc.id) {
+                          <mat-option [value]="doctoc.id">
+                            {{ doctoc.nombre }}
+                          </mat-option>
+                        }
+                      </mat-select>
+                      <mat-error>{{ obtenerErrorDoctoId() }}</mat-error>
                     </mat-form-field>
-                </div>
-                
-                <div class="contenedor-doble-input">
+                  </div>
+                  
+                  <div class="contenedor-doble-input">
                     <mat-form-field appearance="outline" class="full-widthdoble">
-                        <mat-label>Doc relacionado</mat-label>
-                        <input matInput formControlName="palabrasClave">
-                        <mat-error>{{obtenerErrorNombre()}}</mat-error>
+                      <mat-label>Doc relacionado</mat-label>
+                      <input matInput formControlName="docRelacionado">
+                      <mat-error>{{ obtenerErrorDocRelacionado() }}</mat-error>
                     </mat-form-field>
+                  </div>
                 </div>
-    
             
-            </div>
-
-            <div class="contenedor_boton_relaciones">
-                <button mat-flat-button type="button" class="boton_amarillo" (click)="cancelarEdicion()"> Relacionar </button>
-            </div>
-
-                    
-            
+                <div class="contenedor_boton_relaciones">
+                  <button mat-flat-button type="submit" class="boton_amarillo" [disabled]="relacionDocumentoFormulario.invalid">
+                    Relacionar
+                  </button>
+                </div>
+            </form>
 
 
             <div class="contenedorTablaRelaciones">
@@ -290,15 +287,16 @@
             
 
 
-             <!-- Línea horizontal para separación -->
-             <hr class="divider">
-             <!-- Texto "Relacionar documentos" alineado a la izquierda -->
-             <div class="relacionar-documentos">
+
+
+
+            <!-- Línea horizontal para separación ------------------------------------------->
+            <hr class="divider">
+            <!-- Texto "Relacionar documentos" alineado a la izquierda -->
+            <div class="relacionar-documentos">
                 Documentos
-             </div>
+            </div>
              
-
-
 
             <div class="contenedor_boton">
                
