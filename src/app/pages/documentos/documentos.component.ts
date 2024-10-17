@@ -35,6 +35,7 @@ import { DoctocDTO } from '../../Core/models/DoctocDTO';
 import { SubclasificacionDTO } from '../../Core/models/SubclasificacionDTO';
 import { RelacionDocumentoDTO } from '../../Core/models/RelacionDocumentoDTO';
 import { DocumentoDTO } from '../../Core/models/DocumentoDTO';
+import { DocumentoGetDTO } from '../../Core/models/DocumentoGetDTO';
 
 
 
@@ -68,6 +69,7 @@ export class DocumentosComponent implements OnInit {
   listaDoctos! : DoctocDTO[];
   listaClasificaciones!: ClasificacionDTO[];
   listaSubClasificaciones!: SubclasificacionDTO[];
+  listaDocumentos!: DocumentoGetDTO[];
 
   //lista para relacionar Documentos
   doctos: { docto: number, docRelacionado: string }[] = [];
@@ -79,8 +81,8 @@ export class DocumentosComponent implements OnInit {
   @ViewChild(MatPaginator) paginatorRelaciones!: MatPaginator;
 
   //tablaDocumentos
-  listCategoriasdataSource = new MatTableDataSource<CategoriaDTO>([]);
-  displayedColumns: string[] = [ 'acciones', 'categoria', 'tipo', 'norma', 'codigo', 'documento' , 'version', 'oficina', 'docto' , 'clasificacion', 'vigencia' ];
+  listaDocumentosDataSource = new MatTableDataSource<DocumentoGetDTO>([]);
+  displayedColumns: string[] = [ 'acciones', 'categoria', 'tipo', 'etapa', 'norma','codigo', 'nombre' , 'version', 'oficina',  'docto' , 'clasificacion', 'subclasificacion',  'vigencia' ];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   textoBuscar: string = "";
@@ -91,7 +93,7 @@ export class DocumentosComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.obtenerCategoriasCargarTabla();
+    this.obtenerDocumentosCargarTabla();
 
     this.obtenerTipoDocumentos();
     this.obtenerCategorias();
@@ -125,7 +127,7 @@ export class DocumentosComponent implements OnInit {
 
 
   relacionDocumentoFormulario = this.formbuilder.group({
-    doctoId: [0, Validators.required],
+    docto: [0, Validators.required],
     docRelacionado: ['', Validators.required]
   });
 
@@ -133,8 +135,8 @@ export class DocumentosComponent implements OnInit {
 
   //CRUD **********************************************************
   obtenerDocumentos(){
-    this.categoriasService.obtenerCategorias().subscribe(response => {
-      this.listaCategorias = response;
+    this.documentosService.obtenerDocumentos().subscribe(response => {
+      this.listaDocumentos = response;
     });
   }
 
@@ -148,6 +150,7 @@ export class DocumentosComponent implements OnInit {
   crearDocumento() {
     if (this.formulario.invalid) {
       Swal.fire('Error', 'Por favor, complete todos los campos requeridos', 'error');
+      console.log("error al registar documento");
       return;
     }
 
@@ -203,7 +206,7 @@ export class DocumentosComponent implements OnInit {
       };
       this.categoriasService.actualizarCategoria(categoriaActualizada).subscribe(response => {
         console.log(response);
-        this.obtenerCategoriasCargarTabla();
+        this.obtenerDocumentosCargarTabla();
         this.cancelarEdicion();
         this.limpiarErroresFormulario();
         Swal.fire('Editada!', 'La categoría ha sido editada.', 'success');
@@ -212,6 +215,13 @@ export class DocumentosComponent implements OnInit {
   }
 
   editarCategoria(element: CategoriaDTO) {
+
+    //cargar todos los campos del formualrio con los datos
+    //y ademas cargar "doctos" con documento.doctos y doctos a listaRelacionesDataSource
+    //cunado se agregue una relacion nueva se agrega a doctos
+
+
+
     /*
     // Método para cargar los datos de la categoría seleccionada y activar el modo de edición
     this.estaEditando = true;
@@ -234,10 +244,10 @@ export class DocumentosComponent implements OnInit {
     this.formulario.updateValueAndValidity(); // Recalcular estado de validez
   }
 
-  eliminarCategoria(idEliminar: number) {
+  eliminarDocumento(idEliminar: number) {
     // Mostrar el SweetAlert para confirmar la eliminación
     Swal.fire({
-        title: '¿Desea eliminar la categoría?',
+        title: '¿Desea eliminar el documento?',
         text: 'Esta acción no se puede deshacer.',
         icon: 'warning',
         showCancelButton: true,
@@ -249,10 +259,10 @@ export class DocumentosComponent implements OnInit {
     }).then((result) => {
         if (result.isConfirmed) {
             // Si el usuario confirma, proceder con la eliminación
-            this.categoriasService.eliminarCategoria(idEliminar).subscribe(response => {
+            this.documentosService.eliminarDocumento(idEliminar).subscribe(response => {
                 console.log(response);
-                this.obtenerCategoriasCargarTabla();
-                Swal.fire('Eliminado!', 'La categoría ha sido eliminada.', 'success');
+                this.obtenerDocumentosCargarTabla();
+                Swal.fire('Eliminado!', 'El documento ha sido eliminado.', 'success');
             });
         }
     });
@@ -317,7 +327,7 @@ export class DocumentosComponent implements OnInit {
  
   agregarRelacionDocumento() {
     if (this.relacionDocumentoFormulario.valid) {
-      const docto = this.relacionDocumentoFormulario.get('doctoId')?.value;
+      const docto = this.relacionDocumentoFormulario.get('docto')?.value;
       const docRelacionado = this.relacionDocumentoFormulario.get('docRelacionado')?.value;
 
       this.doctos.push({
@@ -341,7 +351,26 @@ export class DocumentosComponent implements OnInit {
   actualizarTablaRelaciones() {
     this.listaRelacionesdataSource.data = this.doctos;
   }
- 
+
+  eliminarRelacionDocumento(id: number) {
+    // Buscar el índice del documento a eliminar usando el id
+    const index = this.doctos.findIndex(docto => docto.docto === id);
+    
+    if (index !== -1) {
+      // Eliminar el documento de la lista
+      this.doctos.splice(index, 1);
+  
+      // Actualizar la tabla con la lista modificada
+      this.actualizarTablaRelaciones();
+  
+      Swal.fire('Eliminada!', 'La relación ha sido eliminada.', 'success');
+  
+      console.log(this.doctos);
+    } else {
+      Swal.fire('Error', 'No se encontró la relación a eliminar.', 'error');
+    }
+  }
+  
  
 
 
@@ -349,16 +378,16 @@ export class DocumentosComponent implements OnInit {
 
   // Otros ***********************************************************************************
 
-  obtenerCategoriasCargarTabla(){
-    this.categoriasService.obtenerCategorias().subscribe(response => {
-      this.listaCategorias = response;
-      this.setTable(this.listaCategorias);
+  obtenerDocumentosCargarTabla(){
+    this.documentosService.obtenerDocumentos().subscribe(response => {
+      this.listaDocumentos = response;
+      this.setTable(this.listaDocumentos);
     });
   }
 
-  setTable(data:CategoriaDTO[]){
-    this.listCategoriasdataSource = new MatTableDataSource<CategoriaDTO>(data);
-    this.listCategoriasdataSource.paginator = this.paginator;
+  setTable(data:DocumentoGetDTO[]){
+    this.listaDocumentosDataSource = new MatTableDataSource<DocumentoGetDTO>(data);
+    this.listaDocumentosDataSource.paginator = this.paginator;
   }
   
   realizarBusqueda() {
