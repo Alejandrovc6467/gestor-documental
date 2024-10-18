@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { CategoriaDTO } from '../../Core/models/CategoriaDTO';
 import { CategoriasService } from '../../Core/services/categorias.service';
+import { DocumentosService } from '../../Core/services/documentos.service';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,6 +16,7 @@ import Swal from 'sweetalert2';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
+import { DocumentoGetDTO } from '../../Core/models/DocumentoGetDTO';
 
 
 
@@ -34,6 +36,7 @@ export class DocumentoversionesComponent implements OnInit  {
 
 
   categoriasService = inject(CategoriasService);
+  documentosService = inject(DocumentosService);
   listaCategorias! : CategoriaDTO[];
   listCategoriasdataSource = new MatTableDataSource<CategoriaDTO>([]);
   displayedColumns: string[] = [ 'acciones', 'nombre', 'descripcion' ];
@@ -41,6 +44,8 @@ export class DocumentoversionesComponent implements OnInit  {
   textoBuscar: string = "";
   estaEditando: boolean = false;
   categoriaSeleccionada!: CategoriaDTO | null;
+
+  objetoDocumentoParaCargarDatosQuemados!: DocumentoGetDTO | null;
 
 
   ngOnInit(): void {
@@ -72,6 +77,22 @@ export class DocumentoversionesComponent implements OnInit  {
   }
 
 
+  //llamar este  en el onInit()
+  cargarCamposQuemadosEnHtml(){
+
+    this.documentosService.obtenerDocumentoPorId(this.id).subscribe(response => {
+      console.log(response);
+      this.objetoDocumentoParaCargarDatosQuemados = response;
+    });
+
+    //antes poner todos los campos en el formulario obvio creo que faltan
+
+    //aqui setear los datos y ponerlos los campos no modificables,
+
+   
+    
+  }
+
 
 
   //CRUD ************************************************************************************************
@@ -88,16 +109,21 @@ export class DocumentoversionesComponent implements OnInit  {
     });
   }
 
-  crearCategoria(){
+  crearVersion(){
     
+    console.log(this.formulario.value);
+    console.log("Entre al crear version");
+
+    /*
     if(this.formulario.invalid){
       alert("Formulario invalido");
     }else{
 
-      const categoria = this.formulario.value as CategoriaDTO; 
-      console.log(categoria);
+      const version = this.formulario.value as CategoriaDTO; 
+      console.log(version);
   
-      this.categoriasService.crearCategoria(categoria).subscribe(response => {
+
+      this.categoriasService.crearCategoria(version).subscribe(response => {
         console.log(response);
         this.obtenerCategoriasCargarTabla();
         this.formulario.reset();
@@ -106,6 +132,7 @@ export class DocumentoversionesComponent implements OnInit  {
       });
 
     }
+      */
 
   
   
@@ -237,7 +264,7 @@ export class DocumentoversionesComponent implements OnInit  {
       this.formulario.get('documento')?.updateValueAndValidity();
     }
   }
-    */
+  */
 
 
   
@@ -271,8 +298,6 @@ export class DocumentoversionesComponent implements OnInit  {
     });
   }
 
-
- 
   obtenerErrorFecha() {
     const fecha = this.formulario.controls.FechaCreacion;
     if (fecha.hasError('required')) {

@@ -21,11 +21,11 @@ export class DocumentosService {
     return this.http.get<DocumentoGetDTO[]> (this.urlBase);
   }
 
-  /*
-  public obtenerCategoriaPorId(id:number): Observable<CategoriaDTO>{
-    return this.http.get<CategoriaDTO>(`${this.urlBase}/${id}`);
+  
+  public obtenerDocumentoPorId(id:number): Observable<DocumentoGetDTO>{
+    return this.http.get<DocumentoGetDTO>(`${this.urlBase}/${id}`);
   }
-  */
+  
 
   public crearDocumento(documento: DocumentoDTO){
     return this.http.post(this.urlBase, documento);
