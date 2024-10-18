@@ -18,3 +18,16 @@ export interface DocumentoGetDTO {
     descargable?: boolean;
     doctoId?: number;
 }
+
+
+
+//hay que agregar "oficinaNombre" a esto, por el momento esta con un valor x, no puedo hacer el editar entoces calavera
+export interface DocumentoGetExtendidaDTO extends DocumentoGetDTO {
+    categoriaNombre: string;
+    tipoDocumentoNombre: string;
+    etapaNombre: string;
+    normaNombre: string;
+    doctoNombre: string;
+    clasificacionNombre: string;
+    subClasificacionNombre: string;
+}

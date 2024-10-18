@@ -35,7 +35,7 @@ import { DoctocDTO } from '../../Core/models/DoctocDTO';
 import { SubclasificacionDTO } from '../../Core/models/SubclasificacionDTO';
 import { RelacionDocumentoDTO } from '../../Core/models/RelacionDocumentoDTO';
 import { DocumentoDTO } from '../../Core/models/DocumentoDTO';
-import { DocumentoGetDTO } from '../../Core/models/DocumentoGetDTO';
+import { DocumentoGetDTO, DocumentoGetExtendidaDTO } from '../../Core/models/DocumentoGetDTO';
 
 
 
@@ -48,8 +48,7 @@ import { DocumentoGetDTO } from '../../Core/models/DocumentoGetDTO';
 })
 export class DocumentosComponent implements OnInit {
 
-  //id!:  number;
-  id = 7;
+ 
 
   tipodocumentoService = inject(TipodocumentoService);
   categoriasService = inject(CategoriasService);
@@ -65,9 +64,11 @@ export class DocumentosComponent implements OnInit {
   listaTipoDocumentos! : TipodocumentoDTO[];
   listaCategorias! : CategoriaDTO[];
   listaNormas! : CategoriaDTO[];
+  listaEtapasPorId! : EtapaDTO[];
   listaEtapas! : EtapaDTO[];
   listaDoctos! : DoctocDTO[];
   listaClasificaciones!: ClasificacionDTO[];
+  listaSubClasificacionesPorId!: SubclasificacionDTO[];
   listaSubClasificaciones!: SubclasificacionDTO[];
   listaDocumentos!: DocumentoGetDTO[];
 
@@ -81,7 +82,7 @@ export class DocumentosComponent implements OnInit {
   @ViewChild(MatPaginator) paginatorRelaciones!: MatPaginator;
 
   //tablaDocumentos
-  listaDocumentosDataSource = new MatTableDataSource<DocumentoGetDTO>([]);
+  listaDocumentosDataSource = new MatTableDataSource<DocumentoGetExtendidaDTO>([]);
   displayedColumns: string[] = [ 'acciones', 'categoria', 'tipo', 'etapa', 'norma','codigo', 'nombre' , 'version', 'oficina',  'docto' , 'clasificacion', 'subclasificacion',  'vigencia' ];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -99,6 +100,8 @@ export class DocumentosComponent implements OnInit {
     this.obtenerCategorias();
     this.obtenerNormas();
     this.obtenerDoctos();
+    this.obtenerEtapas();
+    this.obtenerSubClasificaciones();
     this.obtenerClasificaciones();
 
     this.formulario.updateValueAndValidity();
@@ -118,11 +121,11 @@ export class DocumentosComponent implements OnInit {
     descargable: [false],
     activo: [false],
     descripcion: ['', [Validators.required]],
-    doctoID: [0, [Validators.required]],
-    clasificacionID: ['', [Validators.required]],
-    subClasificacionID: [0, [Validators.required]],
-    vigencia: ['', [Validators.required]],
-    palabraClave: ['', [Validators.required]]
+    doctoID: [0],
+    clasificacionID: [''],
+    subClasificacionID: [0],
+    vigencia: [''],
+    palabraClave: ['']
   });
 
 
@@ -133,7 +136,7 @@ export class DocumentosComponent implements OnInit {
 
  
 
-  //CRUD **********************************************************
+  //CRUD ********************************************************************************************************************
   obtenerDocumentos(){
     this.documentosService.obtenerDocumentos().subscribe(response => {
       this.listaDocumentos = response;
@@ -186,7 +189,9 @@ export class DocumentosComponent implements OnInit {
         this.formulario.reset();
         this.doctos = []; // Limpiar la lista de doctos relacionados
         this.limpiarErroresFormulario();
+        this.obtenerDocumentosCargarTabla();
         Swal.fire('Creado', 'El documento ha sido creado exitosamente', 'success');
+
       },
       error: (error) => {
         console.error('Error al crear el documento:', error);
@@ -214,7 +219,11 @@ export class DocumentosComponent implements OnInit {
       */
   }
 
-  editarCategoria(element: CategoriaDTO) {
+  editarDocumento(element: DocumentoGetDTO) {
+
+    console.log(element);
+
+    //fijarme en el editar y actualizar de etapas
 
     //cargar todos los campos del formualrio con los datos
     //y ademas cargar "doctos" con documento.doctos y doctos a listaRelacionesDataSource
@@ -288,15 +297,21 @@ export class DocumentosComponent implements OnInit {
   })};
 
   onNormaChange(normaId: number) {
-    this.obtenerEtapas(normaId);
-  }
+    this.obtenerEtapasPorId(normaId);
+  };
 
-  obtenerEtapas(normaId: number) {
+  // Método para obtener las etapas filtradas por normmas (Al momento de elegir una norma)
+  obtenerEtapasPorId(normaId: number) {
     this.etapasService.obtenerEtapas().subscribe(response => {
-      this.listaEtapas = response.filter(etapa => etapa.normaID === normaId);
+      this.listaEtapasPorId = response.filter(etapa => etapa.normaID === normaId);
     });
-  }
+  };
 
+  obtenerEtapas(){
+    this.etapasService.obtenerEtapas().subscribe(response => {
+      this.listaEtapas = response;
+  })};
+  
   obtenerDoctos(){
     this.doctocsService.obtenerDoctocs().subscribe(response => {
       this.listaDoctos = response;
@@ -308,16 +323,21 @@ export class DocumentosComponent implements OnInit {
   })};
 
   onClasificacionChange(clasificacionId: number) {
-    this.obtenerSubClasificaciones(clasificacionId);
-  }
+    this.obtenerSubClasificacionesPorId(clasificacionId);
+  };
 
   // Método para obtener las subclasificaciones filtradas por clasificación (Al momento de elegir una clasificacion)
-  obtenerSubClasificaciones(clasificacionId: number) {
+  obtenerSubClasificacionesPorId(clasificacionId: number) {
     this.subclasificacionesService.obtenerSubclasificaciones().subscribe(response => {
-      this.listaSubClasificaciones = response.filter(subclasificacion => subclasificacion.clasificacionID === clasificacionId);
+      this.listaSubClasificacionesPorId = response.filter(subclasificacion => subclasificacion.clasificacionID === clasificacionId);
     });
-  }
+  };
 
+  obtenerSubClasificaciones(){
+    this.subclasificacionesService.obtenerSubclasificaciones().subscribe(response => {
+      this.listaSubClasificaciones = response;
+  })};
+  
   
 
 
@@ -385,9 +405,38 @@ export class DocumentosComponent implements OnInit {
     });
   }
 
-  setTable(data:DocumentoGetDTO[]){
-    this.listaDocumentosDataSource = new MatTableDataSource<DocumentoGetDTO>(data);
-    this.listaDocumentosDataSource.paginator = this.paginator;
+  setTable(data: DocumentoGetDTO[]) {
+
+      // Simulamos una espera con setTimeout para alguna carga visual si es necesario
+      setTimeout(() => {
+    
+        // Mapear los datos para agregar nombres de relaciones (categoría, tipo de documento, etc.)
+        const dataConRelaciones: DocumentoGetExtendidaDTO[] = data.map(documento => {
+          const categoria = this.listaCategorias.find(cat => cat.id === documento.categoriaID);
+          const tipoDocumento = this.listaTipoDocumentos.find(tipo => tipo.id === documento.tipoDocumento);
+          const etapa = this.listaEtapas.find(etp => etp.id === documento.etapaID);
+          const norma = this.listaNormas.find(nrm => nrm.id === documento.normaID);
+          const clasificacion = this.listaClasificaciones.find(clas => clas.id === documento.clasificacionID);
+          const subClasificacion = this.listaSubClasificaciones.find(sub => sub.id === documento.subClasificacionID);
+          const docto = this.listaDoctos.find(doctoc => doctoc.id === documento.doctoId);
+    
+          return {
+            ...documento,
+            categoriaNombre: categoria ? categoria.nombre : 'Sin Categoría',
+            tipoDocumentoNombre: tipoDocumento ? tipoDocumento.nombre : 'Sin Tipo',
+            etapaNombre: etapa ? etapa.nombre : 'Sin Etapa',
+            normaNombre: norma ? norma.nombre : 'Sin Norma',
+            clasificacionNombre: clasificacion ? clasificacion.nombre : 'Sin Clasificación',
+            subClasificacionNombre: subClasificacion ? subClasificacion.nombre : 'Sin Subclasificación',
+            doctoNombre: docto ? docto.nombre : 'Sin Docto' // Suponiendo que `nombre` está en DocumentoGetDTO
+          };
+        });
+    
+        // Configuramos el DataSource con los datos mapeados
+        this.listaDocumentosDataSource = new MatTableDataSource<DocumentoGetExtendidaDTO>(dataConRelaciones);
+        this.listaDocumentosDataSource.paginator = this.paginator;
+    
+      }, 3000); // Ajusta este delay si no es necesario
   }
   
   realizarBusqueda() {
@@ -487,8 +536,6 @@ export class DocumentosComponent implements OnInit {
 
   }
  
-
-
 
 
 }
