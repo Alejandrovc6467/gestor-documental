@@ -1,4 +1,4 @@
-export interface VersionDto {
+export interface VersionDTO {
     id?: number; 
     documentoID: number; 
     numeroVersion: number; 
@@ -9,6 +9,6 @@ export interface VersionDto {
     obsoleto: boolean; 
     numeroSCD: string; 
     justificacion: string; 
-    archivo: File;
+    archivo?: File | null;
   }
   

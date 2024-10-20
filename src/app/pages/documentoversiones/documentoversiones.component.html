@@ -10,7 +10,7 @@
     
   
     
-    <form (submit)="crearVersion()" [formGroup]="formulario">
+    <form (ngSubmit)="null" [formGroup]="formulario">
 
         <div class="contenedor_formulario">
 
@@ -19,7 +19,7 @@
 
             <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Nombre documento</mat-label>
-                <input matInput  [formControl]="formulario.controls.nombre">
+                <input matInput  [formControl]="formulario.controls.nombreDocumento" readonly>
                 <mat-error>{{obtenerErrorNombre()}}</mat-error>
             </mat-form-field>
         
@@ -29,13 +29,13 @@
 
                 <mat-form-field appearance="outline" class="full-width">
                     <mat-label>Usuario</mat-label>
-                    <input matInput [formControl]="formulario.controls.nombre">
+                    <input matInput [formControl]="formulario.controls.nombreUsuario" readonly>
                     <mat-error>{{obtenerErrorNombre()}}</mat-error>
                 </mat-form-field>
 
                 <mat-form-field appearance="outline" class="full-width">
                     <mat-label>Oficina</mat-label>
-                    <input matInput [formControl]="formulario.controls.nombre">
+                    <input matInput [formControl]="formulario.controls.oficina" readonly>
                     <mat-error>{{obtenerErrorNombre()}}</mat-error>
                 </mat-form-field>
 
@@ -46,13 +46,13 @@
 
                 <mat-form-field appearance="outline" class="full-width">
                     <mat-label>Version</mat-label>
-                    <input matInput [formControl]="formulario.controls.nombre">
+                    <input matInput [formControl]="formulario.controls.version">
                     <mat-error>{{obtenerErrorNombre()}}</mat-error>
                 </mat-form-field>
 
                 <mat-form-field appearance="outline" class="full-width">
                     <mat-label>No.SCD</mat-label>
-                    <input matInput [formControl]="formulario.controls.nombre">
+                    <input matInput [formControl]="formulario.controls.noScd">
                     <mat-error>{{obtenerErrorNombre()}}</mat-error>
                 </mat-form-field>
 
@@ -61,8 +61,8 @@
 
             <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Justificación del cambio</mat-label>
-                <textarea matInput formControlName="descripcion" ></textarea>
-                <mat-error>{{obtenerErrorDescripcion()}}</mat-error>
+                <textarea matInput formControlName="justificacion" ></textarea>
+                <mat-error>{{obtenerErrorJustificacion()}}</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="full-width">
@@ -88,7 +88,7 @@
                 <button mat-icon-button matSuffix (click)="fileInput.click()">
                 <mat-icon>attach_file</mat-icon>
                 </button>
-                <input type="file" #fileInput style="display: none" (change)="archivoSeleccionado($event)">
+                <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)">
                 <mat-error>{{obtenerErrorArchivo()}}</mat-error>
             </mat-form-field>
 
@@ -100,7 +100,8 @@
                 }@else {
                     <button mat-flat-button type="button" class="boton_rojo" (click)="limpiarFormulario()">Limpiar</button>
                     <button mat-flat-button class="boton_buscar" type="button" (click)="realizarBusqueda()">Buscar</button>
-                    <button mat-flat-button type="submit"  class="boton_amarillo" [disabled]="formulario.invalid || formulario.pristine">Agregar</button>
+                    <button mat-flat-button type="button" class="boton_amarillo" (click)="crearVersion()" [disabled]="formulario.invalid || formulario.pristine">Agregar</button>
+
                 }
                 
             </div>
@@ -135,7 +136,7 @@
       
         <ng-container matColumnDef="descripcion">
           <th mat-header-cell *matHeaderCellDef> Descripción </th>
-          <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
         </ng-container>
 
         

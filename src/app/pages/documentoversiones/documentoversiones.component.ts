@@ -6,8 +6,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { CategoriaDTO } from '../../Core/models/CategoriaDTO';
+import { VersionDTO } from '../../Core/models/VersionDTO';
 import { CategoriasService } from '../../Core/services/categorias.service';
 import { DocumentosService } from '../../Core/services/documentos.service';
+import { VersionesService } from '../../Core/services/versiones.service';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,12 +19,14 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
 import { DocumentoGetDTO } from '../../Core/models/DocumentoGetDTO';
+import { DatePipe } from '@angular/common';
 
 
 
 @Component({
   selector: 'app-documentoversiones',
   standalone: true,
+  providers: [DatePipe], 
   imports: [MatButtonModule,  MatFormFieldModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule, MatDatepickerModule, MatNativeDateModule,  MatCheckboxModule, MatRadioModule],
   templateUrl: './documentoversiones.component.html',
   styleUrl: './documentoversiones.component.css'
@@ -37,6 +41,8 @@ export class DocumentoversionesComponent implements OnInit  {
 
   categoriasService = inject(CategoriasService);
   documentosService = inject(DocumentosService);
+  versionesService = inject(VersionesService);
+
   listaCategorias! : CategoriaDTO[];
   listCategoriasdataSource = new MatTableDataSource<CategoriaDTO>([]);
   displayedColumns: string[] = [ 'acciones', 'nombre', 'descripcion' ];
@@ -51,45 +57,63 @@ export class DocumentoversionesComponent implements OnInit  {
   ngOnInit(): void {
     this.obtenerCategoriasCargarTabla();
     this.formulario.updateValueAndValidity();
+    this.cargarCamposQuemadosEnHtml();
   }
   
-  constructor(){}
+  constructor(private datePipe: DatePipe) { } // Inyectar DatePipe
 
   private formbuilder = inject(FormBuilder);
   formulario = this.formbuilder.group({
-    nombre: ['', [Validators.required]],
-    descripcion: ['', [Validators.required]],
-    FechaCreacion: new FormControl<Date | null> (null, {validators: [Validators.required]}),
+    nombreDocumento: ['', [Validators.required]],
+    nombreUsuario: ['', [Validators.required]],
+    oficina: ['', [Validators.required]],
+    version: ['', [Validators.required]],
+    noScd: ['', [Validators.required]],
+    justificacion: ['', [Validators.required]],
+    FechaCreacion: ['', [Validators.required]],
     docDinamico: [false],
     obsoleto: [false],
-    archivo: new FormControl<File | null>(null, [Validators.required])
+    archivo: [null as File | null, [Validators.required]]
   });
 
-  //archivo: new FormControl<File | null>(null, [Validators.required])
-
-  archivoSeleccionado(event: any) {
-    if (event.target.files.length > 0) {
-      const file = event.target.files[0];
+ 
+  onFileSelected(event: Event): void {
+    const element = event.currentTarget as HTMLInputElement;
+    let file: File | null = element.files ? element.files[0] : null;
+    
+    if (file) {
       this.formulario.patchValue({
         archivo: file
-      });
+      }, { emitEvent: false });  // Para evitar que el cambio cause eventos innecesarios
     }
   }
-
+  
 
   //llamar este  en el onInit()
   cargarCamposQuemadosEnHtml(){
 
-    this.documentosService.obtenerDocumentoPorId(this.id).subscribe(response => {
-      console.log(response);
-      this.objetoDocumentoParaCargarDatosQuemados = response;
-    });
+    setTimeout(() => {
+      this.documentosService.obtenerDocumentoPorId(this.id).subscribe(response => {
+       
+        this.objetoDocumentoParaCargarDatosQuemados = response;
 
-    //antes poner todos los campos en el formulario obvio creo que faltan
+        this.formulario.patchValue({
+          nombreDocumento: this.objetoDocumentoParaCargarDatosQuemados?.asunto,
+          nombreUsuario: 'Juan Pérez',
+          oficina: 'Oficina Central'
+        });
 
-    //aqui setear los datos y ponerlos los campos no modificables,
+        console.log(this.objetoDocumentoParaCargarDatosQuemados);
 
-   
+      });
+
+    }, 2000);
+    
+    
+ 
+      //luego creo una VersionDTO y lo seteo con los datos del formulario y los de objetoDocumentoParaCargarDatosQuemados 
+      //esto ultimo en el metodo guardar obvio
+  
     
   }
 
@@ -111,34 +135,58 @@ export class DocumentoversionesComponent implements OnInit  {
 
   crearVersion(){
     
-    console.log(this.formulario.value);
     console.log("Entre al crear version");
+    
 
-    /*
-    if(this.formulario.invalid){
-      alert("Formulario invalido");
-    }else{
 
-      const version = this.formulario.value as CategoriaDTO; 
-      console.log(version);
-  
-
-      this.categoriasService.crearCategoria(version).subscribe(response => {
-        console.log(response);
-        this.obtenerCategoriasCargarTabla();
-        this.formulario.reset();
-        this.limpiarErroresFormulario();
-        Swal.fire('Creada!', 'La categoría ha sido creada.', 'success');
-      });
-
+    /*Reuerde sacar el id del usuario del storage y el id de oficina del storage tambien
+    el campo oficinaid falta en el swagger */
+   
+    if (this.formulario.invalid) {
+      console.log("El formulario es inválido");
+      return;
     }
-      */
+  
+    const fechaCreacion = this.formulario.value.FechaCreacion;
+    if (fechaCreacion) {
+      const fechaFormateada = this.datePipe.transform(fechaCreacion, 'dd/MM/yyyy');
+      this.formulario.patchValue({ FechaCreacion: fechaFormateada });
+    }
+  
+ 
+
+  const versionData: VersionDTO = {
+    documentoID: this.id,
+    numeroVersion: Number(this.formulario.value.version) || 0,
+    fechaCreacion: this.formulario.value.FechaCreacion || '',
+    eliminado: Boolean(this.formulario.get('eliminado')?.value),
+    usuarioID: Number(this.formulario.get('usuarioID')?.value) || 0,
+    docDinamico: Boolean(this.formulario.get('docDinamico')?.value),
+    obsoleto: Boolean(this.formulario.get('obsoleto')?.value),
+    numeroSCD: this.formulario.get('noScd')?.value || '',
+    justificacion: this.formulario.get('justificacion')?.value || '',
+    archivo: this.formulario.value.archivo || null
+  };
 
   
+    //antes lo haia asi
+    //const version = this.formulario.value as VersionDTO; 
+ 
+    console.log(versionData);
+  
+    this.versionesService.crearVersion(versionData).subscribe(response => {
+      console.log(response);
+      this.obtenerCategoriasCargarTabla();
+      this.formulario.reset();
+      this.limpiarErroresFormulario();
+      Swal.fire('Creada!', 'La categoría ha sido creada.', 'success');
+    });
+
   
   }
 
   actualizarCategoria() {
+    /*
     if (!this.categoriaSeleccionada) return;
       const categoriaActualizada: CategoriaDTO = {
         id: this.categoriaSeleccionada.id,
@@ -152,9 +200,11 @@ export class DocumentoversionesComponent implements OnInit  {
         this.limpiarErroresFormulario();
         Swal.fire('Editada!', 'La categoría ha sido editada.', 'success');
       });
+      */
   }
 
   editarCategoria(element: CategoriaDTO) {
+    /*
     // Método para cargar los datos de la categoría seleccionada y activar el modo de edición
     this.estaEditando = true;
     this.categoriaSeleccionada = element;
@@ -164,6 +214,7 @@ export class DocumentoversionesComponent implements OnInit  {
       descripcion: element.descripcion
     });
     this.limpiarErroresFormulario();
+    */
   }
 
   cancelarEdicion() {
@@ -254,31 +305,21 @@ export class DocumentoversionesComponent implements OnInit  {
   }
 
 
-  /*
-  onFileSelected(event: Event) {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (file) {
-      this.formulario.patchValue({
-        documento: file
-      });
-      this.formulario.get('documento')?.updateValueAndValidity();
-    }
-  }
-  */
+ 
 
 
   
   // validaciones *******************************************************************************************************************
-  obtenerErrorDescripcion() {
-    const descripcion = this.formulario.controls.descripcion;
-    if (descripcion.hasError('required')) {
-      return 'El campo descripción es obligatorio';
+  obtenerErrorJustificacion() {
+    const justificacion = this.formulario.controls.justificacion;
+    if (justificacion.hasError('required')) {
+      return 'El campo justificacion es obligatorio';
     }
     return '';
   }
 
   obtenerErrorNombre(){
-    const nombre = this.formulario.controls.nombre;
+    const nombre = this.formulario.controls.nombreDocumento;
    
     if (nombre.hasError('required')) {
       return 'El campo nombre es obligatorio';

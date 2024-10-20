@@ -436,7 +436,7 @@ export class DocumentosComponent implements OnInit {
         this.listaDocumentosDataSource = new MatTableDataSource<DocumentoGetExtendidaDTO>(dataConRelaciones);
         this.listaDocumentosDataSource.paginator = this.paginator;
     
-      }, 3000); // Ajusta este delay si no es necesario
+      }, 2000); // Ajusta este delay si no es necesario
   }
   
   realizarBusqueda() {
