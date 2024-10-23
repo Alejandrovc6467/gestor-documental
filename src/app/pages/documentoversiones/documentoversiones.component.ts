@@ -43,19 +43,19 @@ export class DocumentoversionesComponent implements OnInit  {
   documentosService = inject(DocumentosService);
   versionesService = inject(VersionesService);
 
-  listaCategorias! : CategoriaDTO[];
-  listCategoriasdataSource = new MatTableDataSource<CategoriaDTO>([]);
-  displayedColumns: string[] = [ 'acciones', 'nombre', 'descripcion' ];
+  listaCategorias! : VersionDTO[];
+  listCategoriasdataSource = new MatTableDataSource<VersionDTO>([]);
+  displayedColumns: string[] = [ 'acciones', 'version', 'nombreArchivo', 'fechaVersion', 'obsoleto'];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   textoBuscar: string = "";
   estaEditando: boolean = false;
-  categoriaSeleccionada!: CategoriaDTO | null;
+  categoriaSeleccionada!: VersionDTO | null;
 
   objetoDocumentoParaCargarDatosQuemados!: DocumentoGetDTO | null;
 
 
   ngOnInit(): void {
-    this.obtenerCategoriasCargarTabla();
+    this.obtenerVersionesCargarTabla();
     this.formulario.updateValueAndValidity();
     this.cargarCamposQuemadosEnHtml();
   }
@@ -103,7 +103,7 @@ export class DocumentoversionesComponent implements OnInit  {
           oficina: 'Oficina Central'
         });
 
-        console.log(this.objetoDocumentoParaCargarDatosQuemados);
+        //console.log(this.objetoDocumentoParaCargarDatosQuemados);
 
       });
 
@@ -121,9 +121,11 @@ export class DocumentoversionesComponent implements OnInit  {
 
   //CRUD ************************************************************************************************
   obtenerCategorias(){
-    this.categoriasService.obtenerCategorias().subscribe(response => {
+    /*
+    this.versionesService.obtenerCategorias().subscribe(response => {
       this.listaCategorias = response;
     });
+    */
   }
 
   obtenerCategoriaPorId(idBuscar:number){
@@ -176,7 +178,7 @@ export class DocumentoversionesComponent implements OnInit  {
   
     this.versionesService.crearVersion(versionData).subscribe(response => {
       console.log(response);
-      this.obtenerCategoriasCargarTabla();
+      this.obtenerVersionesCargarTabla();
       this.formulario.reset();
       this.limpiarErroresFormulario();
       Swal.fire('Creada!', 'La categoría ha sido creada.', 'success');
@@ -195,7 +197,7 @@ export class DocumentoversionesComponent implements OnInit  {
       };
       this.categoriasService.actualizarCategoria(categoriaActualizada).subscribe(response => {
         console.log(response);
-        this.obtenerCategoriasCargarTabla();
+        this.obtenerVersionesCargarTabla();
         this.cancelarEdicion();
         this.limpiarErroresFormulario();
         Swal.fire('Editada!', 'La categoría ha sido editada.', 'success');
@@ -226,10 +228,12 @@ export class DocumentoversionesComponent implements OnInit  {
     this.formulario.updateValueAndValidity(); // Recalcular estado de validez
   }
 
-  eliminarCategoria(idEliminar: number) {
+  eliminarVersion(idEliminar: number) {
     // Mostrar el SweetAlert para confirmar la eliminación
+
+    
     Swal.fire({
-        title: '¿Desea eliminar la categoría?',
+        title: '¿Desea eliminar la versión?',
         text: 'Esta acción no se puede deshacer.',
         icon: 'warning',
         showCancelButton: true,
@@ -241,13 +245,14 @@ export class DocumentoversionesComponent implements OnInit  {
     }).then((result) => {
         if (result.isConfirmed) {
             // Si el usuario confirma, proceder con la eliminación
-            this.categoriasService.eliminarCategoria(idEliminar).subscribe(response => {
+            this.versionesService.eliminarVersion(idEliminar).subscribe(response => {
                 console.log(response);
-                this.obtenerCategoriasCargarTabla();
-                Swal.fire('Eliminado!', 'La categoría ha sido eliminada.', 'success');
+                this.obtenerVersionesCargarTabla();
+                Swal.fire('Eliminada!', 'La versión ha sido eliminada.', 'success');
             });
         }
     });
+    
   }
 
 
@@ -255,16 +260,17 @@ export class DocumentoversionesComponent implements OnInit  {
 
   // Otros *******************************************************************************************
 
-  obtenerCategoriasCargarTabla(){
-    this.categoriasService.obtenerCategorias().subscribe(response => {
+  obtenerVersionesCargarTabla(){
+    this.versionesService.obtenerVersionesPorId(this.id).subscribe(response => {
       this.listaCategorias = response;
       this.setTable(this.listaCategorias);
     });
   }
 
-  setTable(data:CategoriaDTO[]){
-    this.listCategoriasdataSource = new MatTableDataSource<CategoriaDTO>(data);
+  setTable(data:VersionDTO[]){
+    this.listCategoriasdataSource = new MatTableDataSource<VersionDTO>(data);
     this.listCategoriasdataSource.paginator = this.paginator;
+    console.log(this.listaCategorias);
   }
   
   realizarBusqueda() {
@@ -273,6 +279,7 @@ export class DocumentoversionesComponent implements OnInit  {
 
   filtrarData(){
 
+    /*
     const data = this.listaCategorias.slice();
     if(!this.textoBuscar){
      this.setTable(data);
@@ -284,6 +291,7 @@ export class DocumentoversionesComponent implements OnInit  {
     })
 
     this.setTable(dataFiltrada);
+    */
   }
 
   limpiarFormulario() {

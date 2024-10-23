@@ -16,24 +16,18 @@ export class VersionesService {
 
 
   /*
-  
   public obtenerCategorias(): Observable<VersionDTO[]>{
     return this.http.get<VersionDTO[]> (this.urlBase);
   }
-  
+  */
 
-  
-  public obtenerCategoriaPorId(id:number): Observable<CategoriaDTO>{
-    return this.http.get<CategoriaDTO>(`${this.urlBase}/${id}`);
+
+  public obtenerVersionesPorId(id:number): Observable<VersionDTO[]>{
+    return this.http.get<VersionDTO[]>(`${this.urlBase}/buscarDocumentoPorID/${id}`);
   }
-      */
+      
 
 
-  /*
-  public crearCategoria(categoria: CategoriaDTO){
-    return this.http.post(this.urlBase, categoria);
-  }
-    */
 
   public crearVersion(version: VersionDTO): Observable<any> {
 
@@ -61,11 +55,11 @@ export class VersionesService {
   public actualizarCategoria(categoria: CategoriaDTO){
     return this.http.put(this.urlBase, categoria);
   }
-
-  public eliminarCategoria(id:number){
+  */
+  public eliminarVersion(id:number){
     return this.http.delete(`${this.urlBase}/${id}`);
   }
-    */
+    
     
 
 }
