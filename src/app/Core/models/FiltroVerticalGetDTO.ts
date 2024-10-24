@@ -31,4 +31,14 @@ export interface FiltroVerticalGetDTO {
     clasificacionID: number;
     normaID: number;
     versionID: number;
-  }
+}
+
+
+  export interface FiltroVerticalGetExtendidaDTO extends FiltroVerticalGetDTO {
+    categoriaNombre: string;
+    tipoDocumentoNombre: string;
+    normaNombre: string;
+    //falta oficina aqui
+    doctoNombre: string;
+    clasificacionNombre: string;
+}

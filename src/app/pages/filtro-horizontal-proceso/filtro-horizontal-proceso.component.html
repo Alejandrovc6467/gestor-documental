@@ -5,7 +5,7 @@
         <h5>Consultas</h5>
     </div>
 
-
+    
 
     <br><br>
 
@@ -33,7 +33,7 @@
                 <a routerLink="/consultas/filtroHorizontal" class="BotonHorizontalFiltro">
                     <span class="nav__name">Filtro</span>
                 </a>
-                <a routerLink="/consultas/filtroProceso" class="BotonHorizontalProceso">
+                <a routerLink="consultas/filtroProceso" class="BotonHorizontalProceso">
                     <span class="nav__name">Proceso</span>
                 </a>
             </div>
@@ -42,31 +42,10 @@
     
           
                
-               
-                <mat-form-field appearance="outline" class="inputFiltroHorizontal">
-                        <mat-label>Asunto</mat-label>
-                        <input matInput [formControl]="formulario.controls.asunto">
-                        <mat-error>{{obtenerErrorNombre()}}</mat-error>
-                </mat-form-field>
-    
-                <mat-form-field appearance="outline" class="inputFiltroHorizontal">
-                        <mat-label>Codigo</mat-label>
-                        <input matInput [formControl]="formulario.controls.codigo">
-                        <mat-error>{{obtenerErrorNombre()}}</mat-error>
-                </mat-form-field>
-                
-    
-            
-                <mat-form-field appearance="outline" class="inputFiltroHorizontal">
-                        <mat-label>Version</mat-label>
-                        <input matInput [formControl]="formulario.controls.version">
-                        <mat-error>{{obtenerErrorNombre()}}</mat-error>
-                </mat-form-field>
     
                 <mat-form-field appearance="outline" class="inputFiltroHorizontal">
                     <mat-label>Norma</mat-label>
                     <mat-select formControlName="normaID">
-                        <mat-option [value]="0">Todos</mat-option>
                         @for (norma of listaNormas; track norma.id) {
                             <mat-option [value]="norma.id">
                                   {{ norma.nombre }}
@@ -76,95 +55,6 @@
                         <mat-error>{{ obtenerErrorNombre() }}</mat-error>
                 </mat-form-field>
     
-        
-            
-                <mat-form-field appearance="outline" class="inputFiltroHorizontal">
-                        <mat-label>Doc SG</mat-label>
-                            <mat-select formControlName="tipoDocumento">
-                                <mat-option [value]="0">Todos</mat-option>
-                                @for (tipoDocumento of listaTipoDocumentos; track tipoDocumento.id) {
-                                    <mat-option [value]="tipoDocumento.id">
-                                      {{ tipoDocumento.nombre }}
-                                    </mat-option>
-                                  }
-                            </mat-select>
-                        <mat-error>{{  obtenerErrorNombre() }}</mat-error>
-                </mat-form-field>
-              
-                    
-          
-                <mat-form-field appearance="outline" class="inputFiltroHorizontal">
-                            <mat-label>Categoría</mat-label>
-                            <mat-select formControlName="categoriaID">
-                                <mat-option [value]="0">Todos</mat-option>
-                                @for (categoria of listaCategorias; track categoria.id) {
-                                    <mat-option [value]="categoria.id">
-                                      {{ categoria.nombre }}
-                                    </mat-option>
-                                  }
-                            </mat-select>
-                            <mat-error>{{  obtenerErrorNombre() }}</mat-error>
-                </mat-form-field>
-                
-              
-                <mat-form-field appearance="outline" class="inputFiltroHorizontal">
-                          <mat-label>Oficina</mat-label>
-                          <mat-select formControlName="oficinaID">
-                          
-                            <mat-option [value]="0">Todos</mat-option>
-    
-                            <mat-option [value]="5">
-                                {{ "Oficina central" }}
-                            </mat-option>
-    
-                            <mat-option [value]="2">
-                                {{ "Oficina secundaria" }}
-                            </mat-option>
-                              
-                          </mat-select>
-                          <mat-error>{{  obtenerErrorNombre()  }}</mat-error>
-                </mat-form-field>
-              
-    
-                <mat-form-field appearance="outline" class="inputFiltroHorizontal">
-                        <mat-label>Docto</mat-label>
-                            <mat-select formControlName="doctoID">
-                                <mat-option [value]="0">Todos</mat-option>
-                                @for (docto of listaDoctos; track docto.id) {
-                                    <mat-option [value]="docto.id">
-                                      {{ docto.nombre }}
-                                    </mat-option>
-                                  }
-                            </mat-select>
-                        <mat-error>{{  obtenerErrorNombre()  }}</mat-error>
-                </mat-form-field>
-            
-                
-                
-    
-    
-                    
-                 
-                <mat-form-field appearance="outline" class="inputFiltroHorizontal">
-                          <mat-label>Clasificación</mat-label>
-                          <mat-select formControlName="clasificacionID">
-                            <mat-option [value]="0">Todos</mat-option>
-                            @for (clasificacion of listaClasificaciones; track clasificacion.id) {
-                                <mat-option [value]="clasificacion.id">
-                                  {{ clasificacion.nombre }}
-                                </mat-option>
-                              }
-                          </mat-select>
-                          <mat-error>{{  obtenerErrorNombre()  }}</mat-error>
-                </mat-form-field>
-                   
-    
-    
-                <mat-form-field appearance="outline" class="inputFiltroHorizontal">
-                        <mat-label>Palabras Clave</mat-label>
-                        <input matInput [formControl]="formulario.controls.palabraClave">
-                        <mat-error>{{obtenerErrorNombre()}}</mat-error>
-                </mat-form-field>
         
                 
                 <div class="contenedor_boton">

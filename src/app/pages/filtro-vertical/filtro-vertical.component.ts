@@ -22,7 +22,7 @@ import { TipodocumentoDTO } from '../../Core/models/TipodocumentoDTO';
 import { DoctocDTO } from '../../Core/models/DoctocDTO';
 import { ClasificacionDTO } from '../../Core/models/ClasificacionDTO';
 import { MatSelectModule } from '@angular/material/select';
-import { FiltroVerticalGetDTO } from '../../Core/models/FiltroVerticalGetDTO';
+import { ArchivoDTO, FiltroVerticalGetDTO, FiltroVerticalGetExtendidaDTO } from '../../Core/models/FiltroVerticalGetDTO';
 
 @Component({
   selector: 'app-filtro-vertical',
@@ -54,7 +54,7 @@ export class FiltroVerticalComponent {
 
 
 
-  listCategoriasdataSource = new MatTableDataSource<FiltroVerticalGetDTO>([]);
+  listCategoriasdataSource = new MatTableDataSource<FiltroVerticalGetExtendidaDTO>([]);
   displayedColumns: string[] = [ 'acciones', 'categoria', 'tipo', 'norma', 'codigo', 'documento', 'version', 'oficina', 'docto', 'clasi', 'vigencia'  ];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   textoBuscar: string = "";
@@ -66,6 +66,7 @@ export class FiltroVerticalComponent {
 
 
   ngOnInit(): void {
+
     this.obtenerCategoriasCargarTabla();
 
     this.obtenerDocumentos();
@@ -87,22 +88,24 @@ export class FiltroVerticalComponent {
     asunto: ['', [Validators.required]],
     codigo: ['', [Validators.required]],
     version: ['', [Validators.required]],
-    normaID: ['', [Validators.required]],
+    normaID: [0, [Validators.required]],
     tipoDocumento: [0, [Validators.required]],
     categoriaID: [0, [Validators.required]],
     oficinaID: [0, [Validators.required]],
     doctoID: [0,  [Validators.required]],
-    clasificacionID: ['',  [Validators.required]],
+    clasificacionID: [0,  [Validators.required]],
     palabraClave: ['', [Validators.required]]
 
   });
 
 
 
-  //CRUD **********************************************************
+  //CRUD *******************************************************************************
+  
   obtenerDocumentos(){
     this.filtroVerticalService.obtenerFiltroVertical().subscribe(response => {
       this.listaDocumentos = response;
+      console.log(this.listaDocumentos);
     });
   }
 
@@ -113,46 +116,105 @@ export class FiltroVerticalComponent {
     });
   }
 
-  crearCategoria(){
+  aplicarFiltro() {
+    if (this.formulario.valid) {
+      // Obtener los valores del formulario
+      const filtros = this.formulario.value;
+      
+      // Filtrar la lista de documentos según los criterios
+      let documentosFiltrados = this.listaDocumentos?.filter(doc => {
+        let cumpleFiltros = true;
 
-    console.log(this.formulario.value);
+        // Filtrar por asunto (si no está vacío)
+        if (filtros.asunto) {
+          cumpleFiltros = cumpleFiltros && doc.asunto.toLowerCase().includes(filtros.asunto.toLowerCase());
+        }
 
-    /*
-    
-    if(this.formulario.invalid){
-      alert("Formulario invalido");
-    }else{
+        // Filtrar por código
+        if (filtros.codigo) {
+          cumpleFiltros = cumpleFiltros && doc.codigo.toLowerCase().includes(filtros.codigo.toLowerCase());
+        }
 
-      const categoria = this.formulario.value as CategoriaDTO; 
-      console.log(categoria);
-  
-      this.categoriasService.crearCategoria(categoria).subscribe(response => {
-        console.log(response);
-        this.obtenerCategoriasCargarTabla();
-        this.formulario.reset();
-        this.limpiarErroresFormulario();
-        Swal.fire('Creada!', 'La categoría ha sido creada.', 'success');
+        // Filtrar por versión
+        if (filtros.version) {
+          //cumpleFiltros = cumpleFiltros && doc.versionID.toString() === filtros.version;
+          cumpleFiltros = cumpleFiltros && doc.versionID.toString().includes(filtros.version);
+        }
+
+        // Filtrar por norma (si no es 0 - "Todos")
+        if (filtros.normaID && filtros.normaID !== 0) {
+          cumpleFiltros = cumpleFiltros && doc.normaID === filtros.normaID;
+        }
+
+        // Filtrar por tipo de documento
+        if (filtros.tipoDocumento && filtros.tipoDocumento !== 0) {
+          cumpleFiltros = cumpleFiltros && doc.tipoDocumento === filtros.tipoDocumento;
+        }
+
+        // Filtrar por categoría
+        if (filtros.categoriaID && filtros.categoriaID !== 0) {
+          cumpleFiltros = cumpleFiltros && doc.categoriaID === filtros.categoriaID;
+        }
+
+        // Filtrar por oficina
+        if (filtros.oficinaID && filtros.oficinaID !== 0) {
+          cumpleFiltros = cumpleFiltros && doc.oficinaID === filtros.oficinaID;
+        }
+
+        // Filtrar por docto
+        if (filtros.doctoID && filtros.doctoID !== 0) {
+          cumpleFiltros = cumpleFiltros && doc.doctoId === filtros.doctoID;
+        }
+
+        // Filtrar por clasificación
+        if (filtros.clasificacionID && filtros.clasificacionID !== 0) {
+          cumpleFiltros = cumpleFiltros && doc.clasificacionID === filtros.clasificacionID;
+        }
+
+        // Filtrar por palabra clave
+        if (filtros.palabraClave) {
+          cumpleFiltros = cumpleFiltros && doc.palabraClave.toLowerCase().includes(filtros.palabraClave.toLowerCase());
+        }
+
+        return cumpleFiltros;
       });
 
-      
+      // Si no hay documentos filtrados, mostrar mensaje
+      if (!documentosFiltrados || documentosFiltrados.length === 0) {
+        Swal.fire('Sin resultados', 'No se encontraron documentos que coincidan con los criterios de búsqueda.', 'info');
+       
+        return;
+      }
+
+      // Actualizar la tabla con los resultados filtrados
+      this.setTable(documentosFiltrados);
+     
     }
+  }
+
+
+
+  // Método para descargar el documento
+  /*
+  descargarDocumento(archivo: any) {
+    const link = document.createElement('a');
+    link.href = archivo.url; // La URL donde está el archivo
+    link.download = archivo.fileName; // El nombre que se mostrará al descargar
+    link.click(); // Simulamos el click para iniciar la descarga
+  }
     */
-  
-  
+
+  descargarDocumento(archivo: any) {
+ 
+    this.filtroVerticalService.manejarDescargaArchivo("d:\\DZHosts\\LocalUser\\EmmaRios\\www.gestorDocumental.somee.com\\GestorDocumentalOIJ\\Archivos\\Credenciales DB UCR.pdf");
   }
 
-  actualizarCategoria() {
+
+  observar(id: number) {
   }
 
-  editarCategoria(element: CategoriaDTO) {
-  }
-
-  cancelarEdicion() {
-  }
-
-  eliminarCategoria(idEliminar: number) {
-  }
-
+ 
+ 
 
 
 
@@ -187,16 +249,41 @@ export class FiltroVerticalComponent {
 
   // Otros ***************************************************************************************************
 
+  //no esta siendo utilizado
   obtenerCategoriasCargarTabla(){
     this.filtroVerticalService.obtenerFiltroVertical().subscribe(response => {
       this.listaDocumentos = response;
       this.setTable(this.listaDocumentos);
+      console.log(this.listaDocumentos);
     });
   }
 
   setTable(data:FiltroVerticalGetDTO[]){
-    this.listCategoriasdataSource = new MatTableDataSource<FiltroVerticalGetDTO>(data);
-    this.listCategoriasdataSource.paginator = this.paginator;
+
+    setTimeout(() => {
+
+      const dataConRelaciones: FiltroVerticalGetExtendidaDTO[] = data.map(documento => {
+        const categoria = this.listaCategorias.find(cat => cat.id === documento.categoriaID);
+        const tipoDocumento = this.listaTipoDocumentos.find(tipo => tipo.id === documento.tipoDocumento);
+        const norma = this.listaNormas.find(nrm => nrm.id === documento.normaID);
+        const clasificacion = this.listaClasificaciones.find(clas => clas.id === documento.clasificacionID);
+        const docto = this.listaDoctos.find(doctoc => doctoc.id === documento.doctoId);
+  
+        return {
+          ...documento,
+          categoriaNombre: categoria ? categoria.nombre : 'Sin Categoría',
+          tipoDocumentoNombre: tipoDocumento ? tipoDocumento.nombre : 'Sin Tipo',
+          normaNombre: norma ? norma.nombre : 'Sin Norma',
+          clasificacionNombre: clasificacion ? clasificacion.nombre : 'Sin Clasificación',
+          doctoNombre: docto ? docto.nombre : 'Sin Docto' // Suponiendo que `nombre` está en DocumentoGetDTO
+        };
+      });
+
+      this.listCategoriasdataSource = new MatTableDataSource<FiltroVerticalGetExtendidaDTO>(dataConRelaciones);
+      this.listCategoriasdataSource.paginator = this.paginator;
+      
+    }, 2000); 
+
   }
   
   realizarBusqueda() {

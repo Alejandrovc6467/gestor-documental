@@ -15,6 +15,7 @@ import { IniciosesionprincipalComponent } from './pages/iniciosesionprincipal/in
 import { UsuariosComponent } from './pages/usuarios/usuarios.component';
 import { FiltroHorizontalComponent } from './pages/filtro-horizontal/filtro-horizontal.component';
 import { FiltroVerticalComponent } from './pages/filtro-vertical/filtro-vertical.component';
+import { FiltroHorizontalProcesoComponent } from './pages/filtro-horizontal-proceso/filtro-horizontal-proceso.component';
 
 
 
@@ -26,6 +27,7 @@ export const routes: Routes = [
    
     
     {path: 'consultas/filtroHorizontal', component:FiltroHorizontalComponent},
+    {path: 'consultas/filtroProceso', component:FiltroHorizontalProcesoComponent},
     {path: 'consultas/filtroVertical', component:FiltroVerticalComponent},
     {path: 'documentos', component:DocumentosComponent},
     {path: 'documentos/versiones/:id', component:DocumentoversionesComponent},

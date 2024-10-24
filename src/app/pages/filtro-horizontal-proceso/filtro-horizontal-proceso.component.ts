@@ -23,13 +23,13 @@ import { MatSelectModule } from '@angular/material/select';
 import { ArchivoDTO, FiltroVerticalGetDTO, FiltroVerticalGetExtendidaDTO } from '../../Core/models/FiltroVerticalGetDTO';
 
 @Component({
-  selector: 'app-filtro-horizontal',
+  selector: 'app-filtro-horizontal-proceso',
   standalone: true,
   imports: [MatButtonModule, RouterLink,  MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule],
-  templateUrl: './filtro-horizontal.component.html',
-  styleUrl: './filtro-horizontal.component.css'
+  templateUrl: './filtro-horizontal-proceso.component.html',
+  styleUrl: './filtro-horizontal-proceso.component.css'
 })
-export class FiltroHorizontalComponent {
+export class FiltroHorizontalProcesoComponent {
 
   filtroVerticalService = inject(FiltroVerticalService);
   normasService = inject(NormasService);
@@ -82,16 +82,9 @@ export class FiltroHorizontalComponent {
   private formbuilder = inject(FormBuilder);
   
   formulario = this.formbuilder.group({
-    asunto: ['', [Validators.required]],
-    codigo: ['', [Validators.required]],
-    version: ['', [Validators.required]],
-    normaID: [0, [Validators.required]],
-    tipoDocumento: [0, [Validators.required]],
-    categoriaID: [0, [Validators.required]],
-    oficinaID: [0, [Validators.required]],
-    doctoID: [0,  [Validators.required]],
-    clasificacionID: [0,  [Validators.required]],
-    palabraClave: ['', [Validators.required]]
+   
+    normaID: [0, [Validators.required]]
+   
 
   });
 
@@ -114,6 +107,7 @@ export class FiltroHorizontalComponent {
   }
 
   aplicarFiltro() {
+    /*
     if (this.formulario.valid) {
       // Obtener los valores del formulario
       const filtros = this.formulario.value;
@@ -187,6 +181,7 @@ export class FiltroHorizontalComponent {
       this.setTable(documentosFiltrados);
      
     }
+      */
   }
 
 

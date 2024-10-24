@@ -17,7 +17,7 @@
 }
 
 .BotonHorizontalFiltro{
-    background-color: rgb(255, 208, 0);
+    background-color: white;
     border: 2px solid gray;
     text-decoration: none;
     color: gray;
@@ -25,8 +25,8 @@
     border-bottom-left-radius: 10px;
 }
 
-.BotonHorizontalProceso{
-    background-color: white;
+.BotonHorizontalProceso{  
+    background-color: rgb(255, 208, 0);
     color: gray;
     border: 2px solid gray;
     border-left: none; 
@@ -105,7 +105,6 @@
     text-decoration: none;
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
-   
 }
 
 .nav__icon{
