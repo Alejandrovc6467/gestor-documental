@@ -69,6 +69,8 @@ export class ClasificacionesComponent implements OnInit {
     }else{
 
       const categoria = this.formulario.value as CategoriaDTO; 
+      categoria.usuarioID = 1;
+      categoria.oficinaID = 1;
       console.log(categoria);
   
       this.clasificacionesService.crearClasificacion(categoria).subscribe(response => {
@@ -90,7 +92,9 @@ export class ClasificacionesComponent implements OnInit {
       const categoriaActualizada: CategoriaDTO = {
         id: this.categoriaSeleccionada.id,
         nombre: this.formulario.value.nombre!,
-        descripcion: this.formulario.value.descripcion!
+        descripcion: this.formulario.value.descripcion!,
+        usuarioID: 1,
+        oficinaID: 1
       };
       this.clasificacionesService.actualizarClasificacion(categoriaActualizada).subscribe(response => {
         console.log(response);

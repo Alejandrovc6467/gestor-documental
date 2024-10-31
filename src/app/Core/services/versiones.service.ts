@@ -46,7 +46,9 @@ export class VersionesService {
       .set('DocDinamico', version.docDinamico.toString())
       .set('Obsoleto', version.obsoleto.toString())
       .set('NumeroSCD', version.numeroSCD)
-      .set('justificacion', version.justificacion);
+      .set('justificacion', version.justificacion)
+      .set('UsuarioLogID', version.UsuarioLogID)
+      .set('OficinaID', version.OficinaID);
 
     return this.http.post(this.urlBase, formData, { params: params });
   }

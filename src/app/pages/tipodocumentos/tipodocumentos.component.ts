@@ -70,6 +70,8 @@ export class TipodocumentosComponent implements OnInit  {
     }else{
 
       const categoria = this.formulario.value as TipodocumentoDTO; 
+      categoria.usuarioID = 1;
+      categoria.oficinaID =1;
       console.log(categoria);
   
       this.tipodocumentoService.crearTipodocumento(categoria).subscribe(response => {
@@ -91,7 +93,9 @@ export class TipodocumentosComponent implements OnInit  {
       const categoriaActualizada: TipodocumentoDTO = {
         id: this.categoriaSeleccionada.id,
         nombre: this.formulario.value.nombre!,
-        descripcion: this.formulario.value.descripcion!
+        descripcion: this.formulario.value.descripcion!,
+        usuarioID: 1,
+        oficinaID: 1
       };
       this.tipodocumentoService.actualizarTipodocumento(categoriaActualizada).subscribe(response => {
         console.log(response);

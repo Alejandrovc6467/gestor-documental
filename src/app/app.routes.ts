@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 
 import { DocumentosComponent } from './pages/documentos/documentos.component';
-import { OficinasComponent } from './pages/oficinas/oficinas.component';
 import { NormasComponent } from './pages/normas/normas.component';
 import { EtapasComponent } from './pages/etapas/etapas.component';
 import { ClasificacionesComponent } from './pages/clasificaciones/clasificaciones.component';
@@ -12,7 +11,6 @@ import { DocumentoversionesComponent } from './pages/documentoversiones/document
 import { PruebaComponent } from './pages/prueba/prueba.component';
 import { TipodocumentosComponent } from './pages/tipodocumentos/tipodocumentos.component';
 import { IniciosesionprincipalComponent } from './pages/iniciosesionprincipal/iniciosesionprincipal.component';
-import { UsuariosComponent } from './pages/usuarios/usuarios.component';
 import { FiltroHorizontalComponent } from './pages/filtro-horizontal/filtro-horizontal.component';
 import { FiltroVerticalComponent } from './pages/filtro-vertical/filtro-vertical.component';
 import { FiltroHorizontalProcesoComponent } from './pages/filtro-horizontal-proceso/filtro-horizontal-proceso.component';
@@ -31,7 +29,6 @@ export const routes: Routes = [
     {path: 'consultas/filtroVertical', component:FiltroVerticalComponent},
     {path: 'documentos', component:DocumentosComponent},
     {path: 'documentos/versiones/:id', component:DocumentoversionesComponent},
-    {path: 'oficinas', component:OficinasComponent},
     {path: 'normas', component:NormasComponent},
     {path: 'etapas', component:EtapasComponent},
     {path: 'clasificaciones', component:ClasificacionesComponent},
@@ -39,8 +36,7 @@ export const routes: Routes = [
     {path: 'categorias', component:CategoriasComponent},
     {path: 'doctos', component:DoctosComponent},
     {path: 'tipodocumentos', component:TipodocumentosComponent},
-    {path: 'usuarios', component:UsuariosComponent},
- 
+   
 
 
 

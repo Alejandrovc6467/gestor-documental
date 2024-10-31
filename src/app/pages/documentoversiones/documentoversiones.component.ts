@@ -68,7 +68,7 @@ export class DocumentoversionesComponent implements OnInit  {
     nombreUsuario: ['', [Validators.required]],
     oficina: ['', [Validators.required]],
     version: ['', [Validators.required]],
-    noScd: ['', [Validators.required]],
+    numeroSCD: ['', [Validators.required]],
     justificacion: ['', [Validators.required]],
     FechaCreacion: ['', [Validators.required]],
     docDinamico: [false],
@@ -148,6 +148,8 @@ export class DocumentoversionesComponent implements OnInit  {
       console.log("El formulario es inválido");
       return;
     }
+
+    setTimeout(() => {
   
     const fechaCreacion = this.formulario.value.FechaCreacion;
     if (fechaCreacion) {
@@ -157,18 +159,20 @@ export class DocumentoversionesComponent implements OnInit  {
   
  
 
-  const versionData: VersionDTO = {
-    documentoID: this.id,
-    numeroVersion: Number(this.formulario.value.version) || 0,
-    fechaCreacion: this.formulario.value.FechaCreacion || '',
-    eliminado: Boolean(this.formulario.get('eliminado')?.value),
-    usuarioID: Number(this.formulario.get('usuarioID')?.value) || 0,
-    docDinamico: Boolean(this.formulario.get('docDinamico')?.value),
-    obsoleto: Boolean(this.formulario.get('obsoleto')?.value),
-    numeroSCD: this.formulario.get('noScd')?.value || '',
-    justificacion: this.formulario.get('justificacion')?.value || '',
-    archivo: this.formulario.value.archivo || null
-  };
+    const versionData: VersionDTO = {
+      documentoID: this.id,
+      numeroVersion: Number(this.formulario.value.version) || 0,
+      fechaCreacion: this.formulario.value.FechaCreacion || '',
+      eliminado: false,
+      usuarioID: 1,
+      docDinamico: Boolean(this.formulario.get('docDinamico')?.value),
+      obsoleto: Boolean(this.formulario.get('obsoleto')?.value),
+      numeroSCD: this.formulario.get('numeroSCD')?.value || '',
+      justificacion: this.formulario.value.justificacion || '',
+      archivo: this.formulario.value.archivo || null,
+      UsuarioLogID: 1,
+      OficinaID: 1
+    };
 
   
     //antes lo haia asi
@@ -177,12 +181,20 @@ export class DocumentoversionesComponent implements OnInit  {
     console.log(versionData);
   
     this.versionesService.crearVersion(versionData).subscribe(response => {
+
       console.log(response);
-      this.obtenerVersionesCargarTabla();
-      this.formulario.reset();
-      this.limpiarErroresFormulario();
-      Swal.fire('Creada!', 'La categoría ha sido creada.', 'success');
+      if(response){
+        this.obtenerVersionesCargarTabla();
+        this.formulario.reset();
+        this.limpiarErroresFormulario();
+        Swal.fire('Creada!', 'La versión ha sido creada.', 'success');
+      }else{
+        Swal.fire('Error!', 'La versión no ha sido creada.', 'error');
+      }
+      
     });
+
+  }, 3000);
 
   
   }

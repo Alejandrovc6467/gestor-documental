@@ -93,6 +93,8 @@ export class SubclasificacionesComponent implements OnInit {
       categoria.clasificacionID = Number(categoria.clasificacionID);
 
       categoria.eliminado = false;
+      categoria.usuarioID = 1;
+      categoria.oficinaID = 1;
       console.log(categoria);
   
       this.subclasificaionesService.crearSubclasificacion(categoria).subscribe(response => {
@@ -117,7 +119,9 @@ export class SubclasificacionesComponent implements OnInit {
         nombre: this.formulario.value.nombre!,
         descripcion: this.formulario.value.descripcion!,
         clasificacionID: this.formulario.value.clasificacionID!,
-        eliminado: false
+        eliminado: false,
+        usuarioID: 1,
+        oficinaID:1
       };
 
       console.log(this.subclasificaionSeleccionada);

@@ -70,6 +70,8 @@ export class DoctosComponent implements OnInit  {
     }else{
 
       const categoria = this.formulario.value as DoctocDTO; 
+      categoria.usuarioID = 1;
+      categoria.oficinaID = 1;
       console.log(categoria);
   
       this.doctocService.crearDoctoc(categoria).subscribe(response => {
@@ -91,7 +93,9 @@ export class DoctosComponent implements OnInit  {
       const categoriaActualizada: DoctocDTO = {
         id: this.categoriaSeleccionada.id,
         nombre: this.formulario.value.nombre!,
-        descripcion: this.formulario.value.descripcion!
+        descripcion: this.formulario.value.descripcion!,
+        usuarioID: 1,
+        oficinaID: 1
       };
       this.doctocService.actualizarDoctoc(categoriaActualizada).subscribe(response => {
         console.log(response);

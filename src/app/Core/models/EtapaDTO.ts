@@ -6,6 +6,8 @@ export interface EtapaDTO {
     color:string;
     etapaPadreID:number;
     normaID: number;
+    usuarioID: number;
+    oficinaID: number;
 }
 
 export interface EtapaExtendidaDTO extends EtapaDTO {

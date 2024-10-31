@@ -89,6 +89,8 @@ export class EtapasComponent implements OnInit{
       // Asegurarse de que clasificacionId sea un número válido
       //etapa.normaId = Number(etapa.normaId);
       etapa.eliminado = false;
+      etapa.usuarioID = 1;
+      etapa.oficinaID = 1;
 
       console.log(etapa);
   
@@ -113,7 +115,9 @@ export class EtapasComponent implements OnInit{
         eliminado: false,
         color: this.formulario.value.color!,
         etapaPadreID: this.formulario.value.etapaPadreID!,
-        normaID: this.formulario.value.normaID!
+        normaID: this.formulario.value.normaID!,
+        usuarioID:1,
+        oficinaID:1
       };
       this.etapasService.actualizarEtapa(categoriaActualizada).subscribe(response => {
         console.log(response);

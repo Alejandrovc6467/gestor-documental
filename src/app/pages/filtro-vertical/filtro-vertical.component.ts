@@ -204,9 +204,9 @@ export class FiltroVerticalComponent {
   }
     */
 
-  descargarDocumento(archivo: any) {
+  descargarDocumento(urlArchivo: any) {
  
-    this.filtroVerticalService.manejarDescargaArchivo("d:\\DZHosts\\LocalUser\\EmmaRios\\www.gestorDocumental.somee.com\\GestorDocumentalOIJ\\Archivos\\Credenciales DB UCR.pdf");
+    this.filtroVerticalService.manejarDescargaArchivo(urlArchivo);
   }
 
 
