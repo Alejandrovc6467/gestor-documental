@@ -1,87 +1,65 @@
-
 <div class="pagina animacion">
 
-    <div class="ruta_contendor">
-        <img src="logo-oij.ico" alt="logo_oij">
-        <h5>Reporte control de versiones</h5>
-    </div>
-    
-    <form (submit)="crearNorma()" [formGroup]="formulario">
-
-        <div class="contenedor_formulario">
-
-            <h2>Reporte control de versiones</h2>
-
-            <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Nombre</mat-label>
-                <input matInput [formControl]="formulario.controls.nombre">
-                <mat-error>{{obtenerErrorNombre()}}</mat-error>
-            </mat-form-field>
-
-
-            <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Descripción</mat-label>
-                <textarea matInput formControlName="descripcion" ></textarea>
-                <mat-error>{{obtenerErrorDescripcion()}}</mat-error>
-            </mat-form-field>
-
-            <div class="contenedor_boton">
-               
-                @if(estaEditando){
-                    <button mat-flat-button type="button" class="boton_amarillo" (click)="actualizarNorma()" [disabled]="formulario.invalid"> Editar </button>
-                    <button mat-flat-button type="button" class="boton_amarillo" (click)="cancelarEdicion()"> Cancelar </button>
-                }@else {
-                    <button mat-flat-button type="button" class="boton_rojo" (click)="limpiarFormulario()">Limpiar</button>
-                    <button mat-flat-button class="boton_buscar" type="button" (click)="realizarBusqueda()">Buscar</button>
-                    <button mat-flat-button type="submit"  class="boton_amarillo" [disabled]="formulario.invalid || formulario.pristine">Agregar</button>
-                }
-                
-            </div>
-
-        </div>
-   
+  <div class="ruta_contendor">
+    <img src="logo-oij.ico" alt="logo_oij">
+    <h5>Reporte control de versiones</h5>
+  </div>
+<!-- reporte-bitacora-de-movimientos.component.html -->
+<div class="contenedor_formulario">
+    <!-- Filtros -->
+    <form [formGroup]="filtroForm" (ngSubmit)="aplicarFiltros()">
+      <h2>Reporte control de versiones</h2>
+      <div class="filtros-container">
+        <mat-form-field appearance="outline">
+          <mat-label>Búsqueda general</mat-label>
+          <input matInput formControlName="busqueda">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline">
+          <mat-label>Fecha</mat-label>
+          <input matInput type="date" formControlName="fecha">
+        </mat-form-field>
+  
+        <button mat-raised-button color="primary" type="submit">
+          <mat-icon>filter_list</mat-icon>
+          Filtrar
+        </button>
+      </div>
     </form>
-
-
-
-
-
-    <mat-form-field appearance="outline" class="buscar-input">
-        <mat-label>Buscar <mat-icon name="pie-chart-outline" class="nav__icon">search</mat-icon> </mat-label>
-        <input matInput placeholder="Ingresa un texto" [(ngModel)]="textoBuscar"     (input)="onSearchChange($event)">
-    </mat-form-field>
-
-    <table mat-table [dataSource]="listCategoriasdataSource" class="mat-elevation-z8">
-
-        <ng-container matColumnDef="acciones">
-            <th mat-header-cell *matHeaderCellDef> Acciones </th>
-            <td mat-cell *matCellDef="let element"> 
-                <button mat-flat-button (click)="editarNorma(element)">Editar</button>
-                <button mat-flat-button (click)="eliminarNorma(element.id)" >Eliminar</button>
-            </td>
-        </ng-container>
-
-        <ng-container matColumnDef="nombre">
-          <th mat-header-cell *matHeaderCellDef> Nombre </th>
-          <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
-        </ng-container>
-      
-        <ng-container matColumnDef="descripcion">
-          <th mat-header-cell *matHeaderCellDef> Descripción </th>
-          <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
-        </ng-container>
-
-        
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
-    </table>
-
-    <mat-paginator [pageSizeOptions]="[5, 10, 20]"
-                 showFirstLastButtons
-                 aria-label="Select page of periodic elements">
+  
+    <!-- Botones de exportación -->
+    <div class="export-buttons">
+      <button mat-raised-button color="primary" (click)="exportarExcel()">
+        <mat-icon>description</mat-icon>
+        Excel
+      </button>
+      <button mat-raised-button color="warn" (click)="exportarPDF()">
+        <mat-icon>picture_as_pdf</mat-icon>
+        PDF
+      </button>
+      <button mat-raised-button color="accent" (click)="exportarWord()">
+        <mat-icon>article</mat-icon>
+        Word
+      </button>
+    </div>
+  
+    <!-- Tabla Material -->
+    <mat-table [dataSource]="datosFiltrados" class="mat-elevation-z8">
+      <!-- Columnas dinámicas -->
+      <ng-container *ngFor="let columna of displayedColumns" [matColumnDef]="columna">
+        <mat-header-cell *matHeaderCellDef> {{columna}} </mat-header-cell>
+        <mat-cell *matCellDef="let elemento"> {{elemento[columna]}} </mat-cell>
+      </ng-container>
+  
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+  
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"
+                   showFirstLastButtons
+                   aria-label="Seleccionar página">
     </mat-paginator>
-      
-
+  </div>
 
 </div>
