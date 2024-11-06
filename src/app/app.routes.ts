@@ -14,6 +14,13 @@ import { IniciosesionprincipalComponent } from './pages/iniciosesionprincipal/in
 import { FiltroHorizontalComponent } from './pages/filtro-horizontal/filtro-horizontal.component';
 import { FiltroVerticalComponent } from './pages/filtro-vertical/filtro-vertical.component';
 import { FiltroHorizontalProcesoComponent } from './pages/filtro-horizontal-proceso/filtro-horizontal-proceso.component';
+import { ReporteBitacoraDeMovimientosComponent } from './pages/Reportes/reporte-bitacora-de-movimientos/reporte-bitacora-de-movimientos.component';
+import { ReporteControlDeVersionesComponent } from './pages/Reportes/reporte-control-de-versiones/reporte-control-de-versiones.component';
+import { ReporteDocumentosAntiguosComponent } from './pages/Reportes/reporte-documentos-antiguos/reporte-documentos-antiguos.component';
+import { ReporteMaestroDeDocumentosComponent } from './pages/Reportes/reporte-maestro-de-documentos/reporte-maestro-de-documentos.component';
+import { ReporteMaestroDeDocumentosPorNormaComponent } from './pages/Reportes/reporte-maestro-de-documentos-por-norma/reporte-maestro-de-documentos-por-norma.component';
+import { ReporteDescargaDeDocumentosComponent } from './pages/Reportes/reporte-descarga-de-documentos/reporte-descarga-de-documentos.component';
+import { ReporteDocumentosSinMovimientosComponent } from './pages/Reportes/reporte-documentos-sin-movimientos/reporte-documentos-sin-movimientos.component';
 
 
 
@@ -36,6 +43,17 @@ export const routes: Routes = [
     {path: 'categorias', component:CategoriasComponent},
     {path: 'doctos', component:DoctosComponent},
     {path: 'tipodocumentos', component:TipodocumentosComponent},
+
+
+
+    {path: 'reporteBitacoraMovimientos', component:ReporteBitacoraDeMovimientosComponent},
+    {path: 'reporteControlDeVersiones', component:ReporteControlDeVersionesComponent},
+    {path: 'reporteDocumentosAntiguos', component:ReporteDocumentosAntiguosComponent},
+    {path: 'reporteMaestroDeDocumentos', component:ReporteMaestroDeDocumentosComponent},
+    {path: 'reporteMaestroDeDocumentosPorNorma', component:ReporteMaestroDeDocumentosPorNormaComponent},
+    {path: 'reporteDescargaDeDocumentos', component:ReporteDescargaDeDocumentosComponent},
+    {path: 'reporteDocumentosSinMovimientos', component:ReporteDocumentosSinMovimientosComponent},
+   
    
 
 

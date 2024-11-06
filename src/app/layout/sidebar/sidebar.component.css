@@ -151,6 +151,7 @@ a{
 /*===== COLLAPSE =====*/
 .collapse{
   grid-template-columns: 20px max-content 1fr;
+  width: 100%;
 }
 .collapse__link{
   justify-self: flex-end;
@@ -158,17 +159,24 @@ a{
 }
 .collapse__menu{
   display: none;
-  padding: 10px 2.25rem  25px 2.25rem;
+  padding: 10px 2.25rem  25px 0px;
   margin-bottom: -30px;
 }
 .collapse__sublink{
   color: white;
   font-size: var(--small-font-size);
-  width: 100px;
+  font-size: 12px;
+  width: 180px;
   margin: 1px 0;
 }
 .collapse__sublink:hover{
   color: var(--white-color);
+}
+
+.espacio-norma {
+  display: block; /* Para que esté en una nueva línea */
+  margin-top: 8px; /* Ajusta según el espacio que desees */
+  color: inherit; /* Hereda el color del enlace para que sea visible */
 }
 
 /*Show collapse*/
