@@ -1,28 +1,38 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, Inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { FormBuilder, FormGroup, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, FormsModule, Validators } from '@angular/forms';
+import { TipodocumentoDTO } from '../../../Core/models/TipodocumentoDTO';
+import { TipodocumentoService } from '../../../Core/services/tipodocumento.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
+import { MatOption } from '@angular/material/core';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatSelect } from '@angular/material/select';
 
-interface DatosReporte {
-  id: number;
-  // Añade aquí las propiedades según tu modelo de datos
-  [key: string]: any;
+
+interface DocumentoReporte {
+  codigoDocumento: string;
+  nombreDocumento: string;
+  acceso: string;
+  version: string;
+  fechaPublicacion: string;
+  oficinaResponsable: string;
 }
 
 @Component({
   selector: 'app-reporte-documentos-antiguos',
   standalone: true,
   imports: [
-    CommonModule,  // Necesario para *ngFor y *ngIf
+    CommonModule,
     MatButtonModule,
     MatFormFieldModule,
     ReactiveFormsModule,
@@ -30,15 +40,22 @@ interface DatosReporte {
     MatTableModule,
     MatPaginatorModule,
     MatIconModule,
-    FormsModule
+    FormsModule,
+    MatOption,
+    MatDatepickerModule, // Change this import
+    MatNativeDateModule,
+    MatSelect
   ],
   templateUrl: './reporte-documentos-antiguos.component.html',
-  styleUrl: './reporte-documentos-antiguos.component.css'
+  styleUrls: ['./reporte-documentos-antiguos.component.css']
 })
 export class ReporteDocumentosAntiguosComponent implements OnInit {
-  datos: DatosReporte[] = [];
-  datosFiltrados: DatosReporte[] = [];
-  displayedColumns: string[] = []; // columnas para MatTable
+  tipodocumentoService = inject(TipodocumentoService);
+  documentos: DocumentoReporte[] = [];
+  oficinas: any[] = [];
+  tiposDocumento: TipodocumentoDTO[] = [];
+  fechaCreacion = new Date();
+  fechaActual = new Date();
   filtroForm: FormGroup;
 
   constructor(
@@ -46,53 +63,50 @@ export class ReporteDocumentosAntiguosComponent implements OnInit {
     private fb: FormBuilder
   ) {
     this.filtroForm = this.fb.group({
-      busqueda: [''],
+      oficina: [''],
+      tipoDocumento: [''],
       fecha: ['']
     });
   }
 
   ngOnInit() {
-    this.cargarDatos();
+    this.cargarDatosEjemplo();
+    this.obtenerTipoDocumentos();
   }
 
-  cargarDatos() {
-    // Reemplaza con tu URL de API
-    this.http.get<DatosReporte[]>('/api/datos').subscribe(
-      (response) => {
-        this.datos = response;
-        this.datosFiltrados = [...this.datos];
-        if (this.datos.length > 0) {
-          this.displayedColumns = Object.keys(this.datos[0]);
-        }
+  cargarDatosEjemplo() {
+    this.documentos = [
+      {
+        codigoDocumento: 'Esta es una prueba de sistema favor hacer caso omi',
+        nombreDocumento: 'Esta es una prueba de sistema favor hacer caso omiso',
+        acceso: 'Privado',
+        version: 'V1',
+        fechaPublicacion: '8/8/2023',
+        oficinaResponsable: 'Error: Subreport could not be'
       },
-      (error) => console.error('Error al cargar datos:', error)
-    );
+      {
+        codigoDocumento: 'COD1',
+        nombreDocumento: 'Documento PIP Público Centro Gestor (Esta es una prueba de sistema favor hacer caso omiso)',
+        acceso: 'Público Centro Gestor',
+        version: 'Prueba de sistema',
+        fechaPublicacion: '20/2/2024',
+        oficinaResponsable: 'Error: Subreport could not be'
+      }
+    ];
   }
 
   aplicarFiltros() {
     const filtros = this.filtroForm.value;
-    
-    this.datosFiltrados = this.datos.filter(dato => {
-      let cumpleFiltros = true;
-      
-      if (filtros.busqueda) {
-        const busquedaLower = filtros.busqueda.toLowerCase();
-        cumpleFiltros = Object.values(dato).some(
-          valor => String(valor).toLowerCase().includes(busquedaLower)
-        );
-      }
-
-      if (filtros.fecha) {
-        // cumpleFiltros = cumpleFiltros && 
-        //   dato.fecha?.includes(filtros.fecha);
-      }
-
-      return cumpleFiltros;
-    });
+    // Implementa la lógica de filtrado aquí
   }
 
+  obtenerTipoDocumentos(){
+    this.tipodocumentoService.obtenerTipoducumentos().subscribe(response => {
+      this.tiposDocumento = response;
+  })};
+
   exportarExcel() {
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.datosFiltrados);
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.documentos);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Reporte');
     XLSX.writeFile(wb, 'Reporte.xlsx');
@@ -100,12 +114,19 @@ export class ReporteDocumentosAntiguosComponent implements OnInit {
 
   exportarPDF() {
     const doc = new jsPDF();
+    const headers = ['Código', 'Nombre', 'Acceso', 'Versión', 'Fecha', 'Oficina'];
+    const data = this.documentos.map(doc => [
+      doc.codigoDocumento,
+      doc.nombreDocumento,
+      doc.acceso,
+      doc.version,
+      doc.fechaPublicacion,
+      doc.oficinaResponsable
+    ]);
     
     (doc as any).autoTable({
-      head: [this.displayedColumns],
-      body: this.datosFiltrados.map(dato => 
-        this.displayedColumns.map(col => dato[col])
-      )
+      head: [headers],
+      body: data
     });
 
     doc.save('Reporte.pdf');
@@ -113,16 +134,20 @@ export class ReporteDocumentosAntiguosComponent implements OnInit {
 
   exportarWord() {
     let tabla = '<table><tr>';
-    this.displayedColumns.forEach(col => {
-      tabla += `<th>${col}</th>`;
+    const headers = ['Código', 'Nombre', 'Acceso', 'Versión', 'Fecha', 'Oficina'];
+    headers.forEach(header => {
+      tabla += `<th>${header}</th>`;
     });
     tabla += '</tr>';
 
-    this.datosFiltrados.forEach(dato => {
+    this.documentos.forEach(doc => {
       tabla += '<tr>';
-      this.displayedColumns.forEach(col => {
-        tabla += `<td>${dato[col]}</td>`;
-      });
+      tabla += `<td>${doc.codigoDocumento}</td>`;
+      tabla += `<td>${doc.nombreDocumento}</td>`;
+      tabla += `<td>${doc.acceso}</td>`;
+      tabla += `<td>${doc.version}</td>`;
+      tabla += `<td>${doc.fechaPublicacion}</td>`;
+      tabla += `<td>${doc.oficinaResponsable}</td>`;
       tabla += '</tr>';
     });
     tabla += '</table>';
@@ -148,4 +173,3 @@ export class ReporteDocumentosAntiguosComponent implements OnInit {
     link.click();
   }
 }
-
