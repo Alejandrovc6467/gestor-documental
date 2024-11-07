@@ -60,22 +60,58 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 /*configuraciones para los botones de guardar en general*/
 .boton_amarillo {
-  background-color: var(--bg-color-secundario) !important; 
-  color: white !important;
+  background-color: white !important; 
+  color: gray !important;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  margin-right: 10px;
+ 
 }
 /* Estilos para el botón deshabilitado */
 .boton_amarillo:disabled,
 .boton_amarillo[disabled] {
-  background-color: #d3b301ab !important; /* Un amarillo más claro */
+  background-color: #cccccc !important; /* Un amarillo más claro */
   color: #ffffff !important; /* Un gris oscuro para el texto */
   opacity: 0.7;
   cursor: not-allowed;
 }
 /* Para asegurarnos de que los estilos se apliquen incluso con la especificidad de Angular Material */
 .mat-flat-button.mat-button-disabled.mat-button-disabled.boton_amarillo {
-  background-color: #d3b301ab !important;
+  background-color: #cccccc !important;
   color: #ffffff !important;
 }
+
+
+
+
+
+
+/* Centrar los botones en el eje vertical */
+.acciones-container-botones {
+  display: flex;
+  justify-content: start; /* Centra los botones horizontalmente */
+  align-items: center;     /* Centra los botones verticalmente */
+  height: 100%;            /* Asegura que el contenedor ocupe toda la altura de la celda */
+}
+/* Opcional: ajusta el espaciado entre los botones si es necesario */
+.acciones-container-botones button {
+  margin: 0 5px; /* Espacio entre los botones */
+}
+
+.boton_tabla{
+  color: rgb(134, 134, 134);
+  background-color: rgba(253,251,255,255);
+  border: none;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  border-radius: 15px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+
+.boton_tabla_a{
+  color: rgb(134, 134, 134);
+}
+
 
 
 

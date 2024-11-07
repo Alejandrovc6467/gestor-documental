@@ -39,7 +39,7 @@ export class SubclasificacionesComponent implements OnInit {
   listaSubclasificaciones! : SubclasificacionDTO[];
   clasificaciones!: ClasificacionDTO[];
   listCategoriasdataSource = new MatTableDataSource<SubclasificacionExtendidaDTO>([]);
-  displayedColumns: string[] = [ 'acciones', 'nombre', 'descripcion', 'clasificacion' ];
+  displayedColumns: string[] = [ 'acciones','clasificacion', 'nombre', 'descripcion' ];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   textoBuscar: string = "";
   estaEditando: boolean = false;

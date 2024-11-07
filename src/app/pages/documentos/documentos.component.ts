@@ -190,12 +190,17 @@ export class DocumentosComponent implements OnInit {
     this.documentosService.crearDocumento(documento).subscribe({
       next: (response) => {
         console.log(response);
-        this.formulario.reset();
-        this.doctos = []; // Limpiar la lista de doctos relacionados
-        this.limpiarErroresFormulario();
-        this.obtenerDocumentosCargarTabla();
-        Swal.fire('Creado', 'El documento ha sido creado exitosamente', 'success');
 
+        if(response){
+          this.formulario.reset();
+          this.doctos = []; // Limpiar la lista de doctos relacionados
+          this.limpiarErroresFormulario();
+          this.obtenerDocumentosCargarTabla();
+          Swal.fire('Creado', 'El documento ha sido creado exitosamente', 'success');
+        }else{
+          Swal.fire('Error', 'El documento no ha sido creado exitosamente', 'error');
+        }
+      
       },
       error: (error) => {
         console.error('Error al crear el documento:', error);

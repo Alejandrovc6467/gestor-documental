@@ -6,7 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { CategoriaDTO } from '../../Core/models/CategoriaDTO';
 import { CategoriasService } from '../../Core/services/categorias.service';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-import { MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl, MatPaginatorModule} from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
@@ -21,13 +21,17 @@ import { DoctocDTO } from '../../Core/models/DoctocDTO';
 import { ClasificacionDTO } from '../../Core/models/ClasificacionDTO';
 import { MatSelectModule } from '@angular/material/select';
 import { ArchivoDTO, FiltroVerticalGetDTO, FiltroVerticalGetExtendidaDTO } from '../../Core/models/FiltroVerticalGetDTO';
+import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
 
 @Component({
   selector: 'app-filtro-horizontal-proceso',
   standalone: true,
   imports: [MatButtonModule, RouterLink,  MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule],
   templateUrl: './filtro-horizontal-proceso.component.html',
-  styleUrl: './filtro-horizontal-proceso.component.css'
+  styleUrl: './filtro-horizontal-proceso.component.css',
+  providers: [
+    { provide: MatPaginatorIntl, useClass: CustomMatPaginatorIntlComponent }
+  ]
 })
 export class FiltroHorizontalProcesoComponent {
 
@@ -52,7 +56,7 @@ export class FiltroHorizontalProcesoComponent {
 
 
   listCategoriasdataSource = new MatTableDataSource<FiltroVerticalGetExtendidaDTO>([]);
-  displayedColumns: string[] = [ 'acciones',  'documento', 'version', 'oficina'  ];
+  displayedColumns: string[] = [ 'acciones',  'documento', 'version', 'oficina', 'carpetaRelaciones'  ];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   textoBuscar: string = "";
   estaEditando: boolean = false;
@@ -239,6 +243,11 @@ export class FiltroHorizontalProcesoComponent {
   
 
   // Otros ***************************************************************************************************
+
+  mostrarRelaciones(id: number){
+
+  }
+
 
   //no esta siendo utilizado
   obtenerCategoriasCargarTabla(){

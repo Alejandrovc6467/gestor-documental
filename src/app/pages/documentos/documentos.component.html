@@ -85,7 +85,7 @@
             
 
             <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Asunto Título</mat-label>
+                <mat-label>Asunto título</mat-label>
                 <input matInput formControlName="asunto">
                 <mat-error>{{obtenerErrorNombre()}}</mat-error>
             </mat-form-field>
@@ -189,7 +189,7 @@
 
 
             <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Palabras Clave</mat-label>
+                <mat-label>Palabras clave</mat-label>
                 <input matInput formControlName="palabraClave">
                 <mat-error>{{obtenerErrorNombre()}}</mat-error>
             </mat-form-field>
@@ -201,7 +201,7 @@
             <hr class="divider_relaciones">
             <!-- Texto "Relacionar documentos" alineado a la izquierda -->
             <div class="relacionar-documentos_relaciones">
-                Relacionar Documentos
+                Relacionar documentos
             </div>
             
           
@@ -253,8 +253,12 @@
 
                     <ng-container matColumnDef="acciones">
                         <th mat-header-cell *matHeaderCellDef> Acciones </th>
-                        <td mat-cell *matCellDef="let element"> 
-                            <button mat-flat-button (click)="eliminarRelacionDocumento(element.docto)">Eliminar Relacion</button>
+                        <td mat-cell *matCellDef="let element">
+                            <div class="acciones-container-botones">
+                                <button (click)="eliminarRelacionDocumento(element.docto)" class="boton_tabla">
+                                    <mat-icon name="pie-chart-outline">delete</mat-icon>
+                                </button>
+                            </div>
                         </td>
                     </ng-container>
 
@@ -302,12 +306,12 @@
             <div class="contenedor_boton">
                
                 @if(estaEditando){
-                    <button mat-flat-button type="button" class="boton_amarillo" (click)="actualizarCategoria()" [disabled]="formulario.invalid"> Editar </button>
-                    <button mat-flat-button type="button" class="boton_amarillo" (click)="cancelarEdicion()"> Cancelar </button>
+                    <button mat-flat-button type="button" class="boton_amarillo" (click)="actualizarCategoria()" [disabled]="formulario.invalid"> <mat-icon name="pie-chart-outline" class="nav__icon">edit</mat-icon>Editar </button>
+                    <button mat-flat-button type="button" class="boton_amarillo" (click)="cancelarEdicion()"> <mat-icon name="pie-chart-outline" class="nav__icon">cancel</mat-icon> Cancelar </button>
                 }@else {
-                    <button mat-flat-button type="button" class="boton_rojo" (click)="limpiarFormulario()">Limpiar</button>
-                    <button mat-flat-button class="boton_buscar" type="button" (click)="realizarBusqueda()">Buscar</button>
-                    <button mat-flat-button type="submit"  class="boton_amarillo" [disabled]="formulario.invalid || formulario.pristine">Agregar</button>
+                    <button mat-flat-button type="button"  class="boton_amarillo" (click)="limpiarFormulario()"> <mat-icon name="pie-chart-outline" class="nav__icon">cleaning_services</mat-icon>Limpiar</button>
+                    <button mat-flat-button type="button"  class="boton_amarillo" (click)="realizarBusqueda()"><mat-icon name="pie-chart-outline" class="nav__icon">search</mat-icon>Buscar</button>
+                    <button mat-flat-button type="submit"  class="boton_amarillo" [disabled]="formulario.invalid || formulario.pristine"><mat-icon name="pie-chart-outline" class="nav__icon">add</mat-icon>Agregar</button>
                 }
                 
             </div>
@@ -329,10 +333,17 @@
         <ng-container matColumnDef="acciones">
             <th mat-header-cell *matHeaderCellDef> Acciones </th>
             <td mat-cell *matCellDef="let element"> 
-                <button mat-flat-button (click)="editarDocumento(element)">Editar</button>
-                <button mat-flat-button (click)="eliminarDocumento(element.id)" >Eliminar</button>
-                <button mat-flat-button > <a routerLink="/documentos/versiones/{{element.id}}">veriones</a>  </button>
-               
+                
+                <div class="acciones-container-botones">
+                    <button (click)="editarDocumento(element)" class="boton_tabla">
+                        <mat-icon name="pie-chart-outline">edit</mat-icon>
+                    </button>
+                    <button (click)="eliminarDocumento(element.id)" class="boton_tabla">
+                        <mat-icon name="pie-chart-outline">delete</mat-icon>
+                    </button>
+                    <button class="boton_tabla"  > <a routerLink="/documentos/versiones/{{element.id}}" class="boton_tabla_a"> <mat-icon name="pie-chart-outline">visibility</mat-icon></a>  </button>
+                </div>
+ 
             </td>
         </ng-container>
 
