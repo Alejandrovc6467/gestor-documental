@@ -7,7 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
@@ -23,6 +23,7 @@ import { OficinasService } from '../../../Core/services/oficinas.service';
 
 import { UsuarioDTO } from '../../../Core/models/UsuarioDTO';
 import { UsuariosService } from '../../../Core/services/usuarios.service';
+import { CustomMatPaginatorIntlComponent } from '../../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
 interface DocumentoReporte {
   codigoDocumento: string;
   nombreDocumento: string;
@@ -51,7 +52,10 @@ interface DocumentoReporte {
     MatSelect
   ],
   templateUrl: './reporte-bitacora-de-movimientos.component.html',
-  styleUrl: './reporte-bitacora-de-movimientos.component.css'
+  styleUrl: './reporte-bitacora-de-movimientos.component.css',
+  providers: [
+    { provide: MatPaginatorIntl, useClass: CustomMatPaginatorIntlComponent }
+  ]
 })
 export class ReporteBitacoraDeMovimientosComponent implements OnInit {
   documentos: DocumentoReporte[] = [];

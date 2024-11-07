@@ -10,7 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
+import { MatPaginatorModule, MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { MatOption } from '@angular/material/core';
 import * as XLSX from 'xlsx';
@@ -19,6 +19,7 @@ import 'jspdf-autotable';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSelect } from '@angular/material/select';
+import { CustomMatPaginatorIntlComponent } from '../../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
 
 
 interface DocumentoReporte {
@@ -49,7 +50,10 @@ interface DocumentoReporte {
     MatSelect
   ],
   templateUrl: './reporte-documentos-antiguos.component.html',
-  styleUrls: ['./reporte-documentos-antiguos.component.css']
+  styleUrls: ['./reporte-documentos-antiguos.component.css'],
+  providers: [
+    { provide: MatPaginatorIntl, useClass: CustomMatPaginatorIntlComponent }
+  ]
 })
 export class ReporteDocumentosAntiguosComponent implements OnInit {
   tipodocumentoService = inject(TipodocumentoService);

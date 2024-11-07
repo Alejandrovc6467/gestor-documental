@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
@@ -25,6 +25,7 @@ import { DocumentosService } from '../../../Core/services/documentos.service';
 
 import { OficinaDTO } from '../../../Core/models/OficinaDTO';
 import { OficinasService } from '../../../Core/services/oficinas.service';
+import { CustomMatPaginatorIntlComponent } from '../../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
 
 interface DocumentoReporte {
   codigoDocumento: string;
@@ -51,7 +52,10 @@ interface DocumentoReporte {
     MatSelect,
   CommonModule],
   templateUrl: './reporte-control-de-versiones.component.html',
-  styleUrl: './reporte-control-de-versiones.component.css'
+  styleUrl: './reporte-control-de-versiones.component.css',
+  providers: [
+    { provide: MatPaginatorIntl, useClass: CustomMatPaginatorIntlComponent }
+  ]
 })
 
 export class ReporteControlDeVersionesComponent implements OnInit {
