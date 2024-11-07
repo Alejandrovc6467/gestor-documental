@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -12,77 +12,111 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
-interface DatosReporte {
-  id: number;
-  // Añade aquí las propiedades según tu modelo de datos
-  [key: string]: any;
+import { MatOption } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatSelect } from '@angular/material/select';
+
+import { TipodocumentoDTO } from '../../../Core/models/TipodocumentoDTO';
+import { TipodocumentoService } from '../../../Core/services/tipodocumento.service';
+
+import { DocumentoGetDTO } from '../../../Core/models/DocumentoGetDTO';
+import { DocumentosService } from '../../../Core/services/documentos.service';
+
+import { OficinaDTO } from '../../../Core/models/OficinaDTO';
+import { OficinasService } from '../../../Core/services/oficinas.service';
+
+interface DocumentoReporte {
+  codigoDocumento: string;
+  nombreDocumento: string;
+  acceso: string;
+  version: string;
+  fechaPublicacion: string;
+  oficinaResponsable: string;
 }
 @Component({
   selector: 'app-reporte-control-de-versiones',
   standalone: true,
-  imports: [MatButtonModule,  MatFormFieldModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule],
+  imports: [MatButtonModule,  
+    MatFormFieldModule, 
+    ReactiveFormsModule,
+     MatInputModule, 
+     MatTableModule, 
+     MatPaginatorModule, 
+     MatIconModule, 
+     FormsModule,
+     MatOption,
+    MatDatepickerModule, // Change this import
+    MatNativeDateModule,
+    MatSelect,
+  CommonModule],
   templateUrl: './reporte-control-de-versiones.component.html',
   styleUrl: './reporte-control-de-versiones.component.css'
 })
 
 export class ReporteControlDeVersionesComponent implements OnInit {
-  datos: DatosReporte[] = [];
-  datosFiltrados: DatosReporte[] = [];
+  documentos: DocumentoReporte[] = [];
   displayedColumns: string[] = []; // columnas para MatTable
   filtroForm: FormGroup;
+  fechaCreacion = new Date();
+  fechaActual = new Date();
+
+  tipodocumentoService = inject(TipodocumentoService);
+  tiposDocumento: TipodocumentoDTO[] = [];
+
+  documentoService = inject(DocumentosService);
+  documentosCargados: DocumentoGetDTO[] = [];
+
+  oficinaService = inject(OficinasService);
+  oficinas: OficinaDTO[] = [];
+
 
   constructor(
     private http: HttpClient,
     private fb: FormBuilder
   ) {
     this.filtroForm = this.fb.group({
-      busqueda: [''],
-      fecha: ['']
+      oficina: [''],
+      codigoDocumento: [''],
+      nombreDocumento: [''],
+      tipoDocumento: ['']
     });
   }
 
   ngOnInit() {
     this.cargarDatos();
+    this.obtenerTipoDocumentos();
+    this.obtenerDocumentos();
+    this.obtenerOficinas();
   }
 
   cargarDatos() {
     // Reemplaza con tu URL de API
-    this.http.get<DatosReporte[]>('/api/datos').subscribe(
-      (response) => {
-        this.datos = response;
-        this.datosFiltrados = [...this.datos];
-        if (this.datos.length > 0) {
-          this.displayedColumns = Object.keys(this.datos[0]);
-        }
-      },
-      (error) => console.error('Error al cargar datos:', error)
-    );
   }
 
   aplicarFiltros() {
     const filtros = this.filtroForm.value;
     
-    this.datosFiltrados = this.datos.filter(dato => {
-      let cumpleFiltros = true;
-      
-      if (filtros.busqueda) {
-        const busquedaLower = filtros.busqueda.toLowerCase();
-        cumpleFiltros = Object.values(dato).some(
-          valor => String(valor).toLowerCase().includes(busquedaLower)
-        );
-      }
+  }
 
-      if (filtros.fecha) {
-        // cumpleFiltros = cumpleFiltros && 
-        //   dato.fecha?.includes(filtros.fecha);
-      }
-
-      return cumpleFiltros;
+  obtenerOficinas() {
+    this.oficinaService.obtenerOficinas().subscribe(response => {
+      this.oficinas = response;
     });
   }
 
+  obtenerDocumentos() {
+    this.documentoService.obtenerDocumentos().subscribe(response => {
+      this.documentosCargados = response;
+    })};
+
+  obtenerTipoDocumentos(){
+    this.tipodocumentoService.obtenerTipoducumentos().subscribe(response => {
+      this.tiposDocumento = response;
+  })};
+
   exportarExcel() {
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.datosFiltrados);
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.documentos);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Reporte');
     XLSX.writeFile(wb, 'Reporte.xlsx');
@@ -90,12 +124,19 @@ export class ReporteControlDeVersionesComponent implements OnInit {
 
   exportarPDF() {
     const doc = new jsPDF();
+    const headers = ['Código', 'Nombre', 'Acceso', 'Versión', 'Fecha', 'Oficina'];
+    const data = this.documentos.map(doc => [
+      doc.codigoDocumento,
+      doc.nombreDocumento,
+      doc.acceso,
+      doc.version,
+      doc.fechaPublicacion,
+      doc.oficinaResponsable
+    ]);
     
     (doc as any).autoTable({
-      head: [this.displayedColumns],
-      body: this.datosFiltrados.map(dato => 
-        this.displayedColumns.map(col => dato[col])
-      )
+      head: [headers],
+      body: data
     });
 
     doc.save('Reporte.pdf');
@@ -103,16 +144,20 @@ export class ReporteControlDeVersionesComponent implements OnInit {
 
   exportarWord() {
     let tabla = '<table><tr>';
-    this.displayedColumns.forEach(col => {
-      tabla += `<th>${col}</th>`;
+    const headers = ['Código', 'Nombre', 'Acceso', 'Versión', 'Fecha', 'Oficina'];
+    headers.forEach(header => {
+      tabla += `<th>${header}</th>`;
     });
     tabla += '</tr>';
 
-    this.datosFiltrados.forEach(dato => {
+    this.documentos.forEach(doc => {
       tabla += '<tr>';
-      this.displayedColumns.forEach(col => {
-        tabla += `<td>${dato[col]}</td>`;
-      });
+      tabla += `<td>${doc.codigoDocumento}</td>`;
+      tabla += `<td>${doc.nombreDocumento}</td>`;
+      tabla += `<td>${doc.acceso}</td>`;
+      tabla += `<td>${doc.version}</td>`;
+      tabla += `<td>${doc.fechaPublicacion}</td>`;
+      tabla += `<td>${doc.oficinaResponsable}</td>`;
       tabla += '</tr>';
     });
     tabla += '</table>';

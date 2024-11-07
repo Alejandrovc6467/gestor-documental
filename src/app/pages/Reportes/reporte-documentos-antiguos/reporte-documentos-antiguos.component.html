@@ -14,14 +14,14 @@
           <mat-label>Oficina</mat-label>
           <mat-select formControlName="oficina">
             <mat-option value="">Todas</mat-option>
-            <mat-option *ngFor="let oficina of oficinas" [value]="oficina.codigo">
-              {{oficina.nombre}}
+            <mat-option *ngFor="let oficina of oficinas" [value]="oficina.id">
+              {{oficina.id+" - "+oficina.nombre}}
             </mat-option>
           </mat-select>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Tipo de Documento</mat-label>
+          <mat-label>Tipo de documento</mat-label>
           <mat-select formControlName="tipoDocumento">
             <mat-option value="">Todos</mat-option>
             <mat-option *ngFor="let tipo of tiposDocumento" [value]="tipo.id">

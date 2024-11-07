@@ -32,12 +32,12 @@
           </mat-select>
         </mat-form-field>
 
-        <!-- <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline">
           <mat-label>Oficina</mat-label>
           <mat-select formControlName="oficina">
             <mat-option value="">Todas</mat-option>
-            <mat-option *ngFor="let oficina of oficinas" [value]="oficina.codigo">
-              {{oficina.nombre}}
+            <mat-option *ngFor="let oficina of oficinas" [value]="oficina.id">
+              {{oficina.id+" - "+oficina.nombre}}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -46,24 +46,24 @@
           <mat-label>Usuario</mat-label>
           <mat-select formControlName="Usuario">
             <mat-option value="">Todos</mat-option>
-            <mat-option *ngFor="let tipo of tiposDocumento" [value]="tipo.id">
-              {{tipo.nombre}}
+            <mat-option *ngFor="let Usuario of usuarios" [value]="Usuario.id">
+              {{Usuario.nombre}}
             </mat-option>
           </mat-select>
-        </mat-form-field> -->
+        </mat-form-field>
    
         <mat-form-field appearance="outline">
-          <mat-label>Fecha</mat-label>
-          <input matInput [matDatepicker]="picker" formControlName="fechaInicio">
-          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
+          <mat-label>Fecha inicio</mat-label>
+          <input matInput [matDatepicker]="pickerInicio" formControlName="fechaInicio">
+          <mat-datepicker-toggle matSuffix [for]="pickerInicio"></mat-datepicker-toggle>
+          <mat-datepicker #pickerInicio></mat-datepicker>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Fecha</mat-label>
-          <input matInput [matDatepicker]="picker" formControlName="fechaFin">
-          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
+          <mat-label>Fecha fin</mat-label>
+          <input matInput [matDatepicker]="pickerFin" formControlName="fechaFin">
+          <mat-datepicker-toggle matSuffix [for]="pickerFin"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFin></mat-datepicker>
         </mat-form-field>
    
         <button mat-raised-button color="primary" type="submit">
@@ -106,12 +106,14 @@
       <table class="tabla-documentos">
         <thead>
           <tr>
-            <th>Código Documento</th>
+            <th>Código del documento</th>
             <th>Nombre Del Documento</th>
             <th>Acceso</th>
             <th>Versión</th>
-            <th>Fecha de Publicación</th>
-            <th>Oficina Responsable</th>
+            <th>Fecha de ingreso</th>
+            <th>Usuario</th>
+            <th>Movimiento</th>
+            <th>Oficina responsable</th>
           </tr>
         </thead>
         <tbody>

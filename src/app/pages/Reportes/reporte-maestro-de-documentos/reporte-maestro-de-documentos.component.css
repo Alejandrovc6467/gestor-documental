@@ -29,3 +29,31 @@
     display: flex;
     justify-content: flex-end;
 }
+
+
+
+.tabla-container {
+    overflow-x: auto;
+    margin-bottom: 20px;
+  }
+  
+  .tabla-documentos {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .tabla-documentos th,
+  .tabla-documentos td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .tabla-documentos th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+  }
+  
+  .tabla-documentos tr:nth-child(even) {
+    background-color: #fafafa;
+  }

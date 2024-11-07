@@ -4,30 +4,63 @@
     <img src="logo-oij.ico" alt="logo_oij">
     <h5>Reporte control de versiones</h5>
   </div>
-<!-- reporte-bitacora-de-movimientos.component.html -->
-<div class="contenedor_formulario">
+  <!-- reporte-bitacora-de-movimientos.component.html -->
+  <div class="contenedor_formulario">
     <!-- Filtros -->
     <form [formGroup]="filtroForm" (ngSubmit)="aplicarFiltros()">
       <h2>Reporte control de versiones</h2>
       <div class="filtros-container">
+
+
         <mat-form-field appearance="outline">
-          <mat-label>Búsqueda general</mat-label>
-          <input matInput formControlName="busqueda">
-          <mat-icon matSuffix>search</mat-icon>
+          <mat-label>Oficina</mat-label>
+          <mat-select formControlName="oficina">
+            <mat-option value="">Todas</mat-option>
+            <mat-option *ngFor="let oficina of oficinas" [value]="oficina.id">
+              {{oficina.id+" - "+oficina.nombre}}
+            </mat-option>
+          </mat-select>
         </mat-form-field>
-  
+
         <mat-form-field appearance="outline">
-          <mat-label>Fecha</mat-label>
-          <input matInput type="date" formControlName="fecha">
+          <mat-label>Código del documento</mat-label>
+          <mat-select formControlName="codigoDocumento">
+            <mat-option value="">Todos</mat-option>
+            <mat-option *ngFor="let tipo of documentosCargados" [value]="tipo.id">
+              {{tipo.codigo}}
+            </mat-option>
+          </mat-select>
         </mat-form-field>
-  
+
+
+        <mat-form-field appearance="outline">
+          <mat-label>Nombre del documento</mat-label>
+          <mat-select formControlName="nombreDocumento">
+            <mat-option value="">Todos</mat-option>
+            <mat-option *ngFor="let tipo of documentosCargados" [value]="tipo.id">
+              {{tipo.asunto}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Tipo de Documento</mat-label>
+          <mat-select formControlName="tipoDocumento">
+            <mat-option value="">Todos</mat-option>
+            <mat-option *ngFor="let tipo of tiposDocumento" [value]="tipo.id">
+              {{tipo.nombre}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+
         <button mat-raised-button color="primary" type="submit">
           <mat-icon>filter_list</mat-icon>
           Filtrar
         </button>
       </div>
     </form>
-  
+
     <!-- Botones de exportación -->
     <div class="export-buttons">
       <button mat-raised-button color="primary" (click)="exportarExcel()">
@@ -43,22 +76,47 @@
         Word
       </button>
     </div>
-  
-    <!-- Tabla Material -->
-    <mat-table [dataSource]="datosFiltrados" class="mat-elevation-z8">
-      <!-- Columnas dinámicas -->
-      <ng-container *ngFor="let columna of displayedColumns" [matColumnDef]="columna">
-        <mat-header-cell *matHeaderCellDef> {{columna}} </mat-header-cell>
-        <mat-cell *matCellDef="let elemento"> {{elemento[columna]}} </mat-cell>
-      </ng-container>
-  
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-    </mat-table>
-  
-    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"
-                   showFirstLastButtons
-                   aria-label="Seleccionar página">
+
+    <!-- Información del reporte -->
+    <div class="reporte-info">
+      <div class="reporte-header">
+        <h3>Resultado del Reporte:</h3>
+        <p class="fecha-creacion">Fecha de creación: {{fechaCreacion | date:'dd-MM-yyyy HH:mm'}}</p>
+      </div>
+      <div class="fecha-filtro">
+        <label>Fecha:</label>
+        <span>{{fechaActual | date:'dd/MM/yy'}}</span>
+      </div>
+    </div>
+
+    <!-- Tabla de documentos -->
+    <div class="tabla-container">
+      <table class="tabla-documentos">
+        <thead>
+          <tr>
+            <th>Código del documento</th>
+            <th>Nombre del documento</th>
+            <th>Tipo del documento</th>
+            <th>SCD</th>
+            <th>Versión</th>
+            <th>Fecha</th>
+            <th>Resumen del cambio</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let doc of documentos">
+            <td>{{doc.codigoDocumento}}</td>
+            <td>{{doc.nombreDocumento}}</td>
+            <td>{{doc.acceso}}</td>
+            <td>{{doc.version}}</td>
+            <td>{{doc.fechaPublicacion}}</td>
+            <td>{{doc.oficinaResponsable}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons aria-label="Seleccionar página">
     </mat-paginator>
   </div>
 

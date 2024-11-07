@@ -18,6 +18,11 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatSelect } from '@angular/material/select';
 import { DocumentoGetDTO } from '../../../Core/models/DocumentoGetDTO';
 import { DocumentosService } from '../../../Core/services/documentos.service';
+import { OficinaDTO } from '../../../Core/models/OficinaDTO';
+import { OficinasService } from '../../../Core/services/oficinas.service';
+
+import { UsuarioDTO } from '../../../Core/models/UsuarioDTO';
+import { UsuariosService } from '../../../Core/services/usuarios.service';
 interface DocumentoReporte {
   codigoDocumento: string;
   nombreDocumento: string;
@@ -57,6 +62,10 @@ export class ReporteBitacoraDeMovimientosComponent implements OnInit {
 
   documentosCargados: DocumentoGetDTO[] = [];
   documentosService = inject(DocumentosService);
+  oficinas: OficinaDTO[] = [];
+  oficinasService = inject(OficinasService);
+  usuarios: UsuarioDTO[] = [];
+  usuariosService = inject(UsuariosService);
 
   constructor(
     private http: HttpClient,
@@ -67,14 +76,16 @@ export class ReporteBitacoraDeMovimientosComponent implements OnInit {
       Usuario: [''],
       oficina: [''],
       nombreDocumento: [''],
-      fechaInicio: [''],
-      fechaFin: ['']
+      fechaInicio: [null],
+      fechaFin: [null]
     });
   }
 
   ngOnInit() {
     this.cargarDatos();
     this.obtenerDocumentos();
+    this.obtenerOficinas();
+    this.obtenerUsuarios();
   }
 
   cargarDatos() {
@@ -87,6 +98,15 @@ export class ReporteBitacoraDeMovimientosComponent implements OnInit {
       this.documentosCargados = response;
     });
   }
+
+  obtenerUsuarios(){
+    this.usuariosService.obtenerUsuarios().subscribe(response => {
+      this.usuarios = response;
+  })}
+  obtenerOficinas(){
+    this.oficinasService.obtenerOficinas().subscribe(response => {
+      this.oficinas = response;
+  })}
 
   aplicarFiltros() {
     const filtros = this.filtroForm.value;

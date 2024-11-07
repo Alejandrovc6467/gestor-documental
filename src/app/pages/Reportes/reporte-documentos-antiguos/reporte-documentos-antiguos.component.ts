@@ -4,6 +4,8 @@ import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormsModule, Validators } from '@angular/forms';
 import { TipodocumentoDTO } from '../../../Core/models/TipodocumentoDTO';
 import { TipodocumentoService } from '../../../Core/services/tipodocumento.service';
+import { OficinaDTO } from '../../../Core/models/OficinaDTO';
+import { OficinasService } from '../../../Core/services/oficinas.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -51,8 +53,9 @@ interface DocumentoReporte {
 })
 export class ReporteDocumentosAntiguosComponent implements OnInit {
   tipodocumentoService = inject(TipodocumentoService);
+  oficinasService = inject(OficinasService);
   documentos: DocumentoReporte[] = [];
-  oficinas: any[] = [];
+  oficinas: OficinaDTO[] = [];
   tiposDocumento: TipodocumentoDTO[] = [];
   fechaCreacion = new Date();
   fechaActual = new Date();
@@ -72,6 +75,7 @@ export class ReporteDocumentosAntiguosComponent implements OnInit {
   ngOnInit() {
     this.cargarDatosEjemplo();
     this.obtenerTipoDocumentos();
+    this.obtenerOficinas();
   }
 
   cargarDatosEjemplo() {
@@ -104,6 +108,11 @@ export class ReporteDocumentosAntiguosComponent implements OnInit {
     this.tipodocumentoService.obtenerTipoducumentos().subscribe(response => {
       this.tiposDocumento = response;
   })};
+
+  obtenerOficinas(){
+    this.oficinasService.obtenerOficinas().subscribe(response => {
+      this.oficinas = response;
+  })}
 
   exportarExcel() {
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.documentos);
