@@ -1,1 +1,37 @@
-<p>iniciosesionoficinas works!</p>
+<div class="pagina_logueo">
+    <div class="contenedor_logueo">
+        <div class="contenedor_imagen_logo">
+            <img src="logo-oij.png" alt="logo-oij">
+        </div>
+        <div class="contenedor_formulario_logueo">
+            <h2>Selección de oficina</h2>
+            
+            <form (submit)="loggin()"[formGroup]="formulario">
+                <div class="input_contenedor_logueo">
+                    <label for="">Usuario</label>
+                    <input type="text" [formControl]="formulario.controls.user" readonly>
+                </div>
+                <div class="input_contenedor_logueo">
+                    <label for="oficina">Oficina</label>
+                    <select id="oficina"  [formControl]="formulario.controls.oficinaId" *ngIf="oficinasCargadas">
+                        <option [ngValue]="null">Seleccione una oficina</option>
+                        <option *ngFor="let oficina of listaOficinas" [value]="oficina.id">
+                            {{ oficina.nombre }}
+                        </option>
+                    </select>
+                    <div *ngIf="!oficinasCargadas">Cargando oficinas...</div>
+                </div>
+
+                <button type="submit" class="btn_amarillo">Ingresar</button>
+
+                
+                <div class="mensaje" style="min-height: 20px;"></div>
+
+            </form>
+
+            <p class="derechos_logueo">Copyright © 2024 Poder Judicial.</p>
+        </div>
+    </div>
+</div>
+
+

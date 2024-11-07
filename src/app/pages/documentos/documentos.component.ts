@@ -21,7 +21,7 @@ import { DocumentosService } from '../../Core/services/documentos.service';
 
 
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-import { MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl, MatPaginatorModule} from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import {MatCheckboxModule} from '@angular/material/checkbox';
@@ -36,6 +36,7 @@ import { SubclasificacionDTO } from '../../Core/models/SubclasificacionDTO';
 import { RelacionDocumentoDTO } from '../../Core/models/RelacionDocumentoDTO';
 import { DocumentoDTO } from '../../Core/models/DocumentoDTO';
 import { DocumentoGetDTO, DocumentoGetExtendidaDTO } from '../../Core/models/DocumentoGetDTO';
+import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
 
 
 
@@ -44,7 +45,10 @@ import { DocumentoGetDTO, DocumentoGetExtendidaDTO } from '../../Core/models/Doc
   standalone: true,
   imports: [RouterLink, MatButtonModule,  MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule, MatCheckboxModule, MatRadioModule ],
   templateUrl: './documentos.component.html',
-  styleUrl: './documentos.component.css'
+  styleUrl: './documentos.component.css',
+  providers: [
+    { provide: MatPaginatorIntl, useClass: CustomMatPaginatorIntlComponent }
+  ]
 })
 export class DocumentosComponent implements OnInit {
 

@@ -21,6 +21,7 @@ import { ReporteMaestroDeDocumentosPorNormaComponent } from './pages/Reportes/re
 import { ReporteDescargaDeDocumentosComponent } from './pages/Reportes/reporte-descarga-de-documentos/reporte-descarga-de-documentos.component';
 import { ReporteDocumentosSinMovimientosComponent } from './pages/Reportes/reporte-documentos-sin-movimientos/reporte-documentos-sin-movimientos.component';
 import { SidebarComponent } from './layout/sidebar/sidebar.component';
+import { IniciosesionoficinasComponent } from './pages/iniciosesionoficinas/iniciosesionoficinas.component';
 
 
 
@@ -59,6 +60,7 @@ export const routes: Routes = [
 
 
     {path: 'iniciosesionprincipal', component:IniciosesionprincipalComponent},
+    {path: 'iniciosesionoficinas', component:IniciosesionoficinasComponent}, //este debe llevar el canActive puede ser cualquiera de los que haga pero que se auntentifique primero
 
     //si la ruta  no existe redirecciona a usuarios, obvio si no esta autenticado pues nunca entra aqui y lo manda al loggin
     {path: '**', redirectTo:'consultas/filtroHorizontal'},

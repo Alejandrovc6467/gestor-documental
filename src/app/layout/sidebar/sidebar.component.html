@@ -67,7 +67,7 @@
 
                     <a routerLink="/subclasificaciones" class="nav__link">
                         <mat-icon name="pie-chart-outline" class="nav__icon">account_tree</mat-icon>
-                        <span class="nav__name">Sub Clasificaciones</span>
+                        <span class="nav__name">Sub clasificaciones</span>
                     </a>
 
                     <a routerLink="/categorias" class="nav__link">
@@ -88,9 +88,9 @@
                 </div>
             </div>
 
-            <a routerLink="/iniciosesionprincipal" class="nav__link">
+            <a  (click)="logout()" class="nav__link">
                 <mat-icon name="log-out-outline" class="nav__icon">logout</mat-icon>
-                <span class="nav__name">Cerrar Sesión</span>
+                <span class="nav__name">Cerrar sesión</span>
             </a>
         </nav>
     </div>

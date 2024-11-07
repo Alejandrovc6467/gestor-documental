@@ -4,19 +4,26 @@
             <img src="logo-oij.png" alt="logo-oij">
         </div>
         <div class="contenedor_formulario_logueo">
-            <h2>Gestor Documental</h2>
-            <form action="">
+            <h2>Gestor documental</h2>
+            <form (submit)="loggin()"[formGroup]="formulario">
                 <div class="input_contenedor_logueo">
                     <label for="">Usuario</label>
-                    <input type="text">
+                    <input type="text" [formControl]="formulario.controls.user">
                 </div>
+
                 <div class="input_contenedor_logueo">
                     <label for="">Contraseña</label>
-                    <input type="password">
+                    <input type="password" [formControl]="formulario.controls.password">
                 </div>
+
                 <button type="submit" class="btn_amarillo">Iniciar Sesión</button>
+
+                <div class="mensaje" style="min-height: 20px;"></div>
+               
             </form>
+
             <p class="derechos_logueo">Copyright © 2024 Poder Judicial.</p>
         </div>
     </div>
 </div>
+
