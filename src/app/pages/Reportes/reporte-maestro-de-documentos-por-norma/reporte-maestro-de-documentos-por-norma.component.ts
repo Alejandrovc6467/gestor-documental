@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
@@ -29,6 +29,7 @@ import { NormasService } from '../../../Core/services/normas.service';
 
 import { CategoriaDTO } from '../../../Core/models/CategoriaDTO';
 import { CategoriasService } from '../../../Core/services/categorias.service';
+import { CustomMatPaginatorIntlComponent } from '../../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
 
 interface DocumentoReporte {
   codigoDocumento: string;
@@ -58,7 +59,10 @@ interface DocumentoReporte {
     MatSelect
   ],
   templateUrl: './reporte-maestro-de-documentos-por-norma.component.html',
-  styleUrl: './reporte-maestro-de-documentos-por-norma.component.css'
+  styleUrl: './reporte-maestro-de-documentos-por-norma.component.css',
+  providers: [
+    { provide: MatPaginatorIntl, useClass: CustomMatPaginatorIntlComponent }
+  ]
 })
 export class ReporteMaestroDeDocumentosPorNormaComponent implements OnInit {
   documentos: DocumentoReporte[] = [];
