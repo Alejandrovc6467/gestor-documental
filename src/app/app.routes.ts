@@ -8,7 +8,6 @@ import { SubclasificacionesComponent } from './pages/subclasificaciones/subclasi
 import { CategoriasComponent } from './pages/categorias/categorias.component';
 import { DoctosComponent } from './pages/doctos/doctos.component';
 import { DocumentoversionesComponent } from './pages/documentoversiones/documentoversiones.component';
-import { PruebaComponent } from './pages/prueba/prueba.component';
 import { TipodocumentosComponent } from './pages/tipodocumentos/tipodocumentos.component';
 import { IniciosesionprincipalComponent } from './pages/iniciosesionprincipal/iniciosesionprincipal.component';
 import { FiltroHorizontalComponent } from './pages/filtro-horizontal/filtro-horizontal.component';
@@ -21,51 +20,48 @@ import { ReporteMaestroDeDocumentosComponent } from './pages/Reportes/reporte-ma
 import { ReporteMaestroDeDocumentosPorNormaComponent } from './pages/Reportes/reporte-maestro-de-documentos-por-norma/reporte-maestro-de-documentos-por-norma.component';
 import { ReporteDescargaDeDocumentosComponent } from './pages/Reportes/reporte-descarga-de-documentos/reporte-descarga-de-documentos.component';
 import { ReporteDocumentosSinMovimientosComponent } from './pages/Reportes/reporte-documentos-sin-movimientos/reporte-documentos-sin-movimientos.component';
+import { SidebarComponent } from './layout/sidebar/sidebar.component';
 
 
 
 export const routes: Routes = [
 
-    //inicie en Consultas por default
-    {path:'', component:FiltroHorizontalComponent},
+    //inicie en FiltroHorizontalComponent por default
+    {path:'',
+    component:SidebarComponent,
+    children: [
+            {path: 'consultas/filtroHorizontal', component:FiltroHorizontalComponent},
+            {path: 'consultas/filtroProceso', component:FiltroHorizontalProcesoComponent},
+            {path: 'consultas/filtroVertical', component:FiltroVerticalComponent},
+            {path: 'documentos', component:DocumentosComponent},
+            {path: 'documentos/versiones/:id', component:DocumentoversionesComponent},
+            {path: 'normas', component:NormasComponent},
+            {path: 'etapas', component:EtapasComponent},
+            {path: 'clasificaciones', component:ClasificacionesComponent},
+            {path: 'subclasificaciones', component:SubclasificacionesComponent},
+            {path: 'categorias', component:CategoriasComponent},
+            {path: 'doctos', component:DoctosComponent},
+            {path: 'tipodocumentos', component:TipodocumentosComponent},
+        
+            {path: 'reporteBitacoraMovimientos', component:ReporteBitacoraDeMovimientosComponent},
+            {path: 'reporteControlDeVersiones', component:ReporteControlDeVersionesComponent},
+            {path: 'reporteDocumentosAntiguos', component:ReporteDocumentosAntiguosComponent},
+            {path: 'reporteMaestroDeDocumentos', component:ReporteMaestroDeDocumentosComponent},
+            {path: 'reporteMaestroDeDocumentosPorNorma', component:ReporteMaestroDeDocumentosPorNormaComponent},
+            {path: 'reporteDescargaDeDocumentos', component:ReporteDescargaDeDocumentosComponent},
+            {path: 'reporteDocumentosSinMovimientos', component:ReporteDocumentosSinMovimientosComponent},
 
-   
-    
-    {path: 'consultas/filtroHorizontal', component:FiltroHorizontalComponent},
-    {path: 'consultas/filtroProceso', component:FiltroHorizontalProcesoComponent},
-    {path: 'consultas/filtroVertical', component:FiltroVerticalComponent},
-    {path: 'documentos', component:DocumentosComponent},
-    {path: 'documentos/versiones/:id', component:DocumentoversionesComponent},
-    {path: 'normas', component:NormasComponent},
-    {path: 'etapas', component:EtapasComponent},
-    {path: 'clasificaciones', component:ClasificacionesComponent},
-    {path: 'subclasificaciones', component:SubclasificacionesComponent},
-    {path: 'categorias', component:CategoriasComponent},
-    {path: 'doctos', component:DoctosComponent},
-    {path: 'tipodocumentos', component:TipodocumentosComponent},
-
-
-
-    {path: 'reporteBitacoraMovimientos', component:ReporteBitacoraDeMovimientosComponent},
-    {path: 'reporteControlDeVersiones', component:ReporteControlDeVersionesComponent},
-    {path: 'reporteDocumentosAntiguos', component:ReporteDocumentosAntiguosComponent},
-    {path: 'reporteMaestroDeDocumentos', component:ReporteMaestroDeDocumentosComponent},
-    {path: 'reporteMaestroDeDocumentosPorNorma', component:ReporteMaestroDeDocumentosPorNormaComponent},
-    {path: 'reporteDescargaDeDocumentos', component:ReporteDescargaDeDocumentosComponent},
-    {path: 'reporteDocumentosSinMovimientos', component:ReporteDocumentosSinMovimientosComponent},
-   
-   
-
-
-
-    
-    {path: 'pruebas', component:PruebaComponent},
+            { path: '', redirectTo: 'consultas/filtroHorizontal', pathMatch: 'full' }
+       
+        ]
+    },
 
 
 
     {path: 'iniciosesionprincipal', component:IniciosesionprincipalComponent},
-    //si la ruta  no existe redirecciona a consultas
-    {path: '**', component:FiltroHorizontalComponent},
+
+    //si la ruta  no existe redirecciona a usuarios, obvio si no esta autenticado pues nunca entra aqui y lo manda al loggin
+    {path: '**', redirectTo:'consultas/filtroHorizontal'},
   
 
 
