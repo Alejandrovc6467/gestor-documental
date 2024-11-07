@@ -1,6 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink, RouterOutlet } from '@angular/router';
+import { SeguridadService } from '../../Core/services/seguridad.service';
+
+
 
 @Component({
   selector: 'app-sidebar',
@@ -11,12 +14,18 @@ import { RouterLink, RouterOutlet } from '@angular/router';
 })
 export class SidebarComponent implements OnInit{
 
-
+  seguridadService = inject(SeguridadService);
   
   ngOnInit(): void {
     this.initSidebar();
   }
 
+  logout(): void {
+    this.seguridadService.logout2();
+  }
+
+
+  //configuaraciones del sidebar
   initSidebar() {
     /*===== EXPANDER MENU  =====*/ 
     const showMenu = ()=>{
