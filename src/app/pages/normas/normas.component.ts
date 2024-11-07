@@ -8,17 +8,21 @@ import { MatInputModule } from '@angular/material/input';
 import { NormaDTO } from '../../Core/models/NormaDTO';
 import { NormasService } from '../../Core/services/normas.service';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-import { MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl, MatPaginatorModule} from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
+import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
 
 @Component({
   selector: 'app-normas',
   standalone: true,
   imports: [MatButtonModule,  MatFormFieldModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule],
   templateUrl: './normas.component.html',
-  styleUrl: './normas.component.css'
+  styleUrl: './normas.component.css',
+  providers: [
+    { provide: MatPaginatorIntl, useClass: CustomMatPaginatorIntlComponent }
+  ]
 })
 export class NormasComponent  implements OnInit{
 

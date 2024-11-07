@@ -11,17 +11,21 @@ import { NormaDTO } from '../../Core/models/NormaDTO';
 import { EtapasService } from '../../Core/services/etapas.service';
 import { NormasService } from '../../Core/services/normas.service';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-import { MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl, MatPaginatorModule} from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
+import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
 
 @Component({
   selector: 'app-etapas',
   standalone: true,
   imports: [CommonModule,MatButtonModule,  MatFormFieldModule, MatSelectModule,ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule],
   templateUrl: './etapas.component.html',
-  styleUrl: './etapas.component.css'
+  styleUrl: './etapas.component.css',
+  providers: [
+    { provide: MatPaginatorIntl, useClass: CustomMatPaginatorIntlComponent }
+  ]
 })
 export class EtapasComponent implements OnInit{
   etapasService = inject(EtapasService);

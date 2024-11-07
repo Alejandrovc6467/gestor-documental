@@ -11,7 +11,7 @@ import { CategoriasService } from '../../Core/services/categorias.service';
 import { DocumentosService } from '../../Core/services/documentos.service';
 import { VersionesService } from '../../Core/services/versiones.service';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-import { MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl, MatPaginatorModule} from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
@@ -20,16 +20,20 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
 import { DocumentoGetDTO } from '../../Core/models/DocumentoGetDTO';
 import { DatePipe } from '@angular/common';
+import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
 
 
 
 @Component({
   selector: 'app-documentoversiones',
   standalone: true,
-  providers: [DatePipe], 
   imports: [MatButtonModule,  MatFormFieldModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule, MatDatepickerModule, MatNativeDateModule,  MatCheckboxModule, MatRadioModule],
   templateUrl: './documentoversiones.component.html',
-  styleUrl: './documentoversiones.component.css'
+  styleUrl: './documentoversiones.component.css',
+  providers: [
+    { provide: MatPaginatorIntl, useClass: CustomMatPaginatorIntlComponent },
+     DatePipe
+  ]
 })
 export class DocumentoversionesComponent implements OnInit  {
 
@@ -275,6 +279,7 @@ export class DocumentoversionesComponent implements OnInit  {
   obtenerVersionesCargarTabla(){
     this.versionesService.obtenerVersionesPorId(this.id).subscribe(response => {
       this.listaCategorias = response;
+      console.log(this.listaCategorias);
       this.setTable(this.listaCategorias);
     });
   }

@@ -8,10 +8,12 @@ import { MatInputModule } from '@angular/material/input';
 import { CategoriaDTO } from '../../Core/models/CategoriaDTO';
 import { ClasificacionesService } from '../../Core/services/clasificaciones.service';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-import { MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl, MatPaginatorModule} from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
+import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
+
 
 
 @Component({
@@ -19,7 +21,10 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [MatButtonModule,  MatFormFieldModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule],
   templateUrl: './clasificaciones.component.html',
-  styleUrl: './clasificaciones.component.css'
+  styleUrl: './clasificaciones.component.css',
+  providers: [
+    { provide: MatPaginatorIntl, useClass: CustomMatPaginatorIntlComponent }
+  ]
 })
 export class ClasificacionesComponent implements OnInit {
 
