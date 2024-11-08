@@ -181,8 +181,13 @@ export class DocumentosComponent implements OnInit {
       // Asegúrate de que estos campos estén presentes y con el tipo correcto
       activo: documentoData.activo || false,
       descargable: documentoData.descargable || false,
-      doctoID: documentoData.doctoID || 0
+      doctoID: documentoData.doctoID || 0,
+      usuarioID: 1,
+      oficinaUsuarioID: 1
     };
+
+    //usuarioID y oficinaUsuarioID los tomo del localStorage
+
 
     console.log(documento);
 

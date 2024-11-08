@@ -1,0 +1,14 @@
+
+
+.containerModalRelaciones{
+    padding: 25px 50px 50px 50px;
+}
+
+.containerBotonCerrar{
+    display: flex;
+    justify-content: end;
+}
+
+.tituloModalRelaciones{
+    color: gray;
+}

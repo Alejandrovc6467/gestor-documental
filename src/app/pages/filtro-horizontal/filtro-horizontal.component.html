@@ -195,9 +195,15 @@
                             <button (click)="descargarDocumento(element.urlArchivo)" class="boton_tabla">
                                 <mat-icon name="pie-chart-outline">download</mat-icon>
                             </button>
-                            <button (click)="observar(element.id)" class="boton_tabla">
-                                <mat-icon name="pie-chart-outline">visibility</mat-icon>
-                            </button>
+                            
+                            @if(element.archivo.contentType === 'application/pdf'){
+                                <button (click)="observarDocumento(element)" class="boton_tabla">
+                                    <mat-icon name="pie-chart-outline">visibility</mat-icon>
+                                </button>
+                            }@else {
+                                <span class="ntc">NTC</span>
+                            }
+
                         </div>
                     </td>
                 </ng-container>
@@ -222,7 +228,7 @@
                     <th mat-header-cell *matHeaderCellDef></th>
                     <td mat-cell *matCellDef="let element"> 
                         <div class="acciones-container-botones">
-                            <button (click)="mostrarRelaciones(element.documentoID)" class="boton_tabla">
+                            <button (click)="mostrarRelaciones(element.id)" class="boton_tabla">
                                 <mat-icon name="pie-chart-outline">folder</mat-icon>
                             </button>
                         </div>

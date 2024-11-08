@@ -24,6 +24,8 @@ import { ClasificacionDTO } from '../../Core/models/ClasificacionDTO';
 import { MatSelectModule } from '@angular/material/select';
 import { ArchivoDTO, FiltroVerticalGetDTO, FiltroVerticalGetExtendidaDTO } from '../../Core/models/FiltroVerticalGetDTO';
 import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
+import { PdfViewerComponent } from '../../Core/components/pdf-viewer/pdf-viewer.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-filtro-vertical',
@@ -36,6 +38,8 @@ import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-ma
   ]
 })
 export class FiltroVerticalComponent {
+
+  private dialog = inject(MatDialog); // Usa inject en lugar del constructor
 
 
   filtroVerticalService = inject(FiltroVerticalService);
@@ -258,6 +262,19 @@ export class FiltroVerticalComponent {
 
   }
 
+
+  observarDocumento(element: FiltroVerticalGetExtendidaDTO) {
+    if (element.archivo.contentType === 'application/pdf') {
+      const dialogRef = this.dialog.open(PdfViewerComponent, {
+        data: { url: element.urlArchivo },
+        panelClass: ['pdf-viewer-dialog', 'fullscreen-dialog'],
+        maxWidth: '100vw',
+        maxHeight: '100vh',
+        height: '100vh',
+        width: '100vw',
+      });
+    }
+  }
 
   //no esta siendo utilizado
   obtenerCategoriasCargarTabla(){

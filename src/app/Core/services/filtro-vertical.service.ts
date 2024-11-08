@@ -86,4 +86,6 @@ export class FiltroVerticalService {
       confirmButtonText: 'Aceptar'
     });
   }
+
+  
 }
