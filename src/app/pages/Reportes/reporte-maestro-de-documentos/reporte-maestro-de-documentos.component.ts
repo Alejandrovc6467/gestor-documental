@@ -24,14 +24,11 @@ import { TipodocumentoDTO } from '../../../Core/models/TipodocumentoDTO';
 import { TipodocumentoService } from '../../../Core/services/tipodocumento.service';
 import { CustomMatPaginatorIntlComponent } from '../../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
 
-interface DocumentoReporte {
-  codigoDocumento: string;
-  nombreDocumento: string;
-  acceso: string;
-  version: string;
-  fechaPublicacion: string;
-  oficinaResponsable: string;
-}
+import { ReportesService } from '../../../Core/services/reportes.service';
+import { ReporteMaestroDocumentosDTO } from '../../../Core/models/Reportes/ReporteMaestroDocumentosDTO';
+import { ConsultaReporteMaestroDocumentosDTO } from '../../../Core/models/Reportes/ConsultaReporteMaestroDocumentosDTO';
+import { tap } from 'rxjs';
+
 
 @Component({
   selector: 'app-reporte-maestro-de-documentos',
@@ -58,7 +55,8 @@ interface DocumentoReporte {
   ]
 })
 export class ReporteMaestroDeDocumentosComponent implements OnInit {
-  documentos: DocumentoReporte[] = [];
+  reportesService=inject(ReportesService);
+  documentos: ReporteMaestroDocumentosDTO[] = [];
   displayedColumns: string[] = []; // columnas para MatTable
   filtroForm: FormGroup;
   fechaCreacion = new Date();
@@ -76,8 +74,8 @@ export class ReporteMaestroDeDocumentosComponent implements OnInit {
     private fb: FormBuilder
   ) {
     this.filtroForm = this.fb.group({
-      oficina: [''],
-      tipoDocumento: ['']
+      oficina: [0],
+      tipoDocumento: [0]
     });
   }
 
@@ -96,12 +94,32 @@ export class ReporteMaestroDeDocumentosComponent implements OnInit {
   }
 
   cargarDatos() {
-    // Reemplaza con tu URL de API
+    const filtros = this.filtroForm.value;
+    
+    const params: ConsultaReporteMaestroDocumentosDTO = {
+      oficina: filtros.oficina,
+      tipoDocumento: filtros.tipoDocumento
+    };
+    
+    console.log('Parámetros de consulta:', params);
+    this.reportesService.getReporteMaestroDocumentos(params).pipe(
+      tap(req => console.log('Request URL:', req))
+    )
+      .subscribe({
+        next: (response: ReporteMaestroDocumentosDTO[]) => {
+          console.log('Reporte cargado:', response);
+          this.documentos = response;
+        },
+        error: (error) => {
+          console.error('Error al cargar el reporte:', error);
+        }
+      });
+    
     
   }
 
   aplicarFiltros() {
-    const filtros = this.filtroForm.value;
+    this.cargarDatos();
     
   }
 
@@ -109,19 +127,21 @@ export class ReporteMaestroDeDocumentosComponent implements OnInit {
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.documentos);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Reporte');
-    XLSX.writeFile(wb, 'Reporte.xlsx');
+    XLSX.writeFile(wb, 'ReporteMaestroDocumentos.xlsx');
   }
 
   exportarPDF() {
     const doc = new jsPDF();
-    const headers = ['Código', 'Nombre', 'Acceso', 'Versión', 'Fecha', 'Oficina'];
+    const headers = ['Código', 'Nombre', 'Tipo de documento', 'Estado', 'SCD', 'Versión', 'Fecha de publicación', 'Resumen del cambio'];
     const data = this.documentos.map(doc => [
       doc.codigoDocumento,
       doc.nombreDocumento,
-      doc.acceso,
+      doc.tipoDocumento,
+      doc.estado,
+      doc.scd,
       doc.version,
-      doc.fechaPublicacion,
-      doc.oficinaResponsable
+      doc.fecha,
+      doc.resumenDelCambio
     ]);
     
     (doc as any).autoTable({
@@ -129,12 +149,12 @@ export class ReporteMaestroDeDocumentosComponent implements OnInit {
       body: data
     });
 
-    doc.save('Reporte.pdf');
+    doc.save('ReporteMaestroDocumentos.pdf');
   }
 
   exportarWord() {
     let tabla = '<table><tr>';
-    const headers = ['Código', 'Nombre', 'Acceso', 'Versión', 'Fecha', 'Oficina'];
+    const headers = ['Código', 'Nombre', 'Tipo de documento', 'Estado', 'SCD', 'Versión', 'Fecha de publicación', 'Resumen del cambio'];
     headers.forEach(header => {
       tabla += `<th>${header}</th>`;
     });
@@ -144,10 +164,12 @@ export class ReporteMaestroDeDocumentosComponent implements OnInit {
       tabla += '<tr>';
       tabla += `<td>${doc.codigoDocumento}</td>`;
       tabla += `<td>${doc.nombreDocumento}</td>`;
-      tabla += `<td>${doc.acceso}</td>`;
+      tabla += `<td>${doc.tipoDocumento}</td>`;
+      tabla += `<td>${doc.estado}</td>`;
+      tabla += `<td>${doc.scd}</td>`;
       tabla += `<td>${doc.version}</td>`;
-      tabla += `<td>${doc.fechaPublicacion}</td>`;
-      tabla += `<td>${doc.oficinaResponsable}</td>`;
+      tabla += `<td>${doc.fecha}</td>`;
+      tabla += `<td>${doc.resumenDelCambio}</td>`;
       tabla += '</tr>';
     });
     tabla += '</table>';
@@ -169,7 +191,7 @@ export class ReporteMaestroDeDocumentosComponent implements OnInit {
 
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'Reporte.doc';
+    link.download = 'ReporteMaestroDocumentos.doc';
     link.click();
   }
 }

@@ -31,6 +31,10 @@ import { CategoriaDTO } from '../../../Core/models/CategoriaDTO';
 import { CategoriasService } from '../../../Core/services/categorias.service';
 import { CustomMatPaginatorIntlComponent } from '../../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
 
+import { ReportesService } from '../../../Core/services/reportes.service';
+import { ReporteMaestroDocumentoPorNormaDTO } from '../../../Core/models/Reportes/ReporteMaestroDocumentoPorNormaDTO';
+import { ConsultaReporteMaestroDocumentoPorNormaDTO } from '../../../Core/models/Reportes/ConsultaReporteMaestroDocumentoPorNormaDTO';
+import { tap } from 'rxjs';
 interface DocumentoReporte {
   codigoDocumento: string;
   nombreDocumento: string;
@@ -65,7 +69,8 @@ interface DocumentoReporte {
   ]
 })
 export class ReporteMaestroDeDocumentosPorNormaComponent implements OnInit {
-  documentos: DocumentoReporte[] = [];
+  reportesService = inject(ReportesService);
+  documentos: ReporteMaestroDocumentoPorNormaDTO[] = [];
   displayedColumns: string[] = []; // columnas para MatTable
   filtroForm: FormGroup;
   fechaCreacion = new Date();
@@ -85,10 +90,10 @@ export class ReporteMaestroDeDocumentosPorNormaComponent implements OnInit {
     private fb: FormBuilder
   ) {
     this.filtroForm = this.fb.group({
-      oficina: [''],
-      norma: [''],
-      tipoDocumento: [''],
-      categoria: ['']
+      oficina: [0],
+      norma: [0],
+      tipoDocumento: [0],
+      categoria: [0]
     });
   }
 
@@ -101,7 +106,29 @@ export class ReporteMaestroDeDocumentosPorNormaComponent implements OnInit {
   }
 
   cargarDatos() {
-    // Reemplaza con tu URL de API
+    const filtros = this.filtroForm.value;
+    
+    const params: ConsultaReporteMaestroDocumentoPorNormaDTO = {
+      oficina: filtros.oficina,
+      norma: filtros.norma,
+      tipoDocumento: filtros.tipoDocumento,
+      categoria: filtros.categoria
+    };
+    
+    console.log('Parámetros de consulta:', params);
+    this.reportesService.getReporteMaestroDocumentoPorNorma(params).pipe(
+      tap(req => console.log('Request URL:', req))
+    )
+      .subscribe({
+        next: (response: ReporteMaestroDocumentoPorNormaDTO[]) => {
+          console.log('Reporte cargado:', response);
+          this.documentos = response;
+        },
+        error: (error) => {
+          console.error('Error al cargar el reporte:', error);
+        }
+      });
+    
    
   }
 
@@ -123,28 +150,29 @@ export class ReporteMaestroDeDocumentosPorNormaComponent implements OnInit {
 
 
   aplicarFiltros() {
-    const filtros = this.filtroForm.value;
-    
-
+    this.cargarDatos();
   }
 
   exportarExcel() {
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.documentos);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Reporte');
-    XLSX.writeFile(wb, 'Reporte.xlsx');
+    XLSX.writeFile(wb, 'ReporteMaestroDocumentosPorNorma.xlsx');
   }
 
   exportarPDF() {
     const doc = new jsPDF();
-    const headers = ['Código', 'Nombre', 'Acceso', 'Versión', 'Fecha', 'Oficina'];
+    const headers = ['Norma','Tipo de documento','Código', 'Nombre',  'Acceso', 'SCD', 'Versión', 'Fecha de publicación', 'Resumen del cambio'];
     const data = this.documentos.map(doc => [
+      doc.nombreNorma,
+      doc.tipoDocumento,
       doc.codigoDocumento,
       doc.nombreDocumento,
       doc.acceso,
+      doc.scd,
       doc.version,
-      doc.fechaPublicacion,
-      doc.oficinaResponsable
+      doc.fecha,
+      doc.resumenDelCambio 
     ]);
     
     (doc as any).autoTable({
@@ -152,12 +180,12 @@ export class ReporteMaestroDeDocumentosPorNormaComponent implements OnInit {
       body: data
     });
 
-    doc.save('Reporte.pdf');
+    doc.save('ReporteMaestroDocumentosPorNorma.pdf');
   }
 
   exportarWord() {
     let tabla = '<table><tr>';
-    const headers = ['Código', 'Nombre', 'Acceso', 'Versión', 'Fecha', 'Oficina'];
+    const headers = ['Norma','Tipo de documento','Código', 'Nombre',  'Acceso', 'SCD', 'Versión', 'Fecha de publicación', 'Resumen del cambio'];
     headers.forEach(header => {
       tabla += `<th>${header}</th>`;
     });
@@ -165,12 +193,15 @@ export class ReporteMaestroDeDocumentosPorNormaComponent implements OnInit {
 
     this.documentos.forEach(doc => {
       tabla += '<tr>';
+      tabla += `<td>${doc.nombreNorma}</td>`
+      tabla += `<td>${doc.tipoDocumento}</td>`;
       tabla += `<td>${doc.codigoDocumento}</td>`;
       tabla += `<td>${doc.nombreDocumento}</td>`;
       tabla += `<td>${doc.acceso}</td>`;
+      tabla += `<td>${doc.scd}</td>`;
       tabla += `<td>${doc.version}</td>`;
-      tabla += `<td>${doc.fechaPublicacion}</td>`;
-      tabla += `<td>${doc.oficinaResponsable}</td>`;
+      tabla += `<td>${doc.fecha}</td>`;
+      tabla += `<td>${doc.resumenDelCambio}</td>`;
       tabla += '</tr>';
     });
     tabla += '</table>';
@@ -192,7 +223,7 @@ export class ReporteMaestroDeDocumentosPorNormaComponent implements OnInit {
 
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'Reporte.doc';
+    link.download = 'ReporteMaestroDocumentosPorNorma.doc';
     link.click();
   }
 }

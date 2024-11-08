@@ -21,15 +21,10 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatSelect } from '@angular/material/select';
 import { CustomMatPaginatorIntlComponent } from '../../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
 
-
-interface DocumentoReporte {
-  codigoDocumento: string;
-  nombreDocumento: string;
-  acceso: string;
-  version: string;
-  fechaPublicacion: string;
-  oficinaResponsable: string;
-}
+import { ReportesService } from '../../../Core/services/reportes.service';
+import { ReporteDocumentosAntiguosDTO } from '../../../Core/models/Reportes/ReporteDocumentosAntiguosDTO';
+import { ConsultaReporteDocumentosAntiguosDTO } from '../../../Core/models/Reportes/ConsultaReporteDocumentosAntiguosDTO';
+import { tap } from 'rxjs';
 
 @Component({
   selector: 'app-reporte-documentos-antiguos',
@@ -56,9 +51,10 @@ interface DocumentoReporte {
   ]
 })
 export class ReporteDocumentosAntiguosComponent implements OnInit {
+  reportesService= inject(ReportesService);
   tipodocumentoService = inject(TipodocumentoService);
   oficinasService = inject(OficinasService);
-  documentos: DocumentoReporte[] = [];
+  documentos: ReporteDocumentosAntiguosDTO[] = [];
   oficinas: OficinaDTO[] = [];
   tiposDocumento: TipodocumentoDTO[] = [];
   fechaCreacion = new Date();
@@ -70,42 +66,45 @@ export class ReporteDocumentosAntiguosComponent implements OnInit {
     private fb: FormBuilder
   ) {
     this.filtroForm = this.fb.group({
-      oficina: [''],
-      tipoDocumento: [''],
+      oficina: [0],
+      tipoDocumento: [0],
       fecha: ['']
     });
   }
 
   ngOnInit() {
-    this.cargarDatosEjemplo();
+    this.cargarDatos();
     this.obtenerTipoDocumentos();
     this.obtenerOficinas();
   }
 
-  cargarDatosEjemplo() {
-    this.documentos = [
-      {
-        codigoDocumento: 'Esta es una prueba de sistema favor hacer caso omi',
-        nombreDocumento: 'Esta es una prueba de sistema favor hacer caso omiso',
-        acceso: 'Privado',
-        version: 'V1',
-        fechaPublicacion: '8/8/2023',
-        oficinaResponsable: 'Error: Subreport could not be'
-      },
-      {
-        codigoDocumento: 'COD1',
-        nombreDocumento: 'Documento PIP Público Centro Gestor (Esta es una prueba de sistema favor hacer caso omiso)',
-        acceso: 'Público Centro Gestor',
-        version: 'Prueba de sistema',
-        fechaPublicacion: '20/2/2024',
-        oficinaResponsable: 'Error: Subreport could not be'
-      }
-    ];
+  cargarDatos() {
+    const filtros = this.filtroForm.value;
+    
+    const params: ConsultaReporteDocumentosAntiguosDTO = {
+      oficina: filtros.oficina,
+      tipoDocumento: filtros.tipoDocumento,
+      fecha: filtros.fecha
+    };
+    
+    console.log('Parámetros de consulta:', params);
+    this.reportesService.getReporteDocumentosAntiguos(params).pipe(
+      tap(req => console.log('Request URL:', req))
+    )
+      .subscribe({
+        next: (response: ReporteDocumentosAntiguosDTO[]) => {
+          console.log('Reporte cargado:', response);
+          this.documentos = response;
+        },
+        error: (error) => {
+          console.error('Error al cargar el reporte:', error);
+        }
+      });
+    
   }
 
   aplicarFiltros() {
-    const filtros = this.filtroForm.value;
-    // Implementa la lógica de filtrado aquí
+    this.cargarDatos();
   }
 
   obtenerTipoDocumentos(){
@@ -122,7 +121,7 @@ export class ReporteDocumentosAntiguosComponent implements OnInit {
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.documentos);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Reporte');
-    XLSX.writeFile(wb, 'Reporte.xlsx');
+    XLSX.writeFile(wb, 'ReporteDocumentosAntiguos.xlsx');
   }
 
   exportarPDF() {
@@ -133,7 +132,7 @@ export class ReporteDocumentosAntiguosComponent implements OnInit {
       doc.nombreDocumento,
       doc.acceso,
       doc.version,
-      doc.fechaPublicacion,
+      doc.fecha,
       doc.oficinaResponsable
     ]);
     
@@ -142,7 +141,7 @@ export class ReporteDocumentosAntiguosComponent implements OnInit {
       body: data
     });
 
-    doc.save('Reporte.pdf');
+    doc.save('ReporteDocumentosAntiguos.pdf');
   }
 
   exportarWord() {
@@ -159,7 +158,7 @@ export class ReporteDocumentosAntiguosComponent implements OnInit {
       tabla += `<td>${doc.nombreDocumento}</td>`;
       tabla += `<td>${doc.acceso}</td>`;
       tabla += `<td>${doc.version}</td>`;
-      tabla += `<td>${doc.fechaPublicacion}</td>`;
+      tabla += `<td>${doc.fecha}</td>`;
       tabla += `<td>${doc.oficinaResponsable}</td>`;
       tabla += '</tr>';
     });
@@ -182,7 +181,7 @@ export class ReporteDocumentosAntiguosComponent implements OnInit {
 
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'Reporte.doc';
+    link.download = 'ReporteDocumentosAntiguos.doc';
     link.click();
   }
 }
