@@ -24,6 +24,11 @@ import { TipodocumentoDTO } from '../../../Core/models/TipodocumentoDTO';
 import { TipodocumentoService } from '../../../Core/services/tipodocumento.service';
 import { CustomMatPaginatorIntlComponent } from '../../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
 
+import { ReportesService } from '../../../Core/services/reportes.service';
+import { ReportesDocSinMovimientoDTO } from '../../../Core/models/Reportes/ReportesDocSinMovimientoDTO';
+import { ConsultaReporteDocSinMovimientoDTO } from '../../../Core/models/Reportes/ConsultaReporteDocSinMovimientoDTO';
+import { tap } from 'rxjs';
+
 interface DocumentoReporte {
   codigoDocumento: string;
   nombreDocumento: string;
@@ -59,7 +64,8 @@ interface DocumentoReporte {
 })
 
 export class ReporteDocumentosSinMovimientosComponent implements OnInit {
-  documentos: DocumentoReporte[] = [];
+  reportesService = inject(ReportesService);
+  documentos: ReportesDocSinMovimientoDTO[] = [];
   displayedColumns: string[] = []; // columnas para MatTable
   filtroForm: FormGroup;
   fechaCreacion = new Date();
@@ -76,10 +82,10 @@ export class ReporteDocumentosSinMovimientosComponent implements OnInit {
     private fb: FormBuilder
   ) {
     this.filtroForm = this.fb.group({
-      oficina: [''],
+      oficina: [0],
       tipoDocumento: [''],
-      fechaInicio:[null],
-      fechaFin: [null]
+      fechaInicio:[''],
+      fechaFin: ['']
     });
   }
 
@@ -90,11 +96,33 @@ export class ReporteDocumentosSinMovimientosComponent implements OnInit {
   }
 
   cargarDatos() {
+    const filtros = this.filtroForm.value;
+    
+    const params: ConsultaReporteDocSinMovimientoDTO = {
+      oficinaID: filtros.oficina,
+      tipoDocumento: filtros.tipoDocumento,
+      fechaInicio: filtros.fechaInicio,
+      fechaFin: filtros.fechaFin
+    };
+    
+    console.log('Parámetros de consulta:', params);
+    this.reportesService.getReporteDocSinMovimiento(params).pipe(
+      tap(req => console.log('Request URL:', req))
+    )
+      .subscribe({
+        next: (response: ReportesDocSinMovimientoDTO[]) => {
+          console.log('Reporte cargado:', response);
+          this.documentos = response;
+        },
+        error: (error) => {
+          console.error('Error al cargar el reporte:', error);
+        }
+      });
     
   }
 
   aplicarFiltros() {
-    const filtros = this.filtroForm.value;
+    this.cargarDatos();
     
   }
 
@@ -113,7 +141,7 @@ export class ReporteDocumentosSinMovimientosComponent implements OnInit {
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.documentos);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Reporte');
-    XLSX.writeFile(wb, 'Reporte.xlsx');
+    XLSX.writeFile(wb, 'ReporteDocumentosSINMovimientos.xlsx');
   }
 
   exportarPDF() {
@@ -124,7 +152,7 @@ export class ReporteDocumentosSinMovimientosComponent implements OnInit {
       doc.nombreDocumento,
       doc.acceso,
       doc.version,
-      doc.fechaPublicacion,
+      doc.fecha,
       doc.oficinaResponsable
     ]);
     
@@ -133,7 +161,7 @@ export class ReporteDocumentosSinMovimientosComponent implements OnInit {
       body: data
     });
 
-    doc.save('Reporte.pdf');
+    doc.save('ReporteDocumentosSINMovimientos.pdf');
   }
 
   exportarWord() {
@@ -150,7 +178,7 @@ export class ReporteDocumentosSinMovimientosComponent implements OnInit {
       tabla += `<td>${doc.nombreDocumento}</td>`;
       tabla += `<td>${doc.acceso}</td>`;
       tabla += `<td>${doc.version}</td>`;
-      tabla += `<td>${doc.fechaPublicacion}</td>`;
+      tabla += `<td>${doc.fecha}</td>`;
       tabla += `<td>${doc.oficinaResponsable}</td>`;
       tabla += '</tr>';
     });
@@ -173,7 +201,7 @@ export class ReporteDocumentosSinMovimientosComponent implements OnInit {
 
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'Reporte.doc';
+    link.download = 'ReporteDocumentosSINMovimientos.doc';
     link.click();
   }
 }

@@ -15,7 +15,7 @@
         <mat-form-field appearance="outline">
           <mat-label>Oficina</mat-label>
           <mat-select formControlName="oficina">
-            <mat-option value="">Todas</mat-option>
+            <mat-option [value]="0">Todas</mat-option>
             <mat-option *ngFor="let oficina of oficinas" [value]="oficina.id">
               {{oficina.id+" - "+oficina.nombre}}
             </mat-option>
@@ -26,7 +26,7 @@
           <mat-label>Código del documento</mat-label>
           <mat-select formControlName="codigoDocumento">
             <mat-option value="">Todos</mat-option>
-            <mat-option *ngFor="let tipo of documentosCargados" [value]="tipo.id">
+            <mat-option *ngFor="let tipo of documentosCargados" [value]="tipo.codigo">
               {{tipo.codigo}}
             </mat-option>
           </mat-select>
@@ -37,7 +37,7 @@
           <mat-label>Nombre del documento</mat-label>
           <mat-select formControlName="nombreDocumento">
             <mat-option value="">Todos</mat-option>
-            <mat-option *ngFor="let tipo of documentosCargados" [value]="tipo.id">
+            <mat-option *ngFor="let tipo of documentosCargados" [value]="tipo.asunto">
               {{tipo.asunto}}
             </mat-option>
           </mat-select>
@@ -46,7 +46,7 @@
         <mat-form-field appearance="outline">
           <mat-label>Tipo de Documento</mat-label>
           <mat-select formControlName="tipoDocumento">
-            <mat-option value="">Todos</mat-option>
+            <mat-option [value]="0">Todos</mat-option>
             <mat-option *ngFor="let tipo of tiposDocumento" [value]="tipo.id">
               {{tipo.nombre}}
             </mat-option>
@@ -107,10 +107,11 @@
           <tr *ngFor="let doc of documentos">
             <td>{{doc.codigoDocumento}}</td>
             <td>{{doc.nombreDocumento}}</td>
-            <td>{{doc.acceso}}</td>
+            <td>{{doc.tipoDocumento}}</td>
+            <td>{{doc.scd}}</td>
             <td>{{doc.version}}</td>
-            <td>{{doc.fechaPublicacion}}</td>
-            <td>{{doc.oficinaResponsable}}</td>
+            <td>{{doc.fecha| date:'dd/MM/yyyy'}}</td>
+            <td>{{doc.resumenDelCambio}}</td>
           </tr>
         </tbody>
       </table>

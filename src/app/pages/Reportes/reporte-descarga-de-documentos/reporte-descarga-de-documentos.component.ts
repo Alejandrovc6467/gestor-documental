@@ -26,14 +26,11 @@ import { OficinasService } from '../../../Core/services/oficinas.service';
 import { UsuarioDTO } from '../../../Core/models/UsuarioDTO';
 import { UsuariosService } from '../../../Core/services/usuarios.service';
 import { CustomMatPaginatorIntlComponent } from '../../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
-interface DocumentoReporte {
-  codigoDocumento: string;
-  nombreDocumento: string;
-  acceso: string;
-  version: string;
-  fechaPublicacion: string;
-  oficinaResponsable: string;
-}
+
+import { ReportesService } from '../../../Core/services/reportes.service';
+import { ReporteDescargaDeDocumentosDTO } from '../../../Core/models/Reportes/ReporteDescargaDeDocumentosDTO';
+import { ConsultaReporteDescargaDeDocumentosDTO } from '../../../Core/models/Reportes/ConsultaReporteDescargaDeDocumentosDTO';
+import { tap } from 'rxjs';
 
 @Component({
   selector: 'app-reporte-descarga-de-documentos',
@@ -59,7 +56,8 @@ interface DocumentoReporte {
   ]
 })
 export class ReporteDescargaDeDocumentosComponent implements OnInit {
-  documentos: DocumentoReporte[] = [];
+  reportesService = inject(ReportesService);
+  documentos: ReporteDescargaDeDocumentosDTO[] = [];
   displayedColumns: string[] = []; // columnas para MatTable
   filtroForm: FormGroup;
   fechaCreacion = new Date();
@@ -83,10 +81,10 @@ export class ReporteDescargaDeDocumentosComponent implements OnInit {
     this.filtroForm = this.fb.group({
       codigoDocumento: [''],
       nombreDocumento: [''],
-      oficina: [''],
-      Usuario:[''],
-      fechaInicio: [null],
-      fechaFin: [null]
+      oficina: [0],
+      Usuario:[0],
+      fechaInicio: [''],
+      fechaFin: ['']
     });
   }
 
@@ -98,7 +96,31 @@ export class ReporteDescargaDeDocumentosComponent implements OnInit {
   }
 
   cargarDatos() {
-    // Reemplaza con tu URL de API
+    const filtros = this.filtroForm.value;
+    
+    const params: ConsultaReporteDescargaDeDocumentosDTO = {
+      oficina: filtros.oficina,
+      usuario: filtros.Usuario,
+      codigoDocumento: filtros.codigoDocumento,
+      nombreDocumento: filtros.nombreDocumento,
+      fechaInicio: filtros.fechaInicio,
+      fechaFinal: filtros.fechaFin
+    };
+    
+    console.log('Parámetros de consulta:', params);
+    this.reportesService.getReporteDescargaDeDocumentos(params).pipe(
+      tap(req => console.log('Request URL:', req))
+    )
+      .subscribe({
+        next: (response: ReporteDescargaDeDocumentosDTO[]) => {
+          console.log('Reporte cargado:', response);
+          this.documentos = response;
+        },
+        error: (error) => {
+          console.error('Error al cargar el reporte:', error);
+        }
+      });
+    
   }
 
   obtenerOficinas() {
@@ -118,7 +140,7 @@ export class ReporteDescargaDeDocumentosComponent implements OnInit {
     })};
 
   aplicarFiltros() {
-    const filtros = this.filtroForm.value;
+    this.cargarDatos();
     
   }
 
@@ -126,7 +148,7 @@ export class ReporteDescargaDeDocumentosComponent implements OnInit {
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.documentos);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Reporte');
-    XLSX.writeFile(wb, 'Reporte.xlsx');
+    XLSX.writeFile(wb, 'ReporteDescargaDocumentos.xlsx');
   }
 
   exportarPDF() {
@@ -137,7 +159,7 @@ export class ReporteDescargaDeDocumentosComponent implements OnInit {
       doc.nombreDocumento,
       doc.acceso,
       doc.version,
-      doc.fechaPublicacion,
+      doc.fecha,
       doc.oficinaResponsable
     ]);
     
@@ -146,7 +168,7 @@ export class ReporteDescargaDeDocumentosComponent implements OnInit {
       body: data
     });
 
-    doc.save('Reporte.pdf');
+    doc.save('ReporteDescargaDocumentos.pdf');
   }
 
   exportarWord() {
@@ -163,7 +185,7 @@ export class ReporteDescargaDeDocumentosComponent implements OnInit {
       tabla += `<td>${doc.nombreDocumento}</td>`;
       tabla += `<td>${doc.acceso}</td>`;
       tabla += `<td>${doc.version}</td>`;
-      tabla += `<td>${doc.fechaPublicacion}</td>`;
+      tabla += `<td>${doc.fecha}</td>`;
       tabla += `<td>${doc.oficinaResponsable}</td>`;
       tabla += '</tr>';
     });
@@ -186,7 +208,7 @@ export class ReporteDescargaDeDocumentosComponent implements OnInit {
 
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'Reporte.doc';
+    link.download = 'ReporteDescargaDocumentos.doc';
     link.click();
   }
 }

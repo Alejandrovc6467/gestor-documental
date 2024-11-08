@@ -16,7 +16,7 @@
           <mat-form-field appearance="outline">
             <mat-label>Oficina</mat-label>
             <mat-select formControlName="oficina">
-              <mat-option value="">Todas</mat-option>
+              <mat-option [value]="0">Todas</mat-option>
               <mat-option *ngFor="let oficina of oficinas" [value]="oficina.id">
                 {{oficina.id+" - "+oficina.nombre}}
               </mat-option>
@@ -26,7 +26,7 @@
           <mat-form-field appearance="outline">
             <mat-label>Acceso</mat-label>
             <mat-select formControlName="categoria">
-              <mat-option value="">Todas</mat-option>
+              <mat-option [value]="0">Todas</mat-option>
               <mat-option *ngFor="let categoria of categorias" [value]="categoria.id">
                 {{categoria.nombre}}
               </mat-option>
@@ -36,7 +36,7 @@
           <mat-form-field appearance="outline">
             <mat-label>Norma</mat-label>
             <mat-select formControlName="norma">
-              <mat-option value="">Todas</mat-option>
+              <mat-option [value]="0">Todas</mat-option>
               <mat-option *ngFor="let norma of normas" [value]="norma.id">
                 {{norma.nombre}}
               </mat-option>
@@ -46,7 +46,7 @@
           <mat-form-field appearance="outline">
             <mat-label>Tipo de Documento</mat-label>
             <mat-select formControlName="tipoDocumento">
-              <mat-option value="">Todos</mat-option>
+              <mat-option [value]="0">Todos</mat-option>
               <mat-option *ngFor="let tipo of tiposDocumento" [value]="tipo.id">
                 {{tipo.nombre}}
               </mat-option>
@@ -99,10 +99,11 @@
       <table class="tabla-documentos">
         <thead>
           <tr>
+            <th>Norma</th>
+            <th>Tipo del documento</th>
             <th>Código del documento</th>
             <th>Nombre del documento</th>
-            <th>Tipo del documento</th>
-            <th>Estado</th>
+            <th>Acceso</th>
             <th>SCD</th>
             <th>Versión</th>
             <th>Fecha de publicación</th>
@@ -111,12 +112,15 @@
         </thead>
         <tbody>
           <tr *ngFor="let doc of documentos">
+            <td>{{doc.nombreNorma}}</td>
+            <td>{{doc.tipoDocumento}}</td>
             <td>{{doc.codigoDocumento}}</td>
             <td>{{doc.nombreDocumento}}</td>
             <td>{{doc.acceso}}</td>
+            <td>{{doc.scd}}</td>
             <td>{{doc.version}}</td>
-            <td>{{doc.fechaPublicacion}}</td>
-            <td>{{doc.oficinaResponsable}}</td>
+            <td>{{doc.fecha | date:'dd/MM/yyyy'}}</td>
+            <td>{{doc.resumenDelCambio}}</td>
           </tr>
         </tbody>
       </table>

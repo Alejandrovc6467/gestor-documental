@@ -27,14 +27,11 @@ import { OficinaDTO } from '../../../Core/models/OficinaDTO';
 import { OficinasService } from '../../../Core/services/oficinas.service';
 import { CustomMatPaginatorIntlComponent } from '../../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
 
-interface DocumentoReporte {
-  codigoDocumento: string;
-  nombreDocumento: string;
-  acceso: string;
-  version: string;
-  fechaPublicacion: string;
-  oficinaResponsable: string;
-}
+import { ReportesService } from '../../../Core/services/reportes.service';
+
+import { ReporteControlDeVersionesDTO } from '../../../Core/models/Reportes/ReporteControlDeVersionesDTO';
+import { ConsultaReporteControlDeVersionesDTO } from '../../../Core/models/Reportes/ConsultaReporteControlDeVersionesDTO';
+import { tap } from 'rxjs';
 @Component({
   selector: 'app-reporte-control-de-versiones',
   standalone: true,
@@ -59,7 +56,8 @@ interface DocumentoReporte {
 })
 
 export class ReporteControlDeVersionesComponent implements OnInit {
-  documentos: DocumentoReporte[] = [];
+  reportesService = inject(ReportesService);
+  documentos: ReporteControlDeVersionesDTO[] = [];
   displayedColumns: string[] = []; // columnas para MatTable
   filtroForm: FormGroup;
   fechaCreacion = new Date();
@@ -83,7 +81,7 @@ export class ReporteControlDeVersionesComponent implements OnInit {
       oficina: [''],
       codigoDocumento: [''],
       nombreDocumento: [''],
-      tipoDocumento: ['']
+      tipoDocumento: [0]
     });
   }
 
@@ -95,11 +93,32 @@ export class ReporteControlDeVersionesComponent implements OnInit {
   }
 
   cargarDatos() {
-    // Reemplaza con tu URL de API
+    const filtros = this.filtroForm.value;
+    
+    const params: ConsultaReporteControlDeVersionesDTO = {
+      codigoDocumento: filtros.codigoDocumento,
+      nombreDocumento: filtros.nombreDocumento,
+      tipoDocumento: filtros.tipoDocumento
+    };
+    
+
+    console.log('Parámetros de consulta:', params);
+    this.reportesService.getReporteControlDeVersiones(params).pipe(
+      tap(req => console.log('Request URL:', req))
+    )
+      .subscribe({
+        next: (response: ReporteControlDeVersionesDTO[]) => {
+          console.log('Reporte cargado:', response);
+          this.documentos = response;
+        },
+        error: (error) => {
+          console.error('Error al cargar el reporte:', error);
+        }
+      });
   }
 
   aplicarFiltros() {
-    const filtros = this.filtroForm.value;
+    this.cargarDatos();
     
   }
 
@@ -123,19 +142,21 @@ export class ReporteControlDeVersionesComponent implements OnInit {
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.documentos);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Reporte');
-    XLSX.writeFile(wb, 'Reporte.xlsx');
+    XLSX.writeFile(wb, 'ReporteControlVersiones.xlsx');
   }
 
   exportarPDF() {
     const doc = new jsPDF();
-    const headers = ['Código', 'Nombre', 'Acceso', 'Versión', 'Fecha', 'Oficina'];
-    const data = this.documentos.map(doc => [
-      doc.codigoDocumento,
-      doc.nombreDocumento,
-      doc.acceso,
-      doc.version,
-      doc.fechaPublicacion,
-      doc.oficinaResponsable
+    // Ajusta los headers según las propiedades de tu DTO
+    const headers = ['Código', 'Nombre', 'Tipo Documento', 'SCD','Versión', 'Fecha Creación', 'Resumen del cambio'];
+    const data = this.documentos.map(reporte => [
+      reporte.codigoDocumento,
+      reporte.nombreDocumento,
+      reporte.tipoDocumento,
+      reporte.scd,
+      reporte.version,
+      reporte.fecha,
+      reporte.resumenDelCambio
     ]);
     
     (doc as any).autoTable({
@@ -143,25 +164,26 @@ export class ReporteControlDeVersionesComponent implements OnInit {
       body: data
     });
 
-    doc.save('Reporte.pdf');
+    doc.save('ReporteControlVersiones.pdf');
   }
 
   exportarWord() {
     let tabla = '<table><tr>';
-    const headers = ['Código', 'Nombre', 'Acceso', 'Versión', 'Fecha', 'Oficina'];
+    const headers = ['Código', 'Nombre', 'Tipo Documento', 'SCD','Versión', 'Fecha Creación', 'Resumen del cambio'];
     headers.forEach(header => {
       tabla += `<th>${header}</th>`;
     });
     tabla += '</tr>';
 
-    this.documentos.forEach(doc => {
+    this.documentos.forEach(reporte => {
       tabla += '<tr>';
-      tabla += `<td>${doc.codigoDocumento}</td>`;
-      tabla += `<td>${doc.nombreDocumento}</td>`;
-      tabla += `<td>${doc.acceso}</td>`;
-      tabla += `<td>${doc.version}</td>`;
-      tabla += `<td>${doc.fechaPublicacion}</td>`;
-      tabla += `<td>${doc.oficinaResponsable}</td>`;
+      tabla += `<td>${reporte.codigoDocumento}</td>`;
+      tabla += `<td>${reporte.nombreDocumento}</td>`;
+      tabla += `<td>${reporte.tipoDocumento}</td>`;
+      tabla += `<td>${reporte.scd}</td>`;
+      tabla += `<td>${reporte.version}</td>`;
+      tabla += `<td>${reporte.fecha}</td>`;
+      tabla += `<td>${reporte.resumenDelCambio}</td>`;
       tabla += '</tr>';
     });
     tabla += '</table>';
@@ -183,7 +205,7 @@ export class ReporteControlDeVersionesComponent implements OnInit {
 
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'Reporte.doc';
+    link.download = 'ReporteControlVersiones.doc';
     link.click();
   }
 }

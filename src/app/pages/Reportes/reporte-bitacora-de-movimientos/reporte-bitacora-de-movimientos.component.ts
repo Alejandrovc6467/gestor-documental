@@ -24,14 +24,12 @@ import { OficinasService } from '../../../Core/services/oficinas.service';
 import { UsuarioDTO } from '../../../Core/models/UsuarioDTO';
 import { UsuariosService } from '../../../Core/services/usuarios.service';
 import { CustomMatPaginatorIntlComponent } from '../../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
-interface DocumentoReporte {
-  codigoDocumento: string;
-  nombreDocumento: string;
-  acceso: string;
-  version: string;
-  fechaPublicacion: string;
-  oficinaResponsable: string;
-}
+
+import { ReportesService } from '../../../Core/services/reportes.service';
+import { ReporteBitacoraDeMovimientoDTO } from '../../../Core/models/Reportes/ReporteBitacoraDeMovimientoDTO';
+import { ConsultaReporteBitacoraDeMovimientoDTO } from '../../../Core/models/Reportes/ConsultaReporteBitacoraDeMovimientoDTO';
+import { tap } from 'rxjs';
+
 
 @Component({
   selector: 'app-reporte-bitacora-de-movimientos',
@@ -58,7 +56,8 @@ interface DocumentoReporte {
   ]
 })
 export class ReporteBitacoraDeMovimientosComponent implements OnInit {
-  documentos: DocumentoReporte[] = [];
+  reportesService = inject(ReportesService);
+  documentos: ReporteBitacoraDeMovimientoDTO[] = [];
   displayedColumns: string[] = []; // columnas para MatTable
   filtroForm: FormGroup;
   fechaCreacion = new Date();
@@ -77,11 +76,11 @@ export class ReporteBitacoraDeMovimientosComponent implements OnInit {
   ) {
     this.filtroForm = this.fb.group({
       codigoDocumento: [''],
-      Usuario: [''],
-      oficina: [''],
+      Usuario: [0],
+      oficina: [0],
       nombreDocumento: [''],
-      fechaInicio: [null],
-      fechaFin: [null]
+      fechaInicio: [''],
+      fechaFin: ['']
     });
   }
 
@@ -93,7 +92,30 @@ export class ReporteBitacoraDeMovimientosComponent implements OnInit {
   }
 
   cargarDatos() {
-    // Reemplaza con tu URL de API
+    const filtros = this.filtroForm.value;
+    
+    const params: ConsultaReporteBitacoraDeMovimientoDTO = {
+      oficinaID: filtros.oficina,
+      usuarioID: filtros.Usuario,
+      codigoDocumento: filtros.codigoDocumento,
+      nombreDocumento: filtros.nombreDocumento,
+      fechaInicio: filtros.fechaInicio,
+      fechaFin: filtros.fechaFin
+    };
+    
+    console.log('Parámetros de consulta:', params);
+    this.reportesService.getReporteBitacoraDeMovimiento(params).pipe(
+      tap(req => console.log('Request URL:', req))
+    )
+      .subscribe({
+        next: (response: ReporteBitacoraDeMovimientoDTO[]) => {
+          console.log('Reporte cargado:', response);
+          this.documentos = response;
+        },
+        error: (error) => {
+          console.error('Error al cargar el reporte:', error);
+        }
+      });
     
   }
 
@@ -113,16 +135,14 @@ export class ReporteBitacoraDeMovimientosComponent implements OnInit {
   })}
 
   aplicarFiltros() {
-    const filtros = this.filtroForm.value;
-    
-   
+    this.cargarDatos();
   }
 
   exportarExcel() {
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.documentos);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Reporte');
-    XLSX.writeFile(wb, 'Reporte.xlsx');
+    XLSX.writeFile(wb, 'ReporteBitacoraMovimientos.xlsx');
   }
 
   exportarPDF() {
@@ -133,7 +153,7 @@ export class ReporteBitacoraDeMovimientosComponent implements OnInit {
       doc.nombreDocumento,
       doc.acceso,
       doc.version,
-      doc.fechaPublicacion,
+      doc.fecha,
       doc.oficinaResponsable
     ]);
     
@@ -142,7 +162,7 @@ export class ReporteBitacoraDeMovimientosComponent implements OnInit {
       body: data
     });
 
-    doc.save('Reporte.pdf');
+    doc.save('ReporteBitacoraMovimientos.pdf');
   }
 
   exportarWord() {
@@ -159,7 +179,7 @@ export class ReporteBitacoraDeMovimientosComponent implements OnInit {
       tabla += `<td>${doc.nombreDocumento}</td>`;
       tabla += `<td>${doc.acceso}</td>`;
       tabla += `<td>${doc.version}</td>`;
-      tabla += `<td>${doc.fechaPublicacion}</td>`;
+      tabla += `<td>${doc.fecha}</td>`;
       tabla += `<td>${doc.oficinaResponsable}</td>`;
       tabla += '</tr>';
     });
@@ -182,7 +202,7 @@ export class ReporteBitacoraDeMovimientosComponent implements OnInit {
 
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'Reporte.doc';
+    link.download = 'ReporteBitacoraMovimientos.doc';
     link.click();
   }
 
