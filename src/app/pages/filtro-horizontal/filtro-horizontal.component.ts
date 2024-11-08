@@ -15,18 +15,26 @@ import { NormasService } from '../../Core/services/normas.service';
 import { TipodocumentoService } from '../../Core/services/tipodocumento.service';
 import { DoctocsService } from '../../Core/services/doctocs.service';
 import { FiltroVerticalService } from '../../Core/services/filtro-vertical.service';
+import { DocumentosService } from '../../Core/services/documentos.service';
 import { ClasificacionesService } from '../../Core/services/clasificaciones.service';
 import { TipodocumentoDTO } from '../../Core/models/TipodocumentoDTO';
 import { DoctocDTO } from '../../Core/models/DoctocDTO';
+import { DocumentoGetDTO } from '../../Core/models/DocumentoGetDTO';
 import { ClasificacionDTO } from '../../Core/models/ClasificacionDTO';
 import { MatSelectModule } from '@angular/material/select';
 import { ArchivoDTO, FiltroVerticalGetDTO, FiltroVerticalGetExtendidaDTO } from '../../Core/models/FiltroVerticalGetDTO';
 import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
 
+
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { PdfViewerComponent } from '../../Core/components/pdf-viewer/pdf-viewer.component';
+import { DoctosModalComponent } from '../../Core/components/doctos-modal/doctos-modal.component';
+
+
 @Component({
   selector: 'app-filtro-horizontal',
   standalone: true,
-  imports: [MatButtonModule, RouterLink,  MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule],
+  imports: [MatButtonModule, RouterLink,  MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule, MatDialogModule],
   templateUrl: './filtro-horizontal.component.html',
   styleUrl: './filtro-horizontal.component.css',
   providers: [
@@ -35,6 +43,9 @@ import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-ma
 })
 export class FiltroHorizontalComponent {
 
+  private dialog = inject(MatDialog); // Usa inject en lugar del constructor
+
+
   filtroVerticalService = inject(FiltroVerticalService);
   normasService = inject(NormasService);
   tipodocumentoService = inject(TipodocumentoService);
@@ -42,6 +53,9 @@ export class FiltroHorizontalComponent {
   //falta Oficinas service, despues del modulo de seguridad
   doctocsService = inject(DoctocsService);
   clasificacionesService = inject(ClasificacionesService);
+  documentosService = inject(DocumentosService);
+
+
 
 
   
@@ -81,7 +95,7 @@ export class FiltroHorizontalComponent {
     this.formulario.updateValueAndValidity();
   }
   
-  constructor(){}
+
 
   private formbuilder = inject(FormBuilder);
   
@@ -110,12 +124,7 @@ export class FiltroHorizontalComponent {
     });
   }
 
-  obtenerCategoriaPorId(idBuscar:number){
-    //const idBuscar: number = 1;
-    this.categoriasService.obtenerCategoriaPorId(idBuscar).subscribe(response => {
-      console.log(response);
-    });
-  }
+  
 
   aplicarFiltro() {
     if (this.formulario.valid) {
@@ -195,26 +204,52 @@ export class FiltroHorizontalComponent {
 
 
 
-  // Método para descargar el documento
-  /*
-  descargarDocumento(archivo: any) {
-    const link = document.createElement('a');
-    link.href = archivo.url; // La URL donde está el archivo
-    link.download = archivo.fileName; // El nombre que se mostrará al descargar
-    link.click(); // Simulamos el click para iniciar la descarga
-  }
-    */
-
   descargarDocumento(archivo: any) {
     this.filtroVerticalService.manejarDescargaArchivo(archivo);
   }
 
 
-  observar(id: number) {
+  observarDocumento(element: FiltroVerticalGetExtendidaDTO) {
+    if (element.archivo.contentType === 'application/pdf') {
+      const dialogRef = this.dialog.open(PdfViewerComponent, {
+        data: { url: element.urlArchivo },
+        panelClass: ['pdf-viewer-dialog', 'fullscreen-dialog'],
+        maxWidth: '100vw',
+        maxHeight: '100vh',
+        height: '100vh',
+        width: '100vw',
+      });
+    }
   }
 
+/*
+  mostrarRelaciones(id: number){
+    console.log(id);
+
+    this.documentosService.obtenerDocumentoPorId(id).subscribe(response => {
+      console.log(response);
+    });
+   
+  }
+    */
  
- 
+
+  doctosData: DoctocDTO[] = [];
+
+  mostrarRelaciones(id: number) {
+    this.documentosService.obtenerDocumentoPorId(id).subscribe(response => {
+      this.doctosData = response.doctos || [];
+      console.log(this.doctosData);
+      this.openModal();
+    });
+  }
+
+  openModal() {
+    this.dialog.open(DoctosModalComponent, {
+      data: this.doctosData,
+      width: '800px'
+    });
+  }
 
 
 
@@ -250,9 +285,6 @@ export class FiltroHorizontalComponent {
   // Otros ***************************************************************************************************
 
 
-  mostrarRelaciones(id: number){
-
-  }
 
   //no esta siendo utilizado
   obtenerCategoriasCargarTabla(){

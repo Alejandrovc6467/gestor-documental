@@ -195,9 +195,13 @@
                     <button (click)="descargarDocumento(element.urlArchivo)" class="boton_tabla">
                         <mat-icon name="pie-chart-outline">download</mat-icon>
                     </button>
-                    <button (click)="observar(element.id)" class="boton_tabla">
-                        <mat-icon name="pie-chart-outline">visibility</mat-icon>
-                    </button>
+                    @if(element.archivo.contentType === 'application/pdf'){
+                        <button (click)="observarDocumento(element)" class="boton_tabla">
+                            <mat-icon name="pie-chart-outline">visibility</mat-icon>
+                        </button>
+                    }@else {
+                        <span class="ntc">NTC</span>
+                    }
                 </div>
             </td>
         </ng-container>

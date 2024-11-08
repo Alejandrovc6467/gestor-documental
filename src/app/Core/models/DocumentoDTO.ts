@@ -17,6 +17,8 @@ export interface DocumentoDTO {
     activo: boolean;
     descargable: boolean;
     doctoID: number;
+    usuarioID: number;
+    oficinaUsuarioID: number;
 }
 
 
