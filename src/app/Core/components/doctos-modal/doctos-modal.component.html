@@ -1,23 +1,19 @@
 <!-- doctos-modal.component.html -->
- <div class="containerModalRelaciones">
-
-
+<div class="containerModalRelaciones">
     <div class="containerBotonCerrar">
         <button mat-button (click)="closeModal()">X</button><br><br>
     </div>
-  
 
     <h2 class="tituloModalRelaciones">Documentos relacionados</h2><br><br>
 
-   
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-        <ng-container matColumnDef="docto">
-            <th mat-header-cell *matHeaderCellDef> docto </th>
-            <td mat-cell *matCellDef="let element"> {{ element.docto }} </td>
+        <ng-container matColumnDef="doctoNombre">
+            <th mat-header-cell *matHeaderCellDef> Doctoc </th>
+            <td mat-cell *matCellDef="let element"> {{ element.doctoNombre }} </td>
         </ng-container>
 
         <ng-container matColumnDef="docRelacionado">
-            <th mat-header-cell *matHeaderCellDef> docRelacionado </th>
+            <th mat-header-cell *matHeaderCellDef> Doc relacionado </th>
             <td mat-cell *matCellDef="let element"> {{ element.docRelacionado }} </td>
         </ng-container>
 
@@ -29,7 +25,4 @@
         showFirstLastButtons
         aria-label="Select page of periodic elements">
     </mat-paginator>
-    
-
-
- </div>
+</div>

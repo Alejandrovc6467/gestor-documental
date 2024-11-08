@@ -24,6 +24,10 @@ import { ArchivoDTO, FiltroVerticalGetDTO, FiltroVerticalGetExtendidaDTO } from 
 import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
 import { MatDialog } from '@angular/material/dialog';
 import { PdfViewerComponent } from '../../Core/components/pdf-viewer/pdf-viewer.component';
+import { DocumentosService } from '../../Core/services/documentos.service';
+import { DoctosModalComponent } from '../../Core/components/doctos-modal/doctos-modal.component';
+import { OficinasService } from '../../Core/services/oficinas.service';
+import { OficinaDTO } from '../../Core/models/OficinaDTO';
 
 @Component({
   selector: 'app-filtro-horizontal-proceso',
@@ -45,9 +49,12 @@ export class FiltroHorizontalProcesoComponent {
   normasService = inject(NormasService);
   tipodocumentoService = inject(TipodocumentoService);
   categoriasService = inject(CategoriasService);
-  //falta Oficinas service, despues del modulo de seguridad
+  oficinasService = inject(OficinasService);
   doctocsService = inject(DoctocsService);
   clasificacionesService = inject(ClasificacionesService);
+  documentosService = inject(DocumentosService);
+
+
 
 
   
@@ -55,7 +62,7 @@ export class FiltroHorizontalProcesoComponent {
   listaTipoDocumentos! : TipodocumentoDTO[];
   listaDocumentos! : FiltroVerticalGetDTO[];
   listaCategorias! : CategoriaDTO[];
-  //falta oficinas
+  listaOficinas! : OficinaDTO[];
   listaDoctos! : DoctocDTO[];
   listaClasificaciones!: ClasificacionDTO[];
 
@@ -81,6 +88,7 @@ export class FiltroHorizontalProcesoComponent {
     this.obtenerTipoDocumentos();
     this.obtenerCategorias();
     this.obtenerNormas();
+    this.obtenerOficinas();
     this.obtenerClasificaciones();
     this.obtenerDoctos();
 
@@ -225,6 +233,24 @@ export class FiltroHorizontalProcesoComponent {
   }
 
 
+  doctosData: DoctocDTO[] = [];
+
+  mostrarRelaciones(id: number) {
+    this.documentosService.obtenerDocumentoPorId(id).subscribe(response => {
+      this.doctosData = response.doctos || [];
+      console.log(this.doctosData);
+      this.openModal();
+    });
+  }
+
+  openModal() {
+    this.dialog.open(DoctosModalComponent, {
+      data: this.doctosData,
+      width: '800px'
+    });
+  }
+
+
  
  
 
@@ -247,6 +273,13 @@ export class FiltroHorizontalProcesoComponent {
       this.listaNormas = response;
   })};
 
+  obtenerOficinas(){
+    this.oficinasService.obtenerOficinas().subscribe(response => {
+      this.listaOficinas = response;
+      console.log( this.listaOficinas);
+  })};
+
+
   obtenerClasificaciones(){
     this.clasificacionesService.obtenerClasificaciones().subscribe(response => {
       this.listaClasificaciones = response;
@@ -261,9 +294,6 @@ export class FiltroHorizontalProcesoComponent {
 
   // Otros ***************************************************************************************************
 
-  mostrarRelaciones(id: number){
-
-  }
 
 
   //no esta siendo utilizado
@@ -283,6 +313,7 @@ export class FiltroHorizontalProcesoComponent {
         const categoria = this.listaCategorias.find(cat => cat.id === documento.categoriaID);
         const tipoDocumento = this.listaTipoDocumentos.find(tipo => tipo.id === documento.tipoDocumento);
         const norma = this.listaNormas.find(nrm => nrm.id === documento.normaID);
+        const oficina = this.listaOficinas.find(ofi => ofi.id === documento.oficinaID);
         const clasificacion = this.listaClasificaciones.find(clas => clas.id === documento.clasificacionID);
         const docto = this.listaDoctos.find(doctoc => doctoc.id === documento.doctoId);
   
@@ -291,6 +322,7 @@ export class FiltroHorizontalProcesoComponent {
           categoriaNombre: categoria ? categoria.nombre : 'Sin Categoría',
           tipoDocumentoNombre: tipoDocumento ? tipoDocumento.nombre : 'Sin Tipo',
           normaNombre: norma ? norma.nombre : 'Sin Norma',
+          oficinaNombre: oficina ? oficina.nombre : 'Sin oficina',
           clasificacionNombre: clasificacion ? clasificacion.nombre : 'Sin Clasificación',
           doctoNombre: docto ? docto.nombre : 'Sin Docto' // Suponiendo que `nombre` está en DocumentoGetDTO
         };

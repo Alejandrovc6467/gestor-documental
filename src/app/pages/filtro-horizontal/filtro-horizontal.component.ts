@@ -29,6 +29,8 @@ import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-ma
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { PdfViewerComponent } from '../../Core/components/pdf-viewer/pdf-viewer.component';
 import { DoctosModalComponent } from '../../Core/components/doctos-modal/doctos-modal.component';
+import { OficinasService } from '../../Core/services/oficinas.service';
+import { OficinaDTO } from '../../Core/models/OficinaDTO';
 
 
 @Component({
@@ -50,7 +52,7 @@ export class FiltroHorizontalComponent {
   normasService = inject(NormasService);
   tipodocumentoService = inject(TipodocumentoService);
   categoriasService = inject(CategoriasService);
-  //falta Oficinas service, despues del modulo de seguridad
+  oficinasService = inject(OficinasService);
   doctocsService = inject(DoctocsService);
   clasificacionesService = inject(ClasificacionesService);
   documentosService = inject(DocumentosService);
@@ -63,7 +65,7 @@ export class FiltroHorizontalComponent {
   listaTipoDocumentos! : TipodocumentoDTO[];
   listaDocumentos! : FiltroVerticalGetDTO[];
   listaCategorias! : CategoriaDTO[];
-  //falta oficinas
+  listaOficinas! : OficinaDTO[];
   listaDoctos! : DoctocDTO[];
   listaClasificaciones!: ClasificacionDTO[];
 
@@ -90,6 +92,7 @@ export class FiltroHorizontalComponent {
     this.obtenerCategorias();
     this.obtenerNormas();
     this.obtenerClasificaciones();
+    this.obtenerOficinas();
     this.obtenerDoctos();
 
     this.formulario.updateValueAndValidity();
@@ -211,6 +214,7 @@ export class FiltroHorizontalComponent {
 
   observarDocumento(element: FiltroVerticalGetExtendidaDTO) {
     if (element.archivo.contentType === 'application/pdf') {
+      console.log(element.urlArchivo);
       const dialogRef = this.dialog.open(PdfViewerComponent, {
         data: { url: element.urlArchivo },
         panelClass: ['pdf-viewer-dialog', 'fullscreen-dialog'],
@@ -222,17 +226,6 @@ export class FiltroHorizontalComponent {
     }
   }
 
-/*
-  mostrarRelaciones(id: number){
-    console.log(id);
-
-    this.documentosService.obtenerDocumentoPorId(id).subscribe(response => {
-      console.log(response);
-    });
-   
-  }
-    */
- 
 
   doctosData: DoctocDTO[] = [];
 
@@ -263,6 +256,13 @@ export class FiltroHorizontalComponent {
   obtenerCategorias(){
     this.categoriasService.obtenerCategorias().subscribe(response => {
       this.listaCategorias = response;
+  })};
+
+
+  obtenerOficinas(){
+    this.oficinasService.obtenerOficinas().subscribe(response => {
+      this.listaOficinas = response;
+      console.log( this.listaOficinas);
   })};
 
   obtenerNormas(){
@@ -304,6 +304,7 @@ export class FiltroHorizontalComponent {
         const tipoDocumento = this.listaTipoDocumentos.find(tipo => tipo.id === documento.tipoDocumento);
         const norma = this.listaNormas.find(nrm => nrm.id === documento.normaID);
         const clasificacion = this.listaClasificaciones.find(clas => clas.id === documento.clasificacionID);
+        const oficina = this.listaOficinas.find(ofi => ofi.id === documento.oficinaID);
         const docto = this.listaDoctos.find(doctoc => doctoc.id === documento.doctoId);
   
         return {
@@ -311,8 +312,9 @@ export class FiltroHorizontalComponent {
           categoriaNombre: categoria ? categoria.nombre : 'Sin Categoría',
           tipoDocumentoNombre: tipoDocumento ? tipoDocumento.nombre : 'Sin Tipo',
           normaNombre: norma ? norma.nombre : 'Sin Norma',
+          oficinaNombre: oficina ? oficina.nombre : 'Sin oficina',
+          doctoNombre: docto ? docto.nombre : 'Sin Docto',
           clasificacionNombre: clasificacion ? clasificacion.nombre : 'Sin Clasificación',
-          doctoNombre: docto ? docto.nombre : 'Sin Docto' // Suponiendo que `nombre` está en DocumentoGetDTO
         };
       });
 

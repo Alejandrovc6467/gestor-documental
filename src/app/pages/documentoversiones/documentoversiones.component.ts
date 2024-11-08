@@ -21,6 +21,9 @@ import { MatRadioModule } from '@angular/material/radio';
 import { DocumentoGetDTO } from '../../Core/models/DocumentoGetDTO';
 import { DatePipe } from '@angular/common';
 import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
+import { FiltroVerticalGetExtendidaDTO } from '../../Core/models/FiltroVerticalGetDTO';
+import { PdfViewerComponent } from 'ng2-pdf-viewer';
+import { MatDialog } from '@angular/material/dialog';
 
 
 
@@ -40,6 +43,7 @@ export class DocumentoversionesComponent implements OnInit  {
   @Input({transform: numberAttribute})
   id!: number;
 
+  private dialog = inject(MatDialog); // Usa inject en lugar del constructor
 
 
 
@@ -275,6 +279,22 @@ export class DocumentoversionesComponent implements OnInit  {
   
 
   // Otros *******************************************************************************************
+
+  //en le html voy a pasar element.urlArchivo  y aqui tengo que quitar ese if deporsi ya se que siempre es un pdf por la validacione en el front
+  observarDocumento(element: FiltroVerticalGetExtendidaDTO) {
+    if (element.archivo.contentType === 'application/pdf') {
+      console.log(element.urlArchivo);
+      const dialogRef = this.dialog.open(PdfViewerComponent, {
+        data: { url: element.urlArchivo },
+        panelClass: ['pdf-viewer-dialog', 'fullscreen-dialog'],
+        maxWidth: '100vw',
+        maxHeight: '100vh',
+        height: '100vh',
+        width: '100vw',
+      });
+    }
+  }
+
 
   obtenerVersionesCargarTabla(){
     this.versionesService.obtenerVersionesPorId(this.id).subscribe(response => {

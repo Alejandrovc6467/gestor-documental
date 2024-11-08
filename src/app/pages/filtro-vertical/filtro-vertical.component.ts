@@ -26,6 +26,10 @@ import { ArchivoDTO, FiltroVerticalGetDTO, FiltroVerticalGetExtendidaDTO } from 
 import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
 import { PdfViewerComponent } from '../../Core/components/pdf-viewer/pdf-viewer.component';
 import { MatDialog } from '@angular/material/dialog';
+import { DocumentosService } from '../../Core/services/documentos.service';
+import { DoctosModalComponent } from '../../Core/components/doctos-modal/doctos-modal.component';
+import { OficinaDTO } from '../../Core/models/OficinaDTO';
+import { OficinasService } from '../../Core/services/oficinas.service';
 
 @Component({
   selector: 'app-filtro-vertical',
@@ -46,9 +50,10 @@ export class FiltroVerticalComponent {
   normasService = inject(NormasService);
   tipodocumentoService = inject(TipodocumentoService);
   categoriasService = inject(CategoriasService);
-  //falta Oficinas service, despues del modulo de seguridad
+  oficinasService = inject(OficinasService);
   doctocsService = inject(DoctocsService);
   clasificacionesService = inject(ClasificacionesService);
+  documentosService = inject(DocumentosService);
 
 
   
@@ -56,7 +61,7 @@ export class FiltroVerticalComponent {
   listaTipoDocumentos! : TipodocumentoDTO[];
   listaDocumentos! : FiltroVerticalGetDTO[];
   listaCategorias! : CategoriaDTO[];
-  //falta oficinas
+  listaOficinas! : OficinaDTO[];
   listaDoctos! : DoctocDTO[];
   listaClasificaciones!: ClasificacionDTO[];
 
@@ -82,6 +87,7 @@ export class FiltroVerticalComponent {
     this.obtenerTipoDocumentos();
     this.obtenerCategorias();
     this.obtenerNormas();
+    this.obtenerOficinas();
     this.obtenerClasificaciones();
     this.obtenerDoctos();
 
@@ -202,15 +208,7 @@ export class FiltroVerticalComponent {
 
 
 
-  // Método para descargar el documento
-  /*
-  descargarDocumento(archivo: any) {
-    const link = document.createElement('a');
-    link.href = archivo.url; // La URL donde está el archivo
-    link.download = archivo.fileName; // El nombre que se mostrará al descargar
-    link.click(); // Simulamos el click para iniciar la descarga
-  }
-    */
+
 
   descargarDocumento(urlArchivo: any) {
  
@@ -218,7 +216,35 @@ export class FiltroVerticalComponent {
   }
 
 
-  observar(id: number) {
+  observarDocumento(element: FiltroVerticalGetExtendidaDTO) {
+    if (element.archivo.contentType === 'application/pdf') {
+      const dialogRef = this.dialog.open(PdfViewerComponent, {
+        data: { url: element.urlArchivo },
+        panelClass: ['pdf-viewer-dialog', 'fullscreen-dialog'],
+        maxWidth: '100vw',
+        maxHeight: '100vh',
+        height: '100vh',
+        width: '100vw',
+      });
+    }
+  }
+
+
+  doctosData: DoctocDTO[] = [];
+
+  mostrarRelaciones(id: number) {
+    this.documentosService.obtenerDocumentoPorId(id).subscribe(response => {
+      this.doctosData = response.doctos || [];
+      console.log(this.doctosData);
+      this.openModal();
+    });
+  }
+
+  openModal() {
+    this.dialog.open(DoctosModalComponent, {
+      data: this.doctosData,
+      width: '800px'
+    });
   }
 
  
@@ -236,6 +262,12 @@ export class FiltroVerticalComponent {
   obtenerCategorias(){
     this.categoriasService.obtenerCategorias().subscribe(response => {
       this.listaCategorias = response;
+  })};
+
+  obtenerOficinas(){
+    this.oficinasService.obtenerOficinas().subscribe(response => {
+      this.listaOficinas = response;
+      console.log( this.listaOficinas);
   })};
 
   obtenerNormas(){
@@ -258,23 +290,7 @@ export class FiltroVerticalComponent {
   // Otros ***************************************************************************************************
 
   
-  mostrarRelaciones(id: number){
-
-  }
-
-
-  observarDocumento(element: FiltroVerticalGetExtendidaDTO) {
-    if (element.archivo.contentType === 'application/pdf') {
-      const dialogRef = this.dialog.open(PdfViewerComponent, {
-        data: { url: element.urlArchivo },
-        panelClass: ['pdf-viewer-dialog', 'fullscreen-dialog'],
-        maxWidth: '100vw',
-        maxHeight: '100vh',
-        height: '100vh',
-        width: '100vw',
-      });
-    }
-  }
+  
 
   //no esta siendo utilizado
   obtenerCategoriasCargarTabla(){
@@ -293,6 +309,7 @@ export class FiltroVerticalComponent {
         const categoria = this.listaCategorias.find(cat => cat.id === documento.categoriaID);
         const tipoDocumento = this.listaTipoDocumentos.find(tipo => tipo.id === documento.tipoDocumento);
         const norma = this.listaNormas.find(nrm => nrm.id === documento.normaID);
+        const oficina = this.listaOficinas.find(ofi => ofi.id === documento.oficinaID);
         const clasificacion = this.listaClasificaciones.find(clas => clas.id === documento.clasificacionID);
         const docto = this.listaDoctos.find(doctoc => doctoc.id === documento.doctoId);
   
@@ -301,6 +318,7 @@ export class FiltroVerticalComponent {
           categoriaNombre: categoria ? categoria.nombre : 'Sin Categoría',
           tipoDocumentoNombre: tipoDocumento ? tipoDocumento.nombre : 'Sin Tipo',
           normaNombre: norma ? norma.nombre : 'Sin Norma',
+          oficinaNombre: oficina ? oficina.nombre : 'Sin oficina',
           clasificacionNombre: clasificacion ? clasificacion.nombre : 'Sin Clasificación',
           doctoNombre: docto ? docto.nombre : 'Sin Docto' // Suponiendo que `nombre` está en DocumentoGetDTO
         };

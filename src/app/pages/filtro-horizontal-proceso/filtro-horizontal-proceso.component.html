@@ -111,7 +111,7 @@
                   
                 <ng-container matColumnDef="oficina">
                     <th mat-header-cell *matHeaderCellDef> Oficina </th>
-                    <td mat-cell *matCellDef="let element"> {{element.oficinaID}} </td>
+                    <td mat-cell *matCellDef="let element"> {{element.oficinaNombre}} </td>
                 </ng-container>
 
 
@@ -119,7 +119,7 @@
                     <th mat-header-cell *matHeaderCellDef></th>
                     <td mat-cell *matCellDef="let element"> 
                         <div class="acciones-container-botones">
-                            <button (click)="mostrarRelaciones(element.documentoID)" class="boton_tabla">
+                            <button (click)="mostrarRelaciones(element.id)" class="boton_tabla">
                                 <mat-icon name="pie-chart-outline">folder</mat-icon>
                             </button>
                         </div>

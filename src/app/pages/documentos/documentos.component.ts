@@ -37,6 +37,8 @@ import { RelacionDocumentoDTO } from '../../Core/models/RelacionDocumentoDTO';
 import { DocumentoDTO } from '../../Core/models/DocumentoDTO';
 import { DocumentoGetDTO, DocumentoGetExtendidaDTO } from '../../Core/models/DocumentoGetDTO';
 import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
+import { OficinasService } from '../../Core/services/oficinas.service';
+import { OficinaDTO } from '../../Core/models/OficinaDTO';
 
 
 
@@ -58,7 +60,7 @@ export class DocumentosComponent implements OnInit {
   categoriasService = inject(CategoriasService);
   normasService = inject(NormasService);
   etapasService = inject(EtapasService);
-  //falta Oficinas service, despues del modulo de seguridad
+  oficinasService = inject(OficinasService);
   doctocsService = inject(DoctocsService);
   clasificacionesService = inject(ClasificacionesService);
   subclasificacionesService = inject(SubclasificacionesService);
@@ -68,6 +70,7 @@ export class DocumentosComponent implements OnInit {
   listaTipoDocumentos! : TipodocumentoDTO[];
   listaCategorias! : CategoriaDTO[];
   listaNormas! : CategoriaDTO[];
+  listaOficinas! : OficinaDTO[];
   listaEtapasPorId! : EtapaDTO[];
   listaEtapas! : EtapaDTO[];
   listaDoctos! : DoctocDTO[];
@@ -103,6 +106,7 @@ export class DocumentosComponent implements OnInit {
     this.obtenerTipoDocumentos();
     this.obtenerCategorias();
     this.obtenerNormas();
+    this.obtenerOficinas();
     this.obtenerDoctos();
     this.obtenerEtapas();
     this.obtenerSubClasificaciones();
@@ -310,6 +314,12 @@ export class DocumentosComponent implements OnInit {
       this.listaNormas = response;
   })};
 
+  obtenerOficinas(){
+    this.oficinasService.obtenerOficinas().subscribe(response => {
+      this.listaOficinas = response;
+      console.log( this.listaOficinas);
+  })};
+
   onNormaChange(normaId: number) {
     this.obtenerEtapasPorId(normaId);
   };
@@ -430,6 +440,7 @@ export class DocumentosComponent implements OnInit {
           const tipoDocumento = this.listaTipoDocumentos.find(tipo => tipo.id === documento.tipoDocumento);
           const etapa = this.listaEtapas.find(etp => etp.id === documento.etapaID);
           const norma = this.listaNormas.find(nrm => nrm.id === documento.normaID);
+          const oficina = this.listaOficinas.find(ofi => ofi.id === documento.oficinaID);
           const clasificacion = this.listaClasificaciones.find(clas => clas.id === documento.clasificacionID);
           const subClasificacion = this.listaSubClasificaciones.find(sub => sub.id === documento.subClasificacionID);
           const docto = this.listaDoctos.find(doctoc => doctoc.id === documento.doctoId);
@@ -440,6 +451,7 @@ export class DocumentosComponent implements OnInit {
             tipoDocumentoNombre: tipoDocumento ? tipoDocumento.nombre : 'Sin Tipo',
             etapaNombre: etapa ? etapa.nombre : 'Sin Etapa',
             normaNombre: norma ? norma.nombre : 'Sin Norma',
+            oficinaNombre: oficina ? oficina.nombre : 'Sin oficina',
             clasificacionNombre: clasificacion ? clasificacion.nombre : 'Sin Clasificación',
             subClasificacionNombre: subClasificacion ? subClasificacion.nombre : 'Sin Subclasificación',
             doctoNombre: docto ? docto.nombre : 'Sin Docto' // Suponiendo que `nombre` está en DocumentoGetDTO

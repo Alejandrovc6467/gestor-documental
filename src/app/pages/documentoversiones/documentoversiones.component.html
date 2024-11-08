@@ -76,7 +76,7 @@
 
 
             <div class="checkbox-group">
-                <mat-checkbox formControlName="docDinamico">Doc. Dinamico</mat-checkbox>
+                <mat-checkbox formControlName="docDinamico">Doc. Dinámico</mat-checkbox>
                 <mat-checkbox formControlName="obsoleto">Obsoleto</mat-checkbox>
             </div>
 
@@ -131,7 +131,13 @@
                         <mat-icon name="pie-chart-outline">delete</mat-icon>
                     </button>
 
-                    <button class="boton_tabla"  >  <mat-icon name="pie-chart-outline">visibility</mat-icon>  </button>
+                    @if(element.archivo.contentType === 'application/pdf'){
+                        <button (click)="observarDocumento(element)" class="boton_tabla">
+                            <mat-icon name="pie-chart-outline">visibility</mat-icon>
+                        </button>
+                    }@else {
+                        <span class="ntc">NTC</span>
+                    }
                 </div>
             </td>
         </ng-container>
