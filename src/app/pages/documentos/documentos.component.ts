@@ -40,13 +40,14 @@ import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-ma
 import { OficinasService } from '../../Core/services/oficinas.service';
 import { OficinaDTO } from '../../Core/models/OficinaDTO';
 import { EliminarDTO } from '../../Core/models/EliminarDTO';
+import { PalabrasClaveComponent } from '../../Core/components/palabras-clave/palabras-clave.component';
 
 
 
 @Component({
   selector: 'app-documentos',
   standalone: true,
-  imports: [RouterLink, MatButtonModule,  MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule, MatCheckboxModule, MatRadioModule ],
+  imports: [RouterLink, MatButtonModule,  MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule, MatCheckboxModule, MatRadioModule, PalabrasClaveComponent ],
   templateUrl: './documentos.component.html',
   styleUrl: './documentos.component.css',
   providers: [
@@ -55,6 +56,7 @@ import { EliminarDTO } from '../../Core/models/EliminarDTO';
 })
 export class DocumentosComponent implements OnInit {
 
+  @ViewChild(PalabrasClaveComponent) palabrasClaveComponent!: PalabrasClaveComponent;
  
 
   tipodocumentoService = inject(TipodocumentoService);
@@ -82,6 +84,9 @@ export class DocumentosComponent implements OnInit {
 
   //lista para relacionar Documentos
   doctos: { docto: number, docRelacionado: string }[] = [];
+  //lista para almacenar palbras clave
+  palabrasClave: string[] = [];
+
 
 
   //tabla Relaciones
@@ -91,7 +96,7 @@ export class DocumentosComponent implements OnInit {
 
   //tablaDocumentos
   listaDocumentosDataSource = new MatTableDataSource<DocumentoGetExtendidaDTO>([]);
-  displayedColumns: string[] = [ 'acciones', 'categoria', 'tipo', 'etapa', 'norma','codigo', 'nombre' , 'version', 'oficina',  'docto' , 'clasificacion', 'subclasificacion',  'vigencia' ];
+  displayedColumns: string[] = [ 'acciones', 'categoria', 'tipo', 'etapa', 'norma','codigo', 'nombre' , 'version', 'oficina', 'etiquetas',  'docto' , 'clasificacion', 'subclasificacion',  'vigencia' ];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   textoBuscar: string = "";
@@ -133,8 +138,7 @@ export class DocumentosComponent implements OnInit {
     doctoID: [0],
     clasificacionID: [''],
     subClasificacionID: [0],
-    vigencia: [''],
-    palabraClave: ['']
+    vigencia: ['']
   });
 
 
@@ -168,7 +172,9 @@ export class DocumentosComponent implements OnInit {
 
     //const documentoData = this.formulario.value as DocumentoDTO;
 
-    const palabrasClave: string[] = ["Nesesario", "importante", "oficina", "proyecto", "revisión"];
+    //const palabrasClave: string[] = ["Nesesario", "importante", "oficina", "proyecto", "revisión"];
+
+    const palabrasClave = this.palabrasClaveComponent.getPalabrasClave();
 
     
     const documento: DocumentoDTO = {
@@ -177,7 +183,7 @@ export class DocumentosComponent implements OnInit {
       codigo: this.formulario.value.codigo?.toString()|| '',
       asunto:this.formulario.value.asunto?.toString()|| '',
       descripcion: this.formulario.value.descripcion?.toString() || '',
-      palabraClave: palabrasClave || '',
+      palabraClave: palabrasClave || '',   //antes era this.palabrasClave
       categoriaID: this.formulario.value.categoriaID || 0,
       tipoDocumento: this.formulario.value.tipoDocumento || 0,
       oficinaID: this.formulario.value.oficinaID || 0,
@@ -203,6 +209,7 @@ export class DocumentosComponent implements OnInit {
     console.log(documento);
 
     
+    
     this.documentosService.crearDocumento(documento).subscribe({
       next: (response) => {
         console.log(response);
@@ -223,10 +230,12 @@ export class DocumentosComponent implements OnInit {
         Swal.fire('Error', 'Hubo un problema al crear el documento', 'error');
       }
     });
+
+    
     
   }
 
-  actualizarCategoria() {
+  actualizarDocumento() {
     /*
     if (!this.categoriaSeleccionada) return;
       const categoriaActualizada: CategoriaDTO = {
@@ -338,14 +347,13 @@ export class DocumentosComponent implements OnInit {
   obtenerOficinas(){
     this.oficinasService.obtenerOficinas().subscribe(response => {
       this.listaOficinas = response;
-      console.log( this.listaOficinas);
   })};
 
   onNormaChange(normaId: number) {
     this.obtenerEtapasPorId(normaId);
   };
 
-  // Método para obtener las etapas filtradas por normmas (Al momento de elegir una norma)
+
   obtenerEtapasPorId(normaId: number) {
     this.etapasService.obtenerEtapas().subscribe(response => {
       this.listaEtapasPorId = response.filter(etapa => etapa.normaID === normaId);
@@ -371,7 +379,7 @@ export class DocumentosComponent implements OnInit {
     this.obtenerSubClasificacionesPorId(clasificacionId);
   };
 
-  // Método para obtener las subclasificaciones filtradas por clasificación (Al momento de elegir una clasificacion)
+
   obtenerSubClasificacionesPorId(clasificacionId: number) {
     this.subclasificacionesService.obtenerSubclasificaciones().subscribe(response => {
       this.listaSubClasificacionesPorId = response.filter(subclasificacion => subclasificacion.clasificacionID === clasificacionId);
@@ -436,10 +444,52 @@ export class DocumentosComponent implements OnInit {
     }
   }
   
+
+  /*******************************************  Agregar palabras Clave  ******************************************************************/
  
-
-
-
+  /*
+  agregarPalabraClave(inputPalabra: HTMLInputElement) {
+    const palabra = inputPalabra.value;
+    console.log(palabra);  // Imprimir en consola
+    inputPalabra.value = '';  // Limpiar el campo
+    this.palabrasClave.push(palabra);
+    console.log(this.palabrasClave);
+    this.cargarPalabrasClaveEnHtml();  // Cargar palabras clave en el HTML
+  }
+  
+  cargarPalabrasClaveEnHtml() {
+    const contenedorPalabras = document.getElementById('contenedorPalabras') as HTMLElement;
+    
+    // Limpiar el contenedor solo si se hace de manera controlada
+    contenedorPalabras.innerHTML = '';  // Limpiar todo el contenido del contenedor
+  
+    // Solo agregamos las palabras del array de palabras clave
+    this.palabrasClave.forEach((palabra, index) => {
+      const palabraElemento = document.createElement('div');
+      palabraElemento.classList.add('palabra-clave'); // Clase para el estilo
+      
+      // Crear el texto de la palabra
+      const textoPalabra = document.createElement('span');
+      textoPalabra.textContent = palabra;
+      palabraElemento.appendChild(textoPalabra);
+      
+      // Crear la X para eliminar la palabra
+      const botonEliminar = document.createElement('button');
+      botonEliminar.textContent = 'X';
+      botonEliminar.classList.add('eliminar-palabra');
+      botonEliminar.addEventListener('click', () => this.eliminarPalabra(index));
+      palabraElemento.appendChild(botonEliminar);
+      
+      contenedorPalabras.appendChild(palabraElemento);  // Agregar la etiqueta al contenedor
+    });
+  }
+  
+  eliminarPalabra(index: number) {
+    this.palabrasClave.splice(index, 1);  // Eliminar la palabra del array
+    this.cargarPalabrasClaveEnHtml();  // Actualizar el HTML
+  }
+  */
+  
 
   // Otros ***********************************************************************************
 
@@ -447,6 +497,7 @@ export class DocumentosComponent implements OnInit {
     this.documentosService.obtenerDocumentos().subscribe(response => {
       this.listaDocumentos = response;
       this.setTable(this.listaDocumentos);
+      console.log(this.listaDocumentos);
     });
   }
 

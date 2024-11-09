@@ -280,7 +280,8 @@ export class DocumentoversionesComponent implements OnInit  {
 
   // Otros *******************************************************************************************
 
-  //en le html voy a pasar element.urlArchivo  y aqui tengo que quitar ese if deporsi ya se que siempre es un pdf por la validacione en el front
+  // en le html voy a pasar element.urlArchivo  y aqui tengo que quitar ese if deporsi ya se que siempre es un pdf por la validacione en el front
+  // ademas agregar el nuevo atributo en VersionDTO
   observarDocumento(element: FiltroVerticalGetExtendidaDTO) {
     if (element.archivo.contentType === 'application/pdf') {
       console.log(element.urlArchivo);

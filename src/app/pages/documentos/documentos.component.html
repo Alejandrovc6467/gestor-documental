@@ -188,12 +188,19 @@
             </div>
 
 
+            <!-- En tu template principal -->
+            <app-palabras-clave></app-palabras-clave>
+
+
+            <!--
             <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Palabras clave</mat-label>
-                <input matInput formControlName="palabraClave">
+                <input matInput #inputPalabra (keyup.enter)="agregarPalabraClave(inputPalabra)">
                 <mat-error>{{obtenerErrorNombre()}}</mat-error>
             </mat-form-field>
 
+            <div id="contenedorPalabras"></div>
+            -->
 
 
 
@@ -306,7 +313,7 @@
             <div class="contenedor_boton">
                
                 @if(estaEditando){
-                    <button mat-flat-button type="button" class="boton_amarillo" (click)="actualizarCategoria()" [disabled]="formulario.invalid"> <mat-icon name="pie-chart-outline" class="nav__icon">edit</mat-icon>Editar </button>
+                    <button mat-flat-button type="button" class="boton_amarillo" (click)="actualizarDocumento()" [disabled]="formulario.invalid"> <mat-icon name="pie-chart-outline" class="nav__icon">edit</mat-icon>Editar </button>
                     <button mat-flat-button type="button" class="boton_amarillo" (click)="cancelarEdicion()"> <mat-icon name="pie-chart-outline" class="nav__icon">cancel</mat-icon> Cancelar </button>
                 }@else {
                     <button mat-flat-button type="button"  class="boton_amarillo" (click)="limpiarFormulario()"> <mat-icon name="pie-chart-outline" class="nav__icon">cleaning_services</mat-icon>Limpiar</button>
@@ -385,6 +392,12 @@
         <ng-container matColumnDef="oficina">
             <th mat-header-cell *matHeaderCellDef> Oficina </th>
             <td mat-cell *matCellDef="let element"> {{element.oficinaNombre}} </td>
+        </ng-container>
+
+
+        <ng-container matColumnDef="etiquetas">
+            <th mat-header-cell *matHeaderCellDef> Etiquetas </th>
+            <td mat-cell *matCellDef="let element"> {{element.palabraClave}} </td>
         </ng-container>
 
 
