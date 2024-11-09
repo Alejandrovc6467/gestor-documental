@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { TipodocumentoDTO } from '../models/TipodocumentoDTO';
+import { EliminarDTO } from '../models/EliminarDTO';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -31,10 +32,10 @@ export class TipodocumentoService {
     return this.http.put(this.urlBase, tipodocumento);
   }
 
-  public eliminarTipodocumento(id:number){
-    return this.http.delete(`${this.urlBase}/${id}`);
-  }
 
+  public eliminarTipodocumento(eliminarDTO: EliminarDTO): Observable<any> {
+    return this.http.delete(this.urlBase, { body: eliminarDTO });
+  }
 
 
 }

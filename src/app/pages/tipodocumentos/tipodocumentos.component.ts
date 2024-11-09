@@ -13,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
+import { EliminarDTO } from '../../Core/models/EliminarDTO';
 
 
 
@@ -156,11 +157,27 @@ export class TipodocumentosComponent implements OnInit  {
      
     }).then((result) => {
         if (result.isConfirmed) {
+
+          const eliminarDTO:  EliminarDTO = {
+            objetoID: idEliminar,
+            usuarioID: 1,// esto sale del local
+            oficinaID: 1// y este
+          };
+
+          console.log(eliminarDTO);
+
             // Si el usuario confirma, proceder con la eliminación
-            this.tipodocumentoService.eliminarTipodocumento(idEliminar).subscribe(response => {
+            this.tipodocumentoService.eliminarTipodocumento(eliminarDTO).subscribe(response => {
                 console.log(response);
-                this.obtenerCategoriasCargarTabla();
-                Swal.fire('Eliminado!', 'El tipo de documento ha sido eliminado.', 'success');
+
+                if(response){
+                  this.obtenerCategoriasCargarTabla();
+                  Swal.fire('Eliminado!', 'El tipo de documento ha sido eliminado.', 'success');
+                }else{
+                  Swal.fire('Error!', 'El tipo de documento no ha sido eliminado.', 'error');
+                }
+
+              
             });
         }
     });

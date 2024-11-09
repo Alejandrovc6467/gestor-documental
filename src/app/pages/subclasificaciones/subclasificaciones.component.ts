@@ -18,6 +18,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
+import { EliminarDTO } from '../../Core/models/EliminarDTO';
 
 
 
@@ -103,10 +104,15 @@ export class SubclasificacionesComponent implements OnInit {
   
       this.subclasificaionesService.crearSubclasificacion(categoria).subscribe(response => {
         console.log(response);
-        this.obtenerCategoriasCargarTabla();
-        this.formulario.reset();
-        this.limpiarErroresFormulario();
-        Swal.fire('Creada!', 'La categoría ha sido creada.', 'success');
+        if(response){
+          this.obtenerCategoriasCargarTabla();
+          this.formulario.reset();
+          this.limpiarErroresFormulario();
+          Swal.fire('Creada!', 'La subclasificación ha sido creada.', 'success');
+        }else{
+          Swal.fire('Error!', 'La subclasificación no ha sido creada.', 'error');
+        }
+       
       });
 
     }
@@ -131,10 +137,15 @@ export class SubclasificacionesComponent implements OnInit {
       console.log(this.subclasificaionSeleccionada);
       this.subclasificaionesService.actualizarSubclasificacion(subclasificacionActualizada).subscribe(response => {
         console.log(response);
-        this.obtenerCategoriasCargarTabla();
-        this.cancelarEdicion();
-        this.limpiarErroresFormulario();
-        Swal.fire('Editada!', 'La categoría ha sido editada.', 'success');
+        if(response){
+          this.obtenerCategoriasCargarTabla();
+          this.cancelarEdicion();
+          this.limpiarErroresFormulario();
+          Swal.fire('Editada!', 'La subclasificación ha sido editada.', 'success');
+        }else{
+          Swal.fire('Error!', 'La subclasificación no ha sido editada.', 'error');
+        }
+       
       });
   }
 
@@ -175,11 +186,24 @@ export class SubclasificacionesComponent implements OnInit {
      
     }).then((result) => {
         if (result.isConfirmed) {
+
+
+          const eliminarDTO:  EliminarDTO = {
+            objetoID: idEliminar,
+            usuarioID: 1,// esto sale del local
+            oficinaID: 1// y este
+          };
+
             // Si el usuario confirma, proceder con la eliminación
-            this.subclasificaionesService.eliminarSubclasificacion(idEliminar).subscribe(response => {
+            this.subclasificaionesService.eliminarSubclasificacion(eliminarDTO).subscribe(response => {
                 console.log(response);
-                this.obtenerCategoriasCargarTabla();
-                Swal.fire('Eliminado!', 'La Subclasificación ha sido eliminada.', 'success');
+                if(response){
+                  this.obtenerCategoriasCargarTabla();
+                  Swal.fire('Eliminado!', 'La Subclasificación ha sido eliminada.', 'success');
+                }else{
+                  Swal.fire('Error!', 'La Subclasificación no ha sido eliminada.', 'error');
+                }
+               
             });
         }
     });

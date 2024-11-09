@@ -13,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
+import { EliminarDTO } from '../../Core/models/EliminarDTO';
 
 
 
@@ -156,11 +157,24 @@ export class ClasificacionesComponent implements OnInit {
      
     }).then((result) => {
         if (result.isConfirmed) {
+
+
+          const eliminarDTO:  EliminarDTO = {
+            objetoID: idEliminar,
+            usuarioID: 1,// esto sale del local
+            oficinaID: 1// y este
+          };
+
             // Si el usuario confirma, proceder con la eliminación
-            this.clasificacionesService.eliminarClasificacion(idEliminar).subscribe(response => {
+            this.clasificacionesService.eliminarClasificacion(eliminarDTO).subscribe(response => {
                 console.log(response);
-                this.obtenerCategoriasCargarTabla();
-                Swal.fire('Eliminado!', 'La clasificación ha sido eliminada.', 'success');
+                if(response){
+                  this.obtenerCategoriasCargarTabla();
+                  Swal.fire('Eliminado!', 'La clasificación ha sido eliminada.', 'success');
+                }else{
+                  Swal.fire('Error!', 'La clasificación no ha sido eliminada.', 'error');
+                }
+               
             });
         }
     });

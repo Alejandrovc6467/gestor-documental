@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { DoctocDTO } from '../models/DoctocDTO';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { EliminarDTO } from '../models/EliminarDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -31,8 +32,9 @@ export class DoctocsService {
     return this.http.put(this.urlBase, doctoc);
   }
 
-  public eliminarDoctoc(id:number){
-    return this.http.delete(`${this.urlBase}/${id}`);
+ 
+  public eliminarDoctoc(eliminarDTO: EliminarDTO): Observable<any> {
+    return this.http.delete(this.urlBase, { body: eliminarDTO });
   }
 
 }

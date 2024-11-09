@@ -165,29 +165,35 @@ export class DocumentosComponent implements OnInit {
       return;
     }
 
-    const documentoData = this.formulario.value as DocumentoDTO;
+    //const documentoData = this.formulario.value as DocumentoDTO;
+
+    const palabrasClave: string[] = ["Nesesario", "importante", "oficina", "proyecto", "revisión"];
+
     
     const documento: DocumentoDTO = {
-      ...documentoData,
+    
       id: 0, // Asumiendo que el ID se asigna en el backend
-      codigo: documentoData.codigo?.toString() || '',
-      asunto: documentoData.asunto?.toString() || '',
-      descripcion: documentoData.descripcion?.toString() || '',
-      palabraClave: documentoData.palabraClave || '',
-      categoriaID: documentoData.categoriaID || 0,
-      tipoDocumento: documentoData.tipoDocumento || 0,
-      oficinaID: documentoData.oficinaID || 0,
-      vigencia: documentoData.vigencia?.toString() || '',
-      etapaID: documentoData.etapaID || 0,
-      subClasificacionID: documentoData.subClasificacionID || 0,
+      codigo: this.formulario.value.codigo?.toString()|| '',
+      asunto:this.formulario.value.asunto?.toString()|| '',
+      descripcion: this.formulario.value.descripcion?.toString() || '',
+      palabraClave: palabrasClave || '',
+      categoriaID: this.formulario.value.categoriaID || 0,
+      tipoDocumento: this.formulario.value.tipoDocumento || 0,
+      oficinaID: this.formulario.value.oficinaID || 0,
+      vigencia: this.formulario.value.vigencia?.toString() || '',
+      etapaID: this.formulario.value.etapaID || 0,
+      subClasificacionID: this.formulario.value.subClasificacionID || 0,
       doctos: this.doctos,
    
       // Asegúrate de que estos campos estén presentes y con el tipo correcto
-      activo: documentoData.activo || false,
-      descargable: documentoData.descargable || false,
-      doctoID: documentoData.doctoID || 0,
+      activo: this.formulario.value.activo || false,
+      descargable: this.formulario.value.descargable || false,
+      doctoId: this.formulario.value.doctoID || 0,
       usuarioID: 1,
-      oficinaUsuarioID: 1
+      oficinaUsuarioID: 1,
+      clasificacionID:1,
+      normaID:1,
+      versionID:1
     };
 
     //usuarioID y oficinaUsuarioID los tomo del localStorage

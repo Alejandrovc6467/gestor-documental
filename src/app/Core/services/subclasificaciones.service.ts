@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { SubclasificacionDTO } from '../models/SubclasificacionDTO';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { EliminarDTO } from '../models/EliminarDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -30,8 +31,9 @@ export class SubclasificacionesService {
     return this.http.put(this.urlBase, subclasificacion);
   }
 
-  public eliminarSubclasificacion(id:number){
-    return this.http.delete(`${this.urlBase}/${id}`);
+
+  public eliminarSubclasificacion(eliminarDTO: EliminarDTO): Observable<any> {
+    return this.http.delete(this.urlBase, { body: eliminarDTO });
   }
 
 }
