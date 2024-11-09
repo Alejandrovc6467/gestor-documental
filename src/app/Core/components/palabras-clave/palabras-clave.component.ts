@@ -76,20 +76,18 @@ import { CommonModule } from '@angular/common';
       
       .palabra-chip {
         
-        background: transparent;
+        background-color: #dee7f6 ;
         position: relative;
         padding: 5px 15px;
         display: flex;
         align-items: center;
-        font-size: px;
+        font-size: 15px;
         font-weight: 600;
         text-decoration: none;
-        border: 2px solid rgba(88, 101, 242, 1);/*original */
-        border: 2px solid #005cbb;
         border-radius: 25px;
         outline: none;
         overflow: hidden;
-        color: rgba(88, 101, 242, 1);/*original */
+        color: rgba(88, 101, 242, 1);
         color: #005cbb;
         transition: color 0.3s 0.1s ease-out;
         text-align: center;
