@@ -31,9 +31,10 @@ export class EtapasComponent implements OnInit{
   etapasService = inject(EtapasService);
   normasService = inject(NormasService);
   listaEtapas! : EtapaDTO[];
+  listaEtapasPadre! : EtapaDTO[];
   listaNormas!: NormaDTO[];
   listEtapasDataSource = new MatTableDataSource<EtapaExtendidaDTO>([]);
-  displayedColumns: string[] = [ 'acciones', 'color', 'nombre', 'descripcion', 'norma', 'etapapadre'];
+  displayedColumns: string[] = [ 'acciones', 'color', 'consecutivo','nombre', 'descripcion', 'norma', 'etapapadre'];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   textoBuscar: string = "";
   estaEditando: boolean = false;
@@ -42,6 +43,7 @@ export class EtapasComponent implements OnInit{
 
   ngOnInit(): void {
     this.obtenerCategoriasCargarTabla();
+    this.obtenerEtapasHuerfanas();
     this.formulario.updateValueAndValidity();
     this.obtenerNormas();
     this.obtenerEtapas();
@@ -101,6 +103,7 @@ export class EtapasComponent implements OnInit{
       this.etapasService.crearEtapa(etapa).subscribe(response => {
         console.log(response);
         this.obtenerCategoriasCargarTabla();
+        this.obtenerEtapasHuerfanas();
         this.formulario.reset();
         this.limpiarErroresFormulario();
         Swal.fire('Creada!', 'La Etapa ha sido creada.', 'success');
@@ -121,7 +124,8 @@ export class EtapasComponent implements OnInit{
         etapaPadreID: this.formulario.value.etapaPadreID!,
         normaID: this.formulario.value.normaID!,
         usuarioID:1,
-        oficinaID:1
+        oficinaID:1,
+        consecutivo: this.categoriaSeleccionada.consecutivo
       };
       this.etapasService.actualizarEtapa(categoriaActualizada).subscribe(response => {
         console.log(response);
@@ -193,6 +197,13 @@ export class EtapasComponent implements OnInit{
     });
   }
 
+
+  obtenerEtapasHuerfanas(){
+    this.etapasService.obtenerEtapasHuerfanas().subscribe(response => {
+      this.listaEtapasPadre = response;
+    });
+  }
+
   obtenerCategoriasCargarTabla(){
     this.etapasService.obtenerEtapas().subscribe(response => {
       this.listaEtapas = response;
@@ -201,6 +212,7 @@ export class EtapasComponent implements OnInit{
   }
 
   setTable(data: EtapaDTO[]) {
+    console.log(data);
     setTimeout(() => {
       // Mapear los datos para agregar el nombre de la norma y el nombre de la etapa padre
       const dataConNormaYPadreNombre: EtapaExtendidaDTO[] = data.map(etapa => {

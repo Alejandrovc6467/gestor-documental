@@ -6,6 +6,7 @@ export interface EtapaDTO {
     color:string;
     etapaPadreID:number;
     normaID: number;
+    consecutivo: number;
     usuarioID: number;
     oficinaID: number;
 }

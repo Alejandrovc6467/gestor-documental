@@ -17,6 +17,10 @@ export class EtapasService {
     return this.http.get<EtapaDTO[]> (this.urlBase);
   }
 
+  public obtenerEtapasHuerfanas(): Observable<EtapaDTO[]>{
+    return this.http.get<EtapaDTO[]> (`${this.urlBase}/etapasHuerfanas`);
+  }
+
   public obtenerEtapasPorId(id:number): Observable<EtapaDTO>{
     return this.http.get<EtapaDTO>(`${this.urlBase}/${id}`);
   }
