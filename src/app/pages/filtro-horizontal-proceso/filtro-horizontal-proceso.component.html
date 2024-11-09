@@ -45,18 +45,20 @@
     
                 <mat-form-field appearance="outline" class="inputFiltroHorizontal">
                     <mat-label>Norma</mat-label>
-                    <mat-select formControlName="normaID">
+                    <mat-select formControlName="normaID" (selectionChange)="onNormaSelected()">
                         @for (norma of listaNormas; track norma.id) {
-                            <mat-option [value]="norma.id">
-                                  {{ norma.nombre }}
-                            </mat-option>
+                        <mat-option [value]="norma.id">
+                            {{ norma.nombre }}
+                        </mat-option>
                         }
-                    </mat-select>
+                        </mat-select>
                         <mat-error>{{ obtenerErrorNombre() }}</mat-error>
-                </mat-form-field>
-    
-        
-                
+                        </mat-form-field>
+                        
+                        <!-- Agregar el componente del árbol -->
+                        <app-norma-tree [etapas]="etapas" [normaId]="formulario.get('normaID')?.value ?? 0">
+                        </app-norma-tree>
+
                 <div class="contenedor_boton">
                     <button mat-flat-button type="submit"  class="boton_amarillo" [disabled]="formulario.invalid || formulario.pristine">Aplicar Filtro</button>
                 </div>

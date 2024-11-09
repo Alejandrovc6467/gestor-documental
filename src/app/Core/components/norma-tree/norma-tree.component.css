@@ -1,0 +1,39 @@
+
+.tree-invisible {
+  display: none;
+}
+
+.tree-container {
+  margin: 1rem;
+  background: white;
+  padding: 1rem;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.mat-tree-node {
+  min-height: 3rem;
+  align-items: center;
+}
+
+.mat-nested-tree-node {
+  border-left: 1px dashed #ccc;
+  margin-left: 1rem;
+}
+
+.node-content {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.node-content:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.node-content.active {
+  background-color: rgba(0, 0, 0, 0.08);
+}

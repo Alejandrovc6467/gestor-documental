@@ -28,11 +28,16 @@ import { DocumentosService } from '../../Core/services/documentos.service';
 import { DoctosModalComponent } from '../../Core/components/doctos-modal/doctos-modal.component';
 import { OficinasService } from '../../Core/services/oficinas.service';
 import { OficinaDTO } from '../../Core/models/OficinaDTO';
+import { EtapasService } from '../../Core/services/etapas.service';
+
+import { EtapaDTO } from '../../Core/models/EtapaDTO';
+import { NormaTreeComponent } from '../../Core/components/norma-tree/norma-tree.component';
+import { ComponentFixture } from '@angular/core/testing';
 
 @Component({
   selector: 'app-filtro-horizontal-proceso',
   standalone: true,
-  imports: [MatButtonModule, RouterLink,  MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule],
+  imports: [MatButtonModule, RouterLink,  MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule,NormaTreeComponent],
   templateUrl: './filtro-horizontal-proceso.component.html',
   styleUrl: './filtro-horizontal-proceso.component.css',
   providers: [
@@ -44,7 +49,8 @@ export class FiltroHorizontalProcesoComponent {
 
   private dialog = inject(MatDialog); // Usa inject en lugar del constructor
 
-
+  etapas: EtapaDTO[] = [];
+  etapaService = inject(EtapasService);
   filtroVerticalService = inject(FiltroVerticalService);
   normasService = inject(NormasService);
   tipodocumentoService = inject(TipodocumentoService);
@@ -107,6 +113,21 @@ export class FiltroHorizontalProcesoComponent {
   });
 
 
+    // Agregar este método para manejar el cambio de norma
+    onNormaSelected() {
+      const normaId = this.formulario.get('normaID')?.value;
+      if (normaId) {
+        console.log('Norma seleccionada:', normaId);
+        this.etapaService.obtenerEtapasPorNorma(normaId).subscribe(
+          (etapas) => {
+            this.etapas = etapas;
+          },
+          (error) => {
+            console.error('Error al obtener las etapas:', error);
+          }
+        );
+      }
+    }
 
   //CRUD *******************************************************************************
   
