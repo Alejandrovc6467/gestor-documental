@@ -303,8 +303,14 @@ export class DocumentosComponent implements OnInit {
             // Si el usuario confirma, proceder con la eliminación
             this.documentosService.eliminarDocumento(eliminarDTO).subscribe(response => {
                 console.log(response);
-                this.obtenerDocumentosCargarTabla();
-                Swal.fire('Eliminado!', 'El documento ha sido eliminado.', 'success');
+                if(response){
+                  this.obtenerDocumentosCargarTabla();
+                  Swal.fire('Eliminado!', 'El documento ha sido eliminado.', 'success');
+                }else{
+                  Swal.fire('Error!', 'El documento no ha sido eliminado.', 'error');
+                }
+               
+               
             });
         }
     });
