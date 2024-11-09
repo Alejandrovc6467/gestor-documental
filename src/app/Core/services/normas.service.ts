@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { NormaDTO } from '../models/NormaDTO';
+import { EliminarDTO } from '../models/EliminarDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -31,8 +32,10 @@ export class NormasService {
     return this.http.put(this.urlBase, norma);
   }
 
-  public eliminarNorma(id:number){
-    return this.http.delete(`${this.urlBase}/${id}`);
+ 
+
+  public eliminarNorma(eliminarDTO: EliminarDTO): Observable<any> {
+    return this.http.delete(this.urlBase, { body: eliminarDTO });
   }
 
 }

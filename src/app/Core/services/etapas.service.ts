@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { EtapaDTO } from '../models/EtapaDTO';
+import { EliminarDTO } from '../models/EliminarDTO';
 
 
 @Injectable({
@@ -36,7 +37,10 @@ export class EtapasService {
     return this.http.put(this.urlBase, etapa);
   }
 
-  public eliminarEtapa(id:number){
-    return this.http.delete(`${this.urlBase}?id=${id}`);
+
+
+  public eliminarEtapa(eliminarDTO: EliminarDTO): Observable<any> {
+    return this.http.delete(this.urlBase, { body: eliminarDTO });
   }
+
 }
