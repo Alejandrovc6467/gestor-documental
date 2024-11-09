@@ -39,6 +39,7 @@ import { DocumentoGetDTO, DocumentoGetExtendidaDTO } from '../../Core/models/Doc
 import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
 import { OficinasService } from '../../Core/services/oficinas.service';
 import { OficinaDTO } from '../../Core/models/OficinaDTO';
+import { EliminarDTO } from '../../Core/models/EliminarDTO';
 
 
 
@@ -291,8 +292,16 @@ export class DocumentosComponent implements OnInit {
      
     }).then((result) => {
         if (result.isConfirmed) {
+
+          const eliminarDTO:  EliminarDTO = {
+            objetoID: idEliminar,
+            usuarioID: 1,// esto sale del local
+            oficinaID: 1// y este
+          };
+
+
             // Si el usuario confirma, proceder con la eliminación
-            this.documentosService.eliminarDocumento(idEliminar).subscribe(response => {
+            this.documentosService.eliminarDocumento(eliminarDTO).subscribe(response => {
                 console.log(response);
                 this.obtenerDocumentosCargarTabla();
                 Swal.fire('Eliminado!', 'El documento ha sido eliminado.', 'success');
