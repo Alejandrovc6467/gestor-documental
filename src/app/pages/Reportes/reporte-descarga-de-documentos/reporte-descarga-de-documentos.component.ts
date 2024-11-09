@@ -103,8 +103,8 @@ export class ReporteDescargaDeDocumentosComponent implements OnInit {
       usuario: filtros.Usuario,
       codigoDocumento: filtros.codigoDocumento,
       nombreDocumento: filtros.nombreDocumento,
-      fechaInicio: filtros.fechaInicio,
-      fechaFinal: filtros.fechaFin
+      fechaInicio: this.formatearFecha(filtros.fechaInicio),
+      fechaFinal: this.formatearFecha(filtros.fechaFin)
     };
     
     console.log('Parámetros de consulta:', params);
@@ -121,6 +121,19 @@ export class ReporteDescargaDeDocumentosComponent implements OnInit {
         }
       });
     
+  }
+
+  formatearFecha(fecha: any): string {
+    if (!fecha) return '';
+    
+    // Convertir a Date si no lo es
+    const fechaObj = new Date(fecha);
+    
+    const dia = fechaObj.getDate().toString().padStart(2, '0');
+    const mes = (fechaObj.getMonth() + 1).toString().padStart(2, '0');
+    const anio = fechaObj.getFullYear();
+    
+    return `${mes}-${dia}-${anio}`;
   }
 
   obtenerOficinas() {
@@ -153,14 +166,16 @@ export class ReporteDescargaDeDocumentosComponent implements OnInit {
 
   exportarPDF() {
     const doc = new jsPDF();
-    const headers = ['Código', 'Nombre', 'Acceso', 'Versión', 'Fecha', 'Oficina'];
+    const headers = ['Código', 'Nombre', 'Acceso', 'Versión', 'Fecha', 'Oficina', 'Visualizaciones', 'Descargas'];
     const data = this.documentos.map(doc => [
       doc.codigoDocumento,
       doc.nombreDocumento,
       doc.acceso,
       doc.version,
       doc.fecha,
-      doc.oficinaResponsable
+      doc.oficinaResponsable,
+      doc.visualizaciones,
+      doc.descargas
     ]);
     
     (doc as any).autoTable({
@@ -173,7 +188,7 @@ export class ReporteDescargaDeDocumentosComponent implements OnInit {
 
   exportarWord() {
     let tabla = '<table><tr>';
-    const headers = ['Código', 'Nombre', 'Acceso', 'Versión', 'Fecha', 'Oficina'];
+    const headers = ['Código', 'Nombre', 'Acceso', 'Versión', 'Fecha', 'Oficina', 'Visualizaciones', 'Descargas'];
     headers.forEach(header => {
       tabla += `<th>${header}</th>`;
     });
@@ -187,6 +202,8 @@ export class ReporteDescargaDeDocumentosComponent implements OnInit {
       tabla += `<td>${doc.version}</td>`;
       tabla += `<td>${doc.fecha}</td>`;
       tabla += `<td>${doc.oficinaResponsable}</td>`;
+      tabla += `<td>${doc.visualizaciones}</td>`;
+      tabla += `<td>${doc.descargas}</td>`;
       tabla += '</tr>';
     });
     tabla += '</table>';

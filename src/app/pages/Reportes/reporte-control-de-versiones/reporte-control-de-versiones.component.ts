@@ -78,7 +78,7 @@ export class ReporteControlDeVersionesComponent implements OnInit {
     private fb: FormBuilder
   ) {
     this.filtroForm = this.fb.group({
-      oficina: [''],
+      oficina: [0],
       codigoDocumento: [''],
       nombreDocumento: [''],
       tipoDocumento: [0]
@@ -96,6 +96,7 @@ export class ReporteControlDeVersionesComponent implements OnInit {
     const filtros = this.filtroForm.value;
     
     const params: ConsultaReporteControlDeVersionesDTO = {
+      oficina: filtros.oficina,
       codigoDocumento: filtros.codigoDocumento,
       nombreDocumento: filtros.nombreDocumento,
       tipoDocumento: filtros.tipoDocumento

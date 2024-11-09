@@ -5,4 +5,6 @@ export interface ReporteDescargaDeDocumentosDTO {
     version: number;
     fecha: string;
     oficinaResponsable: string;
+    visualizaciones:number;
+    descargas:number;
 }

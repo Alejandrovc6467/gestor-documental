@@ -139,7 +139,10 @@ export class EtapasComponent implements OnInit{
     // Cargar los datos de la categoría en el formulario
     this.formulario.patchValue({
       nombre: element.nombre,
-      descripcion: element.descripcion
+      descripcion: element.descripcion,
+      color: element.color,
+      etapaPadreID: element.etapaPadreID,
+      normaID: element.normaID
     });
     this.limpiarErroresFormulario();
   }

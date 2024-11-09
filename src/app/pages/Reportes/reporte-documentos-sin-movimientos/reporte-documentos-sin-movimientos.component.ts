@@ -101,8 +101,8 @@ export class ReporteDocumentosSinMovimientosComponent implements OnInit {
     const params: ConsultaReporteDocSinMovimientoDTO = {
       oficinaID: filtros.oficina,
       tipoDocumento: filtros.tipoDocumento,
-      fechaInicio: filtros.fechaInicio,
-      fechaFin: filtros.fechaFin
+      fechaInicio: this.formatearFecha(filtros.fechaInicio),
+      fechaFin: this.formatearFecha(filtros.fechaFin)
     };
     
     console.log('Parámetros de consulta:', params);
@@ -119,6 +119,19 @@ export class ReporteDocumentosSinMovimientosComponent implements OnInit {
         }
       });
     
+  }
+
+  formatearFecha(fecha: any): string {
+    if (!fecha) return '';
+    
+    // Convertir a Date si no lo es
+    const fechaObj = new Date(fecha);
+    
+    const dia = fechaObj.getDate().toString().padStart(2, '0');
+    const mes = (fechaObj.getMonth() + 1).toString().padStart(2, '0');
+    const anio = fechaObj.getFullYear();
+    
+    return `${mes}-${dia}-${anio}`;
   }
 
   aplicarFiltros() {

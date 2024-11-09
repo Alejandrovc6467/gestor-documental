@@ -1,6 +1,6 @@
 // reporte-bitacora-de-movimientos.component.ts
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -31,6 +31,8 @@ import { ConsultaReporteBitacoraDeMovimientoDTO } from '../../../Core/models/Rep
 import { tap } from 'rxjs';
 
 
+
+
 @Component({
   selector: 'app-reporte-bitacora-de-movimientos',
   standalone: true,
@@ -52,10 +54,12 @@ import { tap } from 'rxjs';
   templateUrl: './reporte-bitacora-de-movimientos.component.html',
   styleUrl: './reporte-bitacora-de-movimientos.component.css',
   providers: [
-    { provide: MatPaginatorIntl, useClass: CustomMatPaginatorIntlComponent }
+    { provide: MatPaginatorIntl, useClass: CustomMatPaginatorIntlComponent },
+    DatePipe
   ]
 })
 export class ReporteBitacoraDeMovimientosComponent implements OnInit {
+  datePipe= inject(DatePipe);
   reportesService = inject(ReportesService);
   documentos: ReporteBitacoraDeMovimientoDTO[] = [];
   displayedColumns: string[] = []; // columnas para MatTable
@@ -94,13 +98,14 @@ export class ReporteBitacoraDeMovimientosComponent implements OnInit {
   cargarDatos() {
     const filtros = this.filtroForm.value;
     
+     this.formatearFecha(filtros.fechaFin);
     const params: ConsultaReporteBitacoraDeMovimientoDTO = {
       oficinaID: filtros.oficina,
       usuarioID: filtros.Usuario,
       codigoDocumento: filtros.codigoDocumento,
       nombreDocumento: filtros.nombreDocumento,
-      fechaInicio: filtros.fechaInicio,
-      fechaFin: filtros.fechaFin
+      fechaInicio: this.formatearFecha(filtros.fechaInicio),
+      fechaFin: this.formatearFecha(filtros.fechaFin)
     };
     
     console.log('Parámetros de consulta:', params);
@@ -117,6 +122,19 @@ export class ReporteBitacoraDeMovimientosComponent implements OnInit {
         }
       });
     
+  }
+
+  formatearFecha(fecha: any): string {
+    if (!fecha) return '';
+    
+    // Convertir a Date si no lo es
+    const fechaObj = new Date(fecha);
+    
+    const dia = fechaObj.getDate().toString().padStart(2, '0');
+    const mes = (fechaObj.getMonth() + 1).toString().padStart(2, '0');
+    const anio = fechaObj.getFullYear();
+    
+    return `${mes}-${dia}-${anio}`;
   }
 
   obtenerDocumentos(){
