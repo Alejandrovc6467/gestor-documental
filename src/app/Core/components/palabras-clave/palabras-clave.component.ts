@@ -102,7 +102,7 @@ import { CommonModule } from '@angular/common';
         padding-right: 0px;
         line-height: 20px;
         margin-left: 7px;
-        background-color: #EF6030;
+        background-color: #005cbb;
         border: none;
         border-radius: 50%;
         cursor: pointer;
