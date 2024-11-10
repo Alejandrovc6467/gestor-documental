@@ -22,7 +22,7 @@ import { DocumentoGetDTO } from '../../Core/models/DocumentoGetDTO';
 import { DatePipe } from '@angular/common';
 import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
 import { FiltroVerticalGetExtendidaDTO } from '../../Core/models/FiltroVerticalGetDTO';
-import { PdfViewerComponent } from 'ng2-pdf-viewer';
+import { PdfViewerComponent } from '../../Core/components/pdf-viewer/pdf-viewer.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -283,18 +283,18 @@ export class DocumentoversionesComponent implements OnInit  {
 
   // en le html voy a pasar element.urlArchivo  y aqui tengo que quitar ese if deporsi ya se que siempre es un pdf por la validacione en el front
   // ademas agregar el nuevo atributo en VersionDTO
-  observarDocumento(element: FiltroVerticalGetExtendidaDTO) {
-    if (element.archivo.contentType === 'application/pdf') {
-      console.log(element.urlArchivo);
+  observarDocumento(element: any) {
+    //if (element.archivo.contentType === 'application/pdf') {
+      console.log(element.urlVersion);
       const dialogRef = this.dialog.open(PdfViewerComponent, {
-        data: { url: element.urlArchivo },
+        data: { url: element.urlVersion },
         panelClass: ['pdf-viewer-dialog', 'fullscreen-dialog'],
         maxWidth: '100vw',
         maxHeight: '100vh',
         height: '100vh',
         width: '100vw',
       });
-    }
+   // }
   }
 
 

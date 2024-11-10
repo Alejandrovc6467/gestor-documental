@@ -2,7 +2,7 @@
 import { RouterLink } from '@angular/router';
 
 
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -43,6 +43,7 @@ import { EliminarDTO } from '../../Core/models/EliminarDTO';
 import { PalabrasClaveComponent } from '../../Core/components/palabras-clave/palabras-clave.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { timer } from 'rxjs';
 
 
 @Component({
@@ -93,12 +94,13 @@ export class DocumentosComponent implements OnInit {
   //tabla Relaciones
   listaRelacionesdataSource = new MatTableDataSource<RelacionDocumentoDTO>([]);
   displayedColumnsRelaciones: string[] = [ 'acciones', 'docto', 'docrelacionado'];
-  @ViewChild(MatPaginator) paginatorRelaciones!: MatPaginator;
+  @ViewChild('paginatorRelaciones', { static: true }) paginatorRelaciones!: MatPaginator;
+
 
   //tablaDocumentos
   listaDocumentosDataSource = new MatTableDataSource<DocumentoGetExtendidaDTO>([]);
   displayedColumns: string[] = [ 'acciones', 'categoria', 'tipo', 'etapa', 'norma','codigo', 'nombre' , 'version', 'oficina', 'etiquetas',  'docto' , 'clasificacion', 'subclasificacion',  'vigencia' ];
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild('paginatorDocumentos', { static: true }) paginatorDocumentos!: MatPaginator;
 
   textoBuscar: string = "";
   textoBuscarRelaciones: string = "";
@@ -106,9 +108,8 @@ export class DocumentosComponent implements OnInit {
   categoriaSeleccionada!: CategoriaDTO | null;
 
 
-  ngOnInit(): void {
 
-    this.obtenerDocumentosCargarTabla();
+  ngOnInit(): void {
 
     this.obtenerTipoDocumentos();
     this.obtenerCategorias();
@@ -120,9 +121,28 @@ export class DocumentosComponent implements OnInit {
     this.obtenerClasificaciones();
 
     this.formulario.updateValueAndValidity();
-  }
+
   
-  constructor(){}
+    this.obtenerDocumentosCargarTabla();
+
+    this.actualizarTablaRelaciones();
+
+    
+  }
+
+ 
+/*
+  ngAfterViewInit() {
+    this.listaDocumentosDataSource.paginator = this.paginator;
+    console.log('Paginador conectado:', this.paginator);
+  }
+    */
+
+  constructor() {
+    this.listaDocumentosDataSource.connect().subscribe(data => {
+      console.log('DataSource actualizado:', data.length, 'registros');
+    });
+  }
 
   private formbuilder = inject(FormBuilder);
   formulario = this.formbuilder.group({
@@ -446,50 +466,7 @@ export class DocumentosComponent implements OnInit {
   }
   
 
-  /*******************************************  Agregar palabras Clave  ******************************************************************/
- 
-  /*
-  agregarPalabraClave(inputPalabra: HTMLInputElement) {
-    const palabra = inputPalabra.value;
-    console.log(palabra);  // Imprimir en consola
-    inputPalabra.value = '';  // Limpiar el campo
-    this.palabrasClave.push(palabra);
-    console.log(this.palabrasClave);
-    this.cargarPalabrasClaveEnHtml();  // Cargar palabras clave en el HTML
-  }
-  
-  cargarPalabrasClaveEnHtml() {
-    const contenedorPalabras = document.getElementById('contenedorPalabras') as HTMLElement;
-    
-    // Limpiar el contenedor solo si se hace de manera controlada
-    contenedorPalabras.innerHTML = '';  // Limpiar todo el contenido del contenedor
-  
-    // Solo agregamos las palabras del array de palabras clave
-    this.palabrasClave.forEach((palabra, index) => {
-      const palabraElemento = document.createElement('div');
-      palabraElemento.classList.add('palabra-clave'); // Clase para el estilo
-      
-      // Crear el texto de la palabra
-      const textoPalabra = document.createElement('span');
-      textoPalabra.textContent = palabra;
-      palabraElemento.appendChild(textoPalabra);
-      
-      // Crear la X para eliminar la palabra
-      const botonEliminar = document.createElement('button');
-      botonEliminar.textContent = 'X';
-      botonEliminar.classList.add('eliminar-palabra');
-      botonEliminar.addEventListener('click', () => this.eliminarPalabra(index));
-      palabraElemento.appendChild(botonEliminar);
-      
-      contenedorPalabras.appendChild(palabraElemento);  // Agregar la etiqueta al contenedor
-    });
-  }
-  
-  eliminarPalabra(index: number) {
-    this.palabrasClave.splice(index, 1);  // Eliminar la palabra del array
-    this.cargarPalabrasClaveEnHtml();  // Actualizar el HTML
-  }
-  */
+   
   
 
   // Otros ***********************************************************************************
@@ -502,6 +479,7 @@ export class DocumentosComponent implements OnInit {
     });
   }
 
+ 
   setTable(data: DocumentoGetDTO[]) {
 
       // Simulamos una espera con setTimeout para alguna carga visual si es necesario
@@ -530,12 +508,17 @@ export class DocumentosComponent implements OnInit {
             doctoNombre: docto ? docto.nombre : 'Sin Docto' // Suponiendo que `nombre` está en DocumentoGetDTO
           };
         });
+
+        console.log(dataConRelaciones);
     
         // Configuramos el DataSource con los datos mapeados
         this.listaDocumentosDataSource = new MatTableDataSource<DocumentoGetExtendidaDTO>(dataConRelaciones);
-        this.listaDocumentosDataSource.paginator = this.paginator;
-    
-      }, 2000); // Ajusta este delay si no es necesario
+        this.listaDocumentosDataSource.paginator = this.paginatorDocumentos;
+
+       
+      }, 1000); // Ajusta este delay si no es necesario
+
+      
   }
   
   realizarBusqueda() {
@@ -638,3 +621,5 @@ export class DocumentosComponent implements OnInit {
 
 
 }
+
+

@@ -12,6 +12,7 @@ export interface VersionDTO {
     UsuarioLogID: number;
     OficinaID: number
     archivo?: File | null;
+    urlVersion?: string
    
   }
   
