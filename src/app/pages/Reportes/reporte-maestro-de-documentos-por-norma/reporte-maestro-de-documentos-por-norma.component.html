@@ -5,94 +5,117 @@
       <img src="logo-oij.ico" alt="logo_oij">
       <h5>Reporte maestro de documentos por norma</h5>
     </div>
-  <!-- reporte-bitacora-de-movimientos.component.html -->
-  <div class="contenedor_formulario">
-      <!-- Filtros -->
+ 
+
+
       <form [formGroup]="filtroForm" (ngSubmit)="aplicarFiltros()">
-        <h2>Reporte maestro de documentos por norma</h2>
-        <div class="filtros-container">
+      
+        <div class="contenedor_formulario">
+
+          <h2>Reporte maestro de documentos por norma</h2>
 
 
-          <mat-form-field appearance="outline">
-            <mat-label>Oficina</mat-label>
-            <mat-select formControlName="oficina">
-              <mat-option [value]="0">Todas</mat-option>
-              <mat-option *ngFor="let oficina of oficinas" [value]="oficina.id">
-                {{oficina.id+" - "+oficina.nombre}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-  
-          <mat-form-field appearance="outline">
-            <mat-label>Acceso</mat-label>
-            <mat-select formControlName="categoria">
-              <mat-option [value]="0">Todas</mat-option>
-              <mat-option *ngFor="let categoria of categorias" [value]="categoria.id">
-                {{categoria.nombre}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+          <div class="formulario-contenedor-doble">
 
-          <mat-form-field appearance="outline">
-            <mat-label>Norma</mat-label>
-            <mat-select formControlName="norma">
-              <mat-option [value]="0">Todas</mat-option>
-              <mat-option *ngFor="let norma of normas" [value]="norma.id">
-                {{norma.nombre}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+            <div class="contenedor-doble-input">
+              <mat-form-field appearance="outline" class="full-widthdoble">
+                <mat-label>Oficina</mat-label>
+                <mat-select formControlName="oficina">
+                  <mat-option [value]="0">Todas</mat-option>
+                  <mat-option *ngFor="let oficina of oficinas" [value]="oficina.id">
+                    {{oficina.id+" - "+oficina.nombre}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Tipo de Documento</mat-label>
-            <mat-select formControlName="tipoDocumento">
-              <mat-option [value]="0">Todos</mat-option>
-              <mat-option *ngFor="let tipo of tiposDocumento" [value]="tipo.id">
-                {{tipo.nombre}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+            <div class="contenedor-doble-input">
+              <mat-form-field appearance="outline" class="full-widthdoble">
+                <mat-label>Acceso</mat-label>
+                <mat-select formControlName="categoria">
+                  <mat-option [value]="0">Todas</mat-option>
+                  <mat-option *ngFor="let categoria of categorias" [value]="categoria.id">
+                    {{categoria.nombre}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+          </div>
+
+
+
+          <div class="formulario-contenedor-doble">
+
+            <div class="contenedor-doble-input">
+              <mat-form-field appearance="outline" class="full-widthdoble">
+                <mat-label>Norma</mat-label>
+                <mat-select formControlName="norma">
+                  <mat-option [value]="0">Todas</mat-option>
+                  <mat-option *ngFor="let norma of normas" [value]="norma.id">
+                    {{norma.nombre}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="contenedor-doble-input">
+              <mat-form-field appearance="outline" class="full-widthdoble">
+                <mat-label>Tipo de Documento</mat-label>
+                <mat-select formControlName="tipoDocumento">
+                  <mat-option [value]="0">Todos</mat-option>
+                  <mat-option *ngFor="let tipo of tiposDocumento" [value]="tipo.id">
+                    {{tipo.nombre}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>    
+            </div>
+
+          </div>
+
   
-  
-  
-  
-  
-  
-  
-          <button mat-raised-button color="primary" type="submit">
-            <mat-icon>filter_list</mat-icon>
-            Filtrar
-          </button>
+          <div class="containerBotonFiltrar">
+            <button mat-raised-button color="primary" type="submit">
+              <mat-icon>filter_list</mat-icon>
+              Filtrar
+            </button>
+          </div>
+
+
         </div>
       </form>
-    
-      <!-- Botones de exportación -->
-      <div class="export-buttons">
-        <button mat-raised-button color="primary" (click)="exportarExcel()">
-          <mat-icon>description</mat-icon>
-          Excel
-        </button>
-        <button mat-raised-button color="warn" (click)="exportarPDF()">
-          <mat-icon>picture_as_pdf</mat-icon>
-          PDF
-        </button>
-        <button mat-raised-button color="accent" (click)="exportarWord()">
-          <mat-icon>article</mat-icon>
-          Word
-        </button>
-      </div>
-    
-       <!-- Información del reporte -->
-    <div class="reporte-info">
-      <div class="reporte-header">
-        <h3>Resultado del Reporte:</h3>
-        <p class="fecha-creacion">Fecha de creación: {{fechaCreacion | date:'dd-MM-yyyy HH:mm'}}</p>
-      </div>
-      <div class="fecha-filtro">
-        <label>Fecha:</label>
-        <span>{{fechaActual | date:'dd/MM/yy'}}</span>
-      </div>
-    </div>
+
+      <div class="containerInfoBototesReporte">
+
+        <div class="reporte-info">
+          <div class="reporte-header">
+            <h3>Resultado del Reporte:</h3>
+            <p class="fecha-creacion">Fecha de creación: {{fechaCreacion | date:'dd-MM-yyyy HH:mm'}}</p>
+          </div>
+          <div class="fecha-filtro">
+            <label>Fecha:</label>
+            <span>{{fechaActual | date:'dd/MM/yy'}}</span>
+          </div>
+        </div>
+
+        <div class="export-buttons">
+          <button mat-raised-button color="primary" (click)="exportarExcel()">
+            <mat-icon>description</mat-icon>
+            Excel
+          </button>
+          <button mat-raised-button color="warn" (click)="exportarPDF()">
+            <mat-icon>picture_as_pdf</mat-icon>
+            PDF
+          </button>
+          <button mat-raised-button color="accent" (click)="exportarWord()">
+            <mat-icon>article</mat-icon>
+            Word
+          </button>
+        </div>
+
+      </div> 
+
+   
 
     <!-- Tabla de documentos -->
     <div class="tabla-container">
@@ -128,7 +151,6 @@
 
     <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons aria-label="Seleccionar página">
     </mat-paginator>
-  </div>
 
-  
-  </div>
+ 
+</div>
