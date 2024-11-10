@@ -30,11 +30,12 @@ import { DocumentosService } from '../../Core/services/documentos.service';
 import { DoctosModalComponent } from '../../Core/components/doctos-modal/doctos-modal.component';
 import { OficinaDTO } from '../../Core/models/OficinaDTO';
 import { OficinasService } from '../../Core/services/oficinas.service';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-filtro-vertical',
   standalone: true,
-  imports: [MatButtonModule, RouterLink,  MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule],
+  imports: [MatButtonModule, RouterLink,  MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule, MatTooltipModule],
   templateUrl: './filtro-vertical.component.html',
   styleUrl: './filtro-vertical.component.css',
   providers: [

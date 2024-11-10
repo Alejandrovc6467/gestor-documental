@@ -41,13 +41,14 @@ import { OficinasService } from '../../Core/services/oficinas.service';
 import { OficinaDTO } from '../../Core/models/OficinaDTO';
 import { EliminarDTO } from '../../Core/models/EliminarDTO';
 import { PalabrasClaveComponent } from '../../Core/components/palabras-clave/palabras-clave.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 
 @Component({
   selector: 'app-documentos',
   standalone: true,
-  imports: [RouterLink, MatButtonModule,  MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule, MatCheckboxModule, MatRadioModule, PalabrasClaveComponent ],
+  imports: [RouterLink, MatButtonModule,  MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule, MatCheckboxModule, MatRadioModule, PalabrasClaveComponent, MatTooltipModule ],
   templateUrl: './documentos.component.html',
   styleUrl: './documentos.component.css',
   providers: [

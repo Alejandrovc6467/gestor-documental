@@ -159,3 +159,31 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     opacity: 1;
   }
 }
+
+
+
+/*****  trucate table cells *****************************/
+.mat-mdc-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.truncate-cell {
+  max-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Ajusta el ancho de las columnas según necesites */
+.mat-column-acciones {
+  width: 100px;
+}
+
+.mat-column-nombre {
+  width: 30%;
+}
+
+.mat-column-descripcion {
+  width: calc(70% - 100px);
+}

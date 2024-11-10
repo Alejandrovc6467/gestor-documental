@@ -33,11 +33,12 @@ import { EtapasService } from '../../Core/services/etapas.service';
 import { EtapaDTO } from '../../Core/models/EtapaDTO';
 import { NormaTreeComponent } from '../../Core/components/norma-tree/norma-tree.component';
 import { ComponentFixture } from '@angular/core/testing';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-filtro-horizontal-proceso',
   standalone: true,
-  imports: [MatButtonModule, RouterLink,  MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule,NormaTreeComponent],
+  imports: [MatButtonModule, RouterLink,  MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule,NormaTreeComponent, MatTooltipModule ],
   templateUrl: './filtro-horizontal-proceso.component.html',
   styleUrl: './filtro-horizontal-proceso.component.css',
   providers: [

@@ -14,6 +14,7 @@ import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
 import { EliminarDTO } from '../../Core/models/EliminarDTO';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 
@@ -21,7 +22,7 @@ import { EliminarDTO } from '../../Core/models/EliminarDTO';
 @Component({
   selector: 'app-categorias',
   standalone: true,
-  imports: [MatButtonModule,  MatFormFieldModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule],
+  imports: [MatButtonModule,  MatFormFieldModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule,  MatTooltipModule ],
   templateUrl: './categorias.component.html',
   styleUrl: './categorias.component.css',
   providers: [

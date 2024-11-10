@@ -19,13 +19,14 @@ import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
 import { EliminarDTO } from '../../Core/models/EliminarDTO';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 
 @Component({
   selector: 'app-subclasificaciones',
   standalone: true,
-  imports: [CommonModule,MatButtonModule,  MatFormFieldModule, MatSelectModule,ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule],
+  imports: [CommonModule,MatButtonModule,  MatFormFieldModule, MatSelectModule,ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule,MatTooltipModule ],
   templateUrl: './subclasificaciones.component.html',
   styleUrl: './subclasificaciones.component.css',
   providers: [

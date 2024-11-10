@@ -31,12 +31,13 @@ import { PdfViewerComponent } from '../../Core/components/pdf-viewer/pdf-viewer.
 import { DoctosModalComponent } from '../../Core/components/doctos-modal/doctos-modal.component';
 import { OficinasService } from '../../Core/services/oficinas.service';
 import { OficinaDTO } from '../../Core/models/OficinaDTO';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 @Component({
   selector: 'app-filtro-horizontal',
   standalone: true,
-  imports: [MatButtonModule, RouterLink,  MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule, MatDialogModule],
+  imports: [MatButtonModule, RouterLink,  MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule, MatDialogModule, MatTooltipModule],
   templateUrl: './filtro-horizontal.component.html',
   styleUrl: './filtro-horizontal.component.css',
   providers: [

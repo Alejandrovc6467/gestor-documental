@@ -14,11 +14,12 @@ import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
 import { EliminarDTO } from '../../Core/models/EliminarDTO';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-normas',
   standalone: true,
-  imports: [MatButtonModule,  MatFormFieldModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule],
+  imports: [MatButtonModule,  MatFormFieldModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule, MatTooltipModule ],
   templateUrl: './normas.component.html',
   styleUrl: './normas.component.css',
   providers: [

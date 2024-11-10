@@ -24,13 +24,14 @@ import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-ma
 import { FiltroVerticalGetExtendidaDTO } from '../../Core/models/FiltroVerticalGetDTO';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 
 @Component({
   selector: 'app-documentoversiones',
   standalone: true,
-  imports: [MatButtonModule,  MatFormFieldModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule, MatDatepickerModule, MatNativeDateModule,  MatCheckboxModule, MatRadioModule],
+  imports: [MatButtonModule,  MatFormFieldModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule, MatDatepickerModule, MatNativeDateModule,  MatCheckboxModule, MatRadioModule, MatTooltipModule ],
   templateUrl: './documentoversiones.component.html',
   styleUrl: './documentoversiones.component.css',
   providers: [
