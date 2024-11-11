@@ -264,7 +264,7 @@
     
                     <ng-container matColumnDef="docto">
                     <th mat-header-cell *matHeaderCellDef> Docto </th>
-                    <td mat-cell *matCellDef="let element"> {{element.docto}} </td>
+                    <td mat-cell *matCellDef="let element"> {{element.nombreDocto}} </td>
                     </ng-container>
                 
                     <ng-container matColumnDef="docrelacionado">
@@ -333,7 +333,7 @@
             <td mat-cell *matCellDef="let element"> 
                 
                 <div class="acciones-container-botones">
-                    <button (click)="editarDocumento(element)" class="boton_tabla">
+                    <button (click)="editarDocumento(element.id)" class="boton_tabla">
                         <mat-icon name="pie-chart-outline">edit</mat-icon>
                     </button>
                     <button (click)="eliminarDocumento(element.id)" class="boton_tabla">

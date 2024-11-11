@@ -143,4 +143,13 @@ export class PalabrasClaveComponent {
   getPalabrasClave(): string[] {
     return this.palabrasClave;
   }
+
+  limpiarPalabrasClave() {
+    this.palabrasClave = [];
+  }
+
+  setearPalabrasClave(nuevasPalabrasClave: string[]) {
+    this.palabrasClave = [...nuevasPalabrasClave];
+  }
+  
 }

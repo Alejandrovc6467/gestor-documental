@@ -33,9 +33,9 @@ import { TipodocumentoDTO } from '../../Core/models/TipodocumentoDTO';
 import { EtapaDTO } from '../../Core/models/EtapaDTO';
 import { DoctocDTO } from '../../Core/models/DoctocDTO';
 import { SubclasificacionDTO } from '../../Core/models/SubclasificacionDTO';
-import { RelacionDocumentoDTO } from '../../Core/models/RelacionDocumentoDTO';
+import { RelacionDocumentoDTO, RelacionDocumentoExtendidaDTO } from '../../Core/models/RelacionDocumentoDTO';
 import { DocumentoDTO } from '../../Core/models/DocumentoDTO';
-import { DocumentoGetDTO, DocumentoGetExtendidaDTO } from '../../Core/models/DocumentoGetDTO';
+import { DocumentoGetById, DocumentoGetDTO, DocumentoGetExtendidaDTO } from '../../Core/models/DocumentoGetDTO';
 import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
 import { OficinasService } from '../../Core/services/oficinas.service';
 import { OficinaDTO } from '../../Core/models/OficinaDTO';
@@ -86,8 +86,9 @@ export class DocumentosComponent implements OnInit {
 
   //lista para relacionar Documentos
   doctos: { docto: number, docRelacionado: string }[] = [];
-  //lista para almacenar palbras clave
+  //lista para almacenar palabras clave
   palabrasClave: string[] = [];
+  idDocumentoAEditar: number = 0;
 
 
 
@@ -130,25 +131,15 @@ export class DocumentosComponent implements OnInit {
     
   }
 
- 
-/*
-  ngAfterViewInit() {
-    this.listaDocumentosDataSource.paginator = this.paginator;
-    console.log('Paginador conectado:', this.paginator);
-  }
-    */
 
-  constructor() {
-    this.listaDocumentosDataSource.connect().subscribe(data => {
-      console.log('DataSource actualizado:', data.length, 'registros');
-    });
-  }
+  constructor() {}
+
 
   private formbuilder = inject(FormBuilder);
   formulario = this.formbuilder.group({
     tipoDocumento: [0, [Validators.required]],
     categoriaID: [0, [Validators.required]],
-    normaID: ['', [Validators.required]],
+    normaID: [0, [Validators.required]],
     etapaID: [0, [Validators.required]],
     asunto: ['', [Validators.required]],
     codigo: ['', [Validators.required]],
@@ -157,7 +148,7 @@ export class DocumentosComponent implements OnInit {
     activo: [false],
     descripcion: ['', [Validators.required]],
     doctoID: [0],
-    clasificacionID: [''],
+    clasificacionID: [0],
     subClasificacionID: [0],
     vigencia: ['']
   });
@@ -187,116 +178,209 @@ export class DocumentosComponent implements OnInit {
   crearDocumento() {
     if (this.formulario.invalid) {
       Swal.fire('Error', 'Por favor, complete todos los campos requeridos', 'error');
-      console.log("error al registar documento");
+      console.log("Error al registrar documento");
+      return;
+    }
+  
+    // Mostrar ventana de confirmación antes de crear el documento
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¿Deseas crear este documento?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, crear documento',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Si el usuario confirma, procedemos a crear el documento
+        const palabrasClave = this.palabrasClaveComponent.getPalabrasClave();
+  
+        const documento: DocumentoDTO = {
+          id: 0, // Asumiendo que el ID se asigna en el backend
+          codigo: this.formulario.value.codigo?.toString() || '',
+          asunto: this.formulario.value.asunto?.toString() || '',
+          descripcion: this.formulario.value.descripcion?.toString() || '',
+          palabraClave: palabrasClave || '',   //antes era this.palabrasClave
+          categoriaID: this.formulario.value.categoriaID || 0,
+          tipoDocumento: this.formulario.value.tipoDocumento || 0,
+          oficinaID: this.formulario.value.oficinaID || 0,
+          vigencia: this.formulario.value.vigencia?.toString() || '',
+          etapaID: this.formulario.value.etapaID || 0,
+          subClasificacionID: this.formulario.value.subClasificacionID || 0,
+          doctos: this.doctos,
+          activo: this.formulario.value.activo || false,
+          descargable: this.formulario.value.descargable || false,
+          doctoId: this.formulario.value.doctoID || 0,
+          usuarioID: 1,
+          oficinaUsuarioID: 1,
+          clasificacionID: 1,
+          normaID: 1,
+          versionID: 1
+        };
+  
+        console.log(documento);
+  
+        this.documentosService.crearDocumento(documento).subscribe({
+          next: (response) => {
+            console.log(response);
+  
+            if (response) {
+              this.formulario.reset();
+              this.doctos = []; // Limpiar la lista de doctos relacionados
+              this.limpiarErroresFormulario();
+              this.obtenerDocumentosCargarTabla();
+              Swal.fire('Creado', 'El documento ha sido creado exitosamente', 'success');
+            } else {
+              Swal.fire('Error', 'El documento no ha sido creado exitosamente', 'error');
+            }
+          },
+          error: (error) => {
+            console.error('Error al crear el documento:', error);
+            Swal.fire('Error', 'Hubo un problema al crear el documento', 'error');
+          }
+        });
+      }
+    });
+  }
+  
+
+  actualizarDocumento() {
+   
+    if (this.formulario.invalid) {
+      Swal.fire('Error', 'Por favor, complete todos los campos requeridos', 'error');
+      console.log("Complete todos los cambios");
       return;
     }
 
-    //const documentoData = this.formulario.value as DocumentoDTO;
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¿Deseas editar este documento?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, editar documento',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
 
-    //const palabrasClave: string[] = ["Nesesario", "importante", "oficina", "proyecto", "revisión"];
+        const palabrasClave = this.palabrasClaveComponent.getPalabrasClave();
 
-    const palabrasClave = this.palabrasClaveComponent.getPalabrasClave();
-
-    
-    const documento: DocumentoDTO = {
-    
-      id: 0, // Asumiendo que el ID se asigna en el backend
-      codigo: this.formulario.value.codigo?.toString()|| '',
-      asunto:this.formulario.value.asunto?.toString()|| '',
-      descripcion: this.formulario.value.descripcion?.toString() || '',
-      palabraClave: palabrasClave || '',   //antes era this.palabrasClave
-      categoriaID: this.formulario.value.categoriaID || 0,
-      tipoDocumento: this.formulario.value.tipoDocumento || 0,
-      oficinaID: this.formulario.value.oficinaID || 0,
-      vigencia: this.formulario.value.vigencia?.toString() || '',
-      etapaID: this.formulario.value.etapaID || 0,
-      subClasificacionID: this.formulario.value.subClasificacionID || 0,
-      doctos: this.doctos,
-   
-      // Asegúrate de que estos campos estén presentes y con el tipo correcto
-      activo: this.formulario.value.activo || false,
-      descargable: this.formulario.value.descargable || false,
-      doctoId: this.formulario.value.doctoID || 0,
-      usuarioID: 1,
-      oficinaUsuarioID: 1,
-      clasificacionID:1,
-      normaID:1,
-      versionID:1
-    };
-
-    //usuarioID y oficinaUsuarioID los tomo del localStorage
-
-
-    console.log(documento);
-
-    
-    
-    this.documentosService.crearDocumento(documento).subscribe({
-      next: (response) => {
-        console.log(response);
-
-        if(response){
-          this.formulario.reset();
-          this.doctos = []; // Limpiar la lista de doctos relacionados
-          this.limpiarErroresFormulario();
-          this.obtenerDocumentosCargarTabla();
-          Swal.fire('Creado', 'El documento ha sido creado exitosamente', 'success');
-        }else{
-          Swal.fire('Error', 'El documento no ha sido creado exitosamente', 'error');
-        }
+        const documento: DocumentoDTO = {
       
-      },
-      error: (error) => {
-        console.error('Error al crear el documento:', error);
-        Swal.fire('Error', 'Hubo un problema al crear el documento', 'error');
-      }
-    });
-
+        id: this.idDocumentoAEditar,
+        codigo: this.formulario.value.codigo?.toString()|| '',
+        asunto:this.formulario.value.asunto?.toString()|| '',
+        descripcion: this.formulario.value.descripcion?.toString() || '',
+        palabraClave: palabrasClave || '', 
+        categoriaID: this.formulario.value.categoriaID || 0,
+        tipoDocumento: this.formulario.value.tipoDocumento || 0,
+        oficinaID: this.formulario.value.oficinaID || 0,
+        vigencia: this.formulario.value.vigencia?.toString() || '',
+        etapaID: this.formulario.value.etapaID || 0,
+        subClasificacionID: this.formulario.value.subClasificacionID || 0,
+        doctos: this.doctos,
     
-    
-  }
-
-  actualizarDocumento() {
-    /*
-    if (!this.categoriaSeleccionada) return;
-      const categoriaActualizada: CategoriaDTO = {
-        id: this.categoriaSeleccionada.id,
-        nombre: this.formulario.value.nombre!,
-        descripcion: this.formulario.value.descripcion!
+        activo: this.formulario.value.activo || false,
+        descargable: this.formulario.value.descargable || false,
+        doctoId: this.formulario.value.doctoID || 0,
+        usuarioID: 1,
+        oficinaUsuarioID: 1,
+        clasificacionID:1,
+        normaID:1,
+        versionID:1
       };
-      this.categoriasService.actualizarCategoria(categoriaActualizada).subscribe(response => {
-        console.log(response);
-        this.obtenerDocumentosCargarTabla();
-        this.cancelarEdicion();
-        this.limpiarErroresFormulario();
-        Swal.fire('Editada!', 'La categoría ha sido editada.', 'success');
+
+      //usuarioID y oficinaUsuarioID los tomo del localStorage
+
+      console.log(documento);
+      
+      this.documentosService.actualizarDocumento(documento).subscribe({
+        next: (response) => {
+          console.log(response);
+
+          if(response){
+            this.formulario.reset();
+            this.doctos = []; // Limpiar la lista de doctos relacionados
+            this.actualizarTablaRelaciones();
+            this.palabrasClaveComponent.limpiarPalabrasClave();
+            this.limpiarErroresFormulario();
+            this.obtenerDocumentosCargarTabla();
+            Swal.fire('Editado', 'El documento ha sido editado exitosamente', 'success');
+          }else{
+            Swal.fire('Error', 'El documento no ha sido editado exitosamente', 'error');
+          }
+        
+        },
+        error: (error) => {
+          console.error('Error al crear el documento:', error);
+          Swal.fire('Error', 'Hubo un problema al editar el documento', 'error');
+        }
       });
-      */
+
+    }
+    });
+    
+
   }
 
-  editarDocumento(element: DocumentoGetDTO) {
+  editarDocumento(idDocumento: number) {
 
-    console.log(element);
+    console.log(idDocumento);
 
-    //fijarme en el editar y actualizar de etapas
-
-    //cargar todos los campos del formualrio con los datos
-    //y ademas cargar "doctos" con documento.doctos y doctos a listaRelacionesDataSource
-    //cunado se agregue una relacion nueva se agrega a doctos
-
-
-
-    /*
-    // Método para cargar los datos de la categoría seleccionada y activar el modo de edición
     this.estaEditando = true;
-    this.categoriaSeleccionada = element;
-    // Cargar los datos de la categoría en el formulario
-    this.formulario.patchValue({
-      nombre: element.nombre,
-      descripcion: element.descripcion
+    this.idDocumentoAEditar = idDocumento;
+    let documentoAEditar : DocumentoGetById;
+
+    this.documentosService.obtenerDocumentoPorIdParaEditar(idDocumento).subscribe(response => {
+
+      if(response){
+
+        documentoAEditar = response;
+        
+        // Cargar los datos de la categoría en el formulario
+        this.formulario.patchValue({
+          tipoDocumento: documentoAEditar.tipoDocumento ,
+          categoriaID: documentoAEditar.categoriaID ,
+          normaID: documentoAEditar.normaID,
+          etapaID: documentoAEditar.etapaID ,
+          asunto: documentoAEditar.asunto ,
+          codigo: documentoAEditar.codigo ,
+          oficinaID: documentoAEditar.oficinaID ,
+          descargable: documentoAEditar.descargable ,
+          activo: documentoAEditar.activo ,
+          descripcion: documentoAEditar.descripcion ,
+          doctoID: documentoAEditar.doctoId ,
+          clasificacionID: documentoAEditar.clasificacionID ,
+          subClasificacionID: documentoAEditar.subClasificacionID ,
+          vigencia: documentoAEditar.vigencia 
+        });
+
+        //cargo los catalogos que dependen de estos seguan su eleccion
+        this.onNormaChange(documentoAEditar.normaID);
+        this.onClasificacionChange(documentoAEditar.clasificacionID);
+
+        //carga tabla relaciones documentos
+        this.limpiarRelacionesDocumento();
+        this.doctos = documentoAEditar.doctos;
+        this.actualizarTablaRelaciones();
+
+        //cargar lista de palabras clave
+        this.palabrasClaveComponent.limpiarPalabrasClave();
+        this.palabrasClaveComponent.setearPalabrasClave(documentoAEditar.palabraClave);
+         
+        console.log(documentoAEditar);
+
+      }else{
+        console.log("Error al obtener los datos para la edicion");
+      }
+    
     });
+
     this.limpiarErroresFormulario();
-    */
+    
   }
 
   cancelarEdicion() {
@@ -374,7 +458,6 @@ export class DocumentosComponent implements OnInit {
     this.obtenerEtapasPorId(normaId);
   };
 
-
   obtenerEtapasPorId(normaId: number) {
     this.etapasService.obtenerEtapas().subscribe(response => {
       this.listaEtapasPorId = response.filter(etapa => etapa.normaID === normaId);
@@ -399,7 +482,6 @@ export class DocumentosComponent implements OnInit {
   onClasificacionChange(clasificacionId: number) {
     this.obtenerSubClasificacionesPorId(clasificacionId);
   };
-
 
   obtenerSubClasificacionesPorId(clasificacionId: number) {
     this.subclasificacionesService.obtenerSubclasificaciones().subscribe(response => {
@@ -443,7 +525,29 @@ export class DocumentosComponent implements OnInit {
   }
 
   actualizarTablaRelaciones() {
-    this.listaRelacionesdataSource.data = this.doctos;
+
+    //this.listaRelacionesdataSource.data = this.doctos;
+
+    setTimeout(() => {
+    
+      const dataConRelaciones: RelacionDocumentoExtendidaDTO[] = this.doctos.map(docRelaciones => {
+        
+        const docto = this.listaDoctos.find(doctoc => doctoc.id === docRelaciones.docto);
+  
+        return {
+          ...docRelaciones,
+          nombreDocto: docto ? docto.nombre : 'Sin Docto'
+        };
+      });
+
+      //console.log(dataConRelaciones);
+  
+      this.listaRelacionesdataSource.data = dataConRelaciones;
+
+     
+    }, 1000);
+
+
   }
 
   eliminarRelacionDocumento(id: number) {
@@ -464,6 +568,11 @@ export class DocumentosComponent implements OnInit {
       Swal.fire('Error', 'No se encontró la relación a eliminar.', 'error');
     }
   }
+
+  limpiarRelacionesDocumento() {
+    this.doctos = [];
+    this.actualizarTablaRelaciones();
+  }
   
 
    
@@ -475,11 +584,10 @@ export class DocumentosComponent implements OnInit {
     this.documentosService.obtenerDocumentos().subscribe(response => {
       this.listaDocumentos = response;
       this.setTable(this.listaDocumentos);
-      console.log(this.listaDocumentos);
+      //console.log(this.listaDocumentos);
     });
   }
 
- 
   setTable(data: DocumentoGetDTO[]) {
 
       // Simulamos una espera con setTimeout para alguna carga visual si es necesario
@@ -509,7 +617,7 @@ export class DocumentosComponent implements OnInit {
           };
         });
 
-        console.log(dataConRelaciones);
+       // console.log(dataConRelaciones);
     
         // Configuramos el DataSource con los datos mapeados
         this.listaDocumentosDataSource = new MatTableDataSource<DocumentoGetExtendidaDTO>(dataConRelaciones);
@@ -621,5 +729,3 @@ export class DocumentosComponent implements OnInit {
 
 
 }
-
-

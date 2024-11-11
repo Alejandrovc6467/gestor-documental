@@ -3,7 +3,7 @@ import { CategoriaDTO } from '../models/CategoriaDTO';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { DocumentoDTO } from '../models/DocumentoDTO';
-import { DocumentoGetDTO } from '../models/DocumentoGetDTO';
+import { DocumentoGetById, DocumentoGetDTO } from '../models/DocumentoGetDTO';
 import { EliminarDTO } from '../models/EliminarDTO';
 
 @Injectable({
@@ -26,18 +26,22 @@ export class DocumentosService {
   public obtenerDocumentoPorId(id:number): Observable<DocumentoGetDTO>{
     return this.http.get<DocumentoGetDTO>(`${this.urlBase}/${id}`);
   }
+
+  public obtenerDocumentoPorIdParaEditar(id:number): Observable<DocumentoGetById>{
+    return this.http.get<DocumentoGetById>(`${this.urlBase}/${id}`);
+  }
   
 
   public crearDocumento(documento: DocumentoDTO){
     return this.http.post(this.urlBase, documento);
   }
 
-  /*
-  public actualizarCategoria(categoria: CategoriaDTO){
-    return this.http.put(this.urlBase, categoria);
+  
+  public actualizarDocumento(documento: DocumentoDTO){
+    return this.http.put(this.urlBase, documento);
   }
 
-  */
+  
 
 
   public eliminarDocumento(eliminarDTO: EliminarDTO): Observable<any> {
