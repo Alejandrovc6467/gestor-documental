@@ -1,3 +1,31 @@
+
+.botonAtras{
+    color: #2e79c7;
+    margin-top: 20px;
+   display: flex;
+   justify-content: space-around;
+   align-items: center;
+    background-color: #ebf2fa;
+    cursor: pointer;
+    border: none;
+    font-size: 14px;
+    border-radius: 20px;
+    width: 100px;
+    padding: 7px 10px;
+    font-weight: 700;
+}
+
+.icon-animation-hover {
+    display: inline-block;
+    transform-origin: center center;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .botonAtras:hover .icon-animation-hover {
+    transform: translateX(-5px);
+  }
+
+
 .full-widthdoble {
     width: 80%;  
     max-width: 1000px;

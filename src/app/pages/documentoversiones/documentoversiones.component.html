@@ -6,11 +6,15 @@
         <h5>Documentos/versiones</h5>
     </div>
 
-    <p>documentoversiones works! on id: {{id}}</p>
-    
+    <button  routerLink="/documentos" class="botonAtras">
+        <mat-icon name="pie-chart-outline" class="nav__icon icon-animation-hover">arrow_back</mat-icon>Atrás
+    </button>
   
+ 
     
     <form [formGroup]="formulario" (submit)="$event.preventDefault()">
+
+      
 
         <div class="contenedor_formulario">
 
@@ -20,7 +24,6 @@
             <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Nombre documento</mat-label>
                 <input matInput  [formControl]="formulario.controls.nombreDocumento" readonly>
-                <mat-error>{{obtenerErrorNombre()}}</mat-error>
             </mat-form-field>
         
            
@@ -30,13 +33,13 @@
                 <mat-form-field appearance="outline" class="full-width">
                     <mat-label>Usuario</mat-label>
                     <input matInput [formControl]="formulario.controls.nombreUsuario" readonly>
-                    <mat-error>{{obtenerErrorNombre()}}</mat-error>
+
                 </mat-form-field>
 
                 <mat-form-field appearance="outline" class="full-width">
                     <mat-label>Oficina</mat-label>
                     <input matInput [formControl]="formulario.controls.oficina" readonly>
-                    <mat-error>{{obtenerErrorNombre()}}</mat-error>
+
                 </mat-form-field>
 
             </div>
@@ -47,13 +50,13 @@
                 <mat-form-field appearance="outline" class="full-width">
                     <mat-label>Versión</mat-label>
                     <input matInput [formControl]="formulario.controls.version">
-                    <mat-error>{{obtenerErrorNombre()}}</mat-error>
+                    <mat-error>{{obtenerErrorVersion()}}</mat-error>
                 </mat-form-field>
 
                 <mat-form-field appearance="outline" class="full-width">
                     <mat-label>No.SCD</mat-label>
                     <input matInput [formControl]="formulario.controls.numeroSCD">
-                    <mat-error>{{obtenerErrorNombre()}}</mat-error>
+                    <mat-error>{{obtenerErrorNoSCD()}}</mat-error>
                 </mat-form-field>
 
             </div>
@@ -92,17 +95,19 @@
                 <mat-error>{{obtenerErrorArchivo()}}</mat-error>
             </mat-form-field>
 
+            
             <div class="contenedor_boton">
-               
-                @if(estaEditando){
-                    <button mat-flat-button type="button" class="boton_amarillo" (click)="actualizarVersion()" [disabled]="formulario.invalid"> <mat-icon name="pie-chart-outline" class="nav__icon">edit</mat-icon>Editar </button>
-                    <button mat-flat-button type="button" class="boton_amarillo" (click)="cancelarEdicion()"> <mat-icon name="pie-chart-outline" class="nav__icon">cancel</mat-icon> Cancelar </button>
-                }@else {
-                    <button mat-flat-button type="button"  class="boton_amarillo" (click)="limpiarFormulario()"> <mat-icon name="pie-chart-outline" class="nav__icon">cleaning_services</mat-icon>Limpiar</button>
-                    <button mat-flat-button type="button"  class="boton_amarillo" (click)="realizarBusqueda()"><mat-icon name="pie-chart-outline" class="nav__icon">search</mat-icon>Buscar</button>
-                    <button mat-flat-button type="button" class="boton_amarillo" (click)="crearVersion()" [disabled]="formulario.invalid || formulario.pristine"> <mat-icon name="pie-chart-outline" class="nav__icon">add</mat-icon>Agregar</button>
-                }
-                
+                <button mat-flat-button type="button" class="boton_amarillo" (click)="limpiarFormulario()">
+                    <mat-icon name="pie-chart-outline" class="nav__icon">cleaning_services</mat-icon>Limpiar
+                </button>
+                <button mat-flat-button type="button" class="boton_amarillo" (click)="realizarBusqueda()">
+                    <mat-icon name="pie-chart-outline" class="nav__icon">search</mat-icon>Buscar
+                </button>
+
+                <button mat-flat-button type="button" (click)="guardarVersion()"  class="boton_amarillo">
+                    <mat-icon name="pie-chart-outline" class="nav__icon">{{estaEditando ? 'edit' : 'add'}}</mat-icon>
+                    {{estaEditando ? 'Actualizar' : 'Agregar'}}
+                </button>
             </div>
 
         </div>

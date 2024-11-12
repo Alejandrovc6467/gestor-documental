@@ -5,9 +5,7 @@ import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angu
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { CategoriaDTO } from '../../Core/models/CategoriaDTO';
 import { VersionDTO } from '../../Core/models/VersionDTO';
-import { CategoriasService } from '../../Core/services/categorias.service';
 import { DocumentosService } from '../../Core/services/documentos.service';
 import { VersionesService } from '../../Core/services/versiones.service';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
@@ -21,18 +19,18 @@ import { MatRadioModule } from '@angular/material/radio';
 import { DocumentoGetDTO } from '../../Core/models/DocumentoGetDTO';
 import { DatePipe } from '@angular/common';
 import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
-import { FiltroVerticalGetExtendidaDTO } from '../../Core/models/FiltroVerticalGetDTO';
 import { PdfViewerComponent } from '../../Core/components/pdf-viewer/pdf-viewer.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { firstValueFrom } from 'rxjs';
 import { FiltroVerticalService } from '../../Core/services/filtro-vertical.service';
+import { RouterLink } from '@angular/router';
 
 
 @Component({
   selector: 'app-documentoversiones',
   standalone: true,
-  imports: [MatButtonModule,  MatFormFieldModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule, MatDatepickerModule, MatNativeDateModule,  MatCheckboxModule, MatRadioModule, MatTooltipModule ],
+  imports: [MatButtonModule, RouterLink,  MatFormFieldModule, ReactiveFormsModule, MatInputModule, MatTableModule, MatPaginatorModule, MatIconModule, FormsModule, MatDatepickerModule, MatNativeDateModule,  MatCheckboxModule, MatRadioModule, MatTooltipModule ],
   templateUrl: './documentoversiones.component.html',
   styleUrl: './documentoversiones.component.css',
   providers: [
@@ -63,7 +61,6 @@ export class DocumentoversionesComponent implements OnInit  {
 
   ngOnInit(): void {
     this.obtenerVersionesCargarTabla();
-    this.formulario.updateValueAndValidity();
     this.cargarCamposQuemadosEnHtml();
   }
   
@@ -74,7 +71,7 @@ export class DocumentoversionesComponent implements OnInit  {
     nombreDocumento: ['', [Validators.required]],
     nombreUsuario: ['', [Validators.required]],
     oficina: ['', [Validators.required]],
-    version: [0, [Validators.required, Validators.pattern('^[0-9]+$')]],
+    version: [null as number | null, [Validators.required, Validators.pattern('^[0-9]+$')]],
     numeroSCD: ['', [Validators.required]],
     justificacion: ['', [Validators.required]],
     FechaCreacion: ['', [Validators.required]],
@@ -114,7 +111,7 @@ export class DocumentoversionesComponent implements OnInit  {
 
       });
 
-    }, 1000);
+    }, 500);
     
     //luego creo una VersionDTO y lo seteo con los datos del formulario y los de objetoDocumentoParaCargarDatosQuemados 
     //esto ultimo en el metodo guardar obvio
@@ -125,99 +122,191 @@ export class DocumentoversionesComponent implements OnInit  {
 
   //CRUD ************************************************************************************************
 
+  guardarVersion() {
+    
+    if (this.formulario.invalid) {
+
+      console.log('invalido en guardarVersion');
+    
+      this.formulario.markAllAsTouched();
+
+      // Verificar si todos los campos, excepto "archivo", están llenos, estopara mostrar la venta de archivo vacio solo para este caso
+      const camposLlenos = Object.keys(this.formulario.controls).every(campo => {
+        if (campo !== 'archivo') {
+          return this.formulario.get(campo)?.value !== '';
+        }
+        return true;
+      });
+
+      // Verificar si el campo "archivo" está vacío
+      const archivoControl = this.formulario.get('archivo');
+      if (camposLlenos && archivoControl?.value === null) {
+        Swal.fire('Espera!', 'Selecciona un archivo.', 'error');
+      }
+
+      return;
+
+    }
+
+
+    this.marcarErrores();
+    
+    if (this.estaEditando) {
+      this.actualizarVersion();
+    } else {
+      this.crearVersion();
+    }
+  }
+
+
+
+  marcarErrores() {
+    // Lista de los campos requeridos
+    const camposRequeridos = [ 'nombreDocumento', 'nombreUsuario', 'oficina', 'version', 'numeroSCD', 'justificacion', 'FechaCreacion', 'archivo'];
+  
+    camposRequeridos.forEach(campo => {
+      const control = this.formulario.get(campo);
+  
+      // Marca el campo como tocado
+      control?.markAsTouched();
+  
+      // Si el campo está vacío, establece el error de 'required'
+      if (campo === 'archivo' && !control?.value) {
+        control?.setErrors({ required: true });
+      } else if (campo !== 'archivo' && !control?.value) {
+        control?.setErrors({ required: true, pattern: true });
+      }
+    });
+  }
+
   crearVersion(){
-    
-    console.log("Entre al crear version");
-    
-    /*Reuerde sacar el id del usuario del storage y el id de oficina del storage tambien
-    el campo oficinaid falta en el swagger */
+
    
     if (this.formulario.invalid) {
-      console.log("El formulario es inválido");
+      console.log('invalido');
       return;
     }
 
-    setTimeout(() => {
+
+    
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¿Deseas crear esta versión?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, crear',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+        setTimeout(() => {
   
-    const fechaCreacion = this.formulario.value.FechaCreacion;
-    if (fechaCreacion) {
-      const fechaFormateada = this.datePipe.transform(fechaCreacion, 'dd/MM/yyyy');
-      this.formulario.patchValue({ FechaCreacion: fechaFormateada });
-    }
-  
- 
-
-    const versionData: VersionDTO = {
-      documentoID: this.id,
-      numeroVersion: this.formulario.value.version || 0,
-      fechaCreacion: this.formulario.value.FechaCreacion || '',
-      eliminado: false,
-      usuarioID: 1,
-      docDinamico: Boolean(this.formulario.get('docDinamico')?.value),
-      obsoleto: Boolean(this.formulario.get('obsoleto')?.value),
-      numeroSCD: this.formulario.get('numeroSCD')?.value || '',
-      justificacion: this.formulario.value.justificacion || '',
-      archivo: this.formulario.value.archivo || null,
-      UsuarioLogID: 1,
-      OficinaID: 1
-    };
-
-
-    console.log(versionData);
-  
-    this.versionesService.crearVersion(versionData).subscribe(response => {
-
-      console.log(response);
-      if(response){
-        this.obtenerVersionesCargarTabla();
-        this.formulario.reset();
-        this.limpiarErroresFormulario();
-        Swal.fire('Creada!', 'La versión ha sido creada.', 'success');
-      }else{
-        Swal.fire('Error!', 'La versión no ha sido creada.', 'error');
-      }
+          const fechaCreacion = this.formulario.value.FechaCreacion;
+          if (fechaCreacion) {
+            const fechaFormateada = this.datePipe.transform(fechaCreacion, 'dd/MM/yyyy');
+            this.formulario.patchValue({ FechaCreacion: fechaFormateada });
+          }
+        
       
+    
+          const versionData: VersionDTO = {
+            documentoID: this.id,
+            numeroVersion: this.formulario.value.version || 0,
+            fechaCreacion: this.formulario.value.FechaCreacion || '',
+            eliminado: false,
+            usuarioID: 1,
+            docDinamico: Boolean(this.formulario.get('docDinamico')?.value),
+            obsoleto: Boolean(this.formulario.get('obsoleto')?.value),
+            numeroSCD: this.formulario.get('numeroSCD')?.value || '',
+            justificacion: this.formulario.value.justificacion || '',
+            archivo: this.formulario.value.archivo || null,
+            UsuarioLogID: 1,
+            OficinaID: 1
+          };
+    
+    
+          console.log(versionData);
+        
+          this.versionesService.crearVersion(versionData).subscribe(response => {
+    
+            console.log(response);
+            if(response){
+              this.obtenerVersionesCargarTabla();
+              this.limpiarFormulario();
+              Swal.fire('Creada!', 'La versión ha sido creada.', 'success');
+            }else{
+              Swal.fire('Error!', 'La versión no ha sido creada.', 'error');
+            }
+            
+          });
+    
+        }, 3000);
+    
+
+      }
     });
-
-  }, 3000);
-
+    
+   
+    
   
   }
 
   actualizarVersion() {
 
     if (this.formulario.invalid) {
-      Swal.fire('Error', 'Por favor, complete todos los campos requeridos', 'error');
-      console.log("Complete todos los cambios");
       return;
     }
 
-    const versionData: VersionDTO = {
-      id: this.versionAEditar?.id,
-      documentoID: this.id,
-      numeroVersion: this.formulario.value.version || 0,
-      fechaCreacion: this.formulario.value.FechaCreacion || '',
-      eliminado: false,
-      usuarioID: 1,
-      docDinamico: Boolean(this.formulario.get('docDinamico')?.value),
-      obsoleto: Boolean(this.formulario.get('obsoleto')?.value),
-      numeroSCD: this.formulario.get('numeroSCD')?.value || '',
-      justificacion: this.formulario.value.justificacion || '',
-      archivo: this.formulario.value.archivo || null,
-      UsuarioLogID: 1,
-      OficinaID: 1
-    };
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¿Deseas actualizar este Tipo de documento?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, actualizar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
 
-  
+
+        const versionData: VersionDTO = {
+          id: this.versionAEditar?.id,
+          documentoID: this.id,
+          numeroVersion: this.formulario.value.version || 0,
+          fechaCreacion: this.formulario.value.FechaCreacion || '',
+          eliminado: false,
+          usuarioID: 1,
+          docDinamico: Boolean(this.formulario.get('docDinamico')?.value),
+          obsoleto: Boolean(this.formulario.get('obsoleto')?.value),
+          numeroSCD: this.formulario.get('numeroSCD')?.value || '',
+          justificacion: this.formulario.value.justificacion || '',
+          archivo: this.formulario.value.archivo || null,
+          UsuarioLogID: 1,
+          OficinaID: 1
+        };
     
-    this.versionesService.actualizarVersion(versionData).subscribe(response => {
-        console.log(response);
-        this.obtenerVersionesCargarTabla();
-        this.cancelarEdicion();
-        this.limpiarErroresFormulario();
-        Swal.fire('Editada!', 'La categoría ha sido editada.', 'success');
+        
+        this.versionesService.actualizarVersion(versionData).subscribe(response => {
+            console.log(response);
+            if(response){
+            
+              this.obtenerVersionesCargarTabla();
+              this.limpiarFormulario();
+              Swal.fire('Editada!', 'La versión ha sido editada.', 'success');
+
+            }else{
+              Swal.fire('Error!', 'La versión no ha sido editada.', 'error');
+            }
+
+        });
+        
+
+      }
     });
-    
+
       
   }
 
@@ -279,30 +368,59 @@ export class DocumentoversionesComponent implements OnInit  {
         console.error('Error al editar la versión:', error);
         Swal.fire('Error', 'No se pudieron cargar los datos para la edición', 'error');
     }
-}
 
-
-
-
-
-
-
-
-  cancelarEdicion() {
-    this.estaEditando = false;
-    this.versionAEditar = null;
-    this.formulario.reset(); // Limpiar el formulario
-    this.formulario.markAsPristine();  // Marcar como 'pristino'
-    this.formulario.markAsUntouched(); // Marcar como 'intacto'
-    this.formulario.updateValueAndValidity(); // Recalcular estado de validez
-    this.limpiarErroresFormulario();
-    this.cargarCamposQuemadosEnHtml();
+    // Marcar como pristine después de cargar los datos
+    this.formulario.markAsPristine();
+    // Marcar como untouched para evitar mensajes de error
+    Object.keys(this.formulario.controls).forEach(key => {
+      const control = this.formulario.get(key);
+      if (control) {
+        control.markAsUntouched();
+      }
+    });
   }
 
-  eliminarVersion(idEliminar: number) {
-    // Mostrar el SweetAlert para confirmar la eliminación
 
+
+  limpiarFormulario(){
     
+    const camposRequeridos: string[] = ['version', 'numeroSCD','justificacion', 'FechaCreacion','docDinamico', 'codigo','obsoleto', 'archivo'];
+    camposRequeridos.forEach(campo => {
+      const control = this.formulario.get(campo);
+      if (control) {
+        // Verificar si el campo es booleano y asignar false en lugar de un valor vacío
+        if (campo === 'docDinamico' || campo === 'obsoleto') {
+          control.setValue(false);
+        } else if (campo === 'version') {
+          control.setValue('');
+        } else if (campo === 'archivo') {
+          control.setValue(null); // Establecer el campo de archivo a null
+        } else {
+          control.setValue('');
+        }
+      }
+    });
+  
+
+   //limpiar los errores del formulario
+   Object.keys(this.formulario.controls).forEach(key => {
+    this.formulario.get(key)?.setErrors(null); // Eliminar los errores de cada control
+   });
+
+   this.cargarCamposQuemadosEnHtml();
+
+   this.formulario.updateValueAndValidity();
+
+    // Reseteamos los estados del componente
+    this.estaEditando = false;
+
+  }
+
+
+
+
+  eliminarVersion(idEliminar: number) {
+   
     Swal.fire({
         title: '¿Desea eliminar la versión?',
         text: 'Esta acción no se puede deshacer.',
@@ -318,8 +436,14 @@ export class DocumentoversionesComponent implements OnInit  {
             // Si el usuario confirma, proceder con la eliminación
             this.versionesService.eliminarVersion(idEliminar).subscribe(response => {
                 console.log(response);
-                this.obtenerVersionesCargarTabla();
-                Swal.fire('Eliminada!', 'La versión ha sido eliminada.', 'success');
+                if(response){
+                  this.obtenerVersionesCargarTabla();
+                  this.limpiarFormulario();
+                  Swal.fire('Eliminada!', 'La versión ha sido eliminada.', 'success');
+                }else{
+                  Swal.fire('Error!', 'La versión no ha sido eliminada.', 'error');
+                }
+              
             });
         }
     });
@@ -331,8 +455,6 @@ export class DocumentoversionesComponent implements OnInit  {
 
   // Otros *******************************************************************************************
 
-  // en le html voy a pasar element.urlArchivo  y aqui tengo que quitar ese if deporsi ya se que siempre es un pdf por la validacione en el front
-  // ademas agregar el nuevo atributo en VersionDTO
   observarDocumento(element: any) {
     //if (element.archivo.contentType === 'application/pdf') {
       console.log(element.urlVersion);
@@ -383,14 +505,6 @@ export class DocumentoversionesComponent implements OnInit  {
     */
   }
 
-  limpiarFormulario() {
-    this.formulario.reset(); // Resetea los campos del formulario
-    this.formulario.markAsPristine();  // Marcar como 'pristino'
-    this.formulario.markAsUntouched(); // Marcar como 'intacto'
-    this.formulario.updateValueAndValidity(); // Recalcular estado de validez
-    this.limpiarErroresFormulario(); // Eliminar los errores
-    this.cargarCamposQuemadosEnHtml();
-  }
 
   onSearchChange(event: any) {
     const filterValue = event.target.value?.trim().toLowerCase() || '';
@@ -408,33 +522,32 @@ export class DocumentoversionesComponent implements OnInit  {
 
   
   // validaciones *******************************************************************************************************************
+
+  obtenerErrorVersion() {
+    const version = this.formulario.controls.version;
+    if (version.hasError('required')) {
+      return 'La versión es obligatoria';
+    } else if (version.hasError('pattern')) {
+      return 'La versión debe ser un número';
+    }
+    return '';
+  }
+
+  obtenerErrorNoSCD() {
+    const justificacion = this.formulario.controls.numeroSCD;
+    if (justificacion.hasError('required')) {
+      return 'El campo No.SCD es obligatorio';
+    }
+    return '';
+  }
+
+
   obtenerErrorJustificacion() {
     const justificacion = this.formulario.controls.justificacion;
     if (justificacion.hasError('required')) {
       return 'El campo justificacion es obligatorio';
     }
     return '';
-  }
-
-  obtenerErrorNombre(){
-    const nombre = this.formulario.controls.nombreDocumento;
-   
-    if (nombre.hasError('required')) {
-      return 'El campo nombre es obligatorio';
-    }
-
-    
-    if (nombre.hasError('pattern')) {
-      return 'El campo nombre solo puede contener letras';
-    }
-    
-    return ''; 
-  }
-
-  limpiarErroresFormulario() {
-    Object.keys(this.formulario.controls).forEach(key => {
-      this.formulario.get(key)?.setErrors(null); // Eliminar los errores de cada control
-    });
   }
 
   obtenerErrorFecha() {
@@ -445,20 +558,18 @@ export class DocumentoversionesComponent implements OnInit  {
     return '';
   }
 
-  obtenerErrorDocumento() {
-    const documento = this.formulario.controls.archivo;
-    if (documento.hasError('required')) {
-      return 'El documento es obligatorio';
+  
+
+  obtenerErrorArchivo() {
+    const archivo = this.formulario.get('archivo');
+    if (archivo?.hasError('required')) {
+      return 'El archivo es obligatorio';
     }
     return '';
   }
 
-  obtenerErrorArchivo() {
-    const control = this.formulario.get('archivo');
-    if (control?.hasError('required')) {
-      return 'El archivo es requerido';
-    }
-    return '';
+  obtenerErrorNombre(){
+
   }
 
 }
