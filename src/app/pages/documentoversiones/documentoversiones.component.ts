@@ -25,7 +25,8 @@ import { FiltroVerticalGetExtendidaDTO } from '../../Core/models/FiltroVerticalG
 import { PdfViewerComponent } from '../../Core/components/pdf-viewer/pdf-viewer.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
-
+import { firstValueFrom } from 'rxjs';
+import { FiltroVerticalService } from '../../Core/services/filtro-vertical.service';
 
 
 @Component({
@@ -46,7 +47,6 @@ export class DocumentoversionesComponent implements OnInit  {
 
   private dialog = inject(MatDialog); // Usa inject en lugar del constructor
 
-  categoriasService = inject(CategoriasService);
   documentosService = inject(DocumentosService);
   versionesService = inject(VersionesService);
 
@@ -56,9 +56,9 @@ export class DocumentoversionesComponent implements OnInit  {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   textoBuscar: string = "";
   estaEditando: boolean = false;
-  categoriaSeleccionada!: VersionDTO | null;
-
+  versionAEditar!: VersionDTO | null;
   objetoDocumentoParaCargarDatosQuemados!: DocumentoGetDTO | null;
+  filtroVerticalService = inject(FiltroVerticalService);
 
 
   ngOnInit(): void {
@@ -74,7 +74,7 @@ export class DocumentoversionesComponent implements OnInit  {
     nombreDocumento: ['', [Validators.required]],
     nombreUsuario: ['', [Validators.required]],
     oficina: ['', [Validators.required]],
-    version: ['', [Validators.required]],
+    version: [0, [Validators.required, Validators.pattern('^[0-9]+$')]],
     numeroSCD: ['', [Validators.required]],
     justificacion: ['', [Validators.required]],
     FechaCreacion: ['', [Validators.required]],
@@ -116,38 +116,19 @@ export class DocumentoversionesComponent implements OnInit  {
 
     }, 1000);
     
-    
- 
-      //luego creo una VersionDTO y lo seteo con los datos del formulario y los de objetoDocumentoParaCargarDatosQuemados 
-      //esto ultimo en el metodo guardar obvio
+    //luego creo una VersionDTO y lo seteo con los datos del formulario y los de objetoDocumentoParaCargarDatosQuemados 
+    //esto ultimo en el metodo guardar obvio
   
-    
   }
 
 
 
   //CRUD ************************************************************************************************
-  obtenerCategorias(){
-    /*
-    this.versionesService.obtenerCategorias().subscribe(response => {
-      this.listaCategorias = response;
-    });
-    */
-  }
-
-  obtenerCategoriaPorId(idBuscar:number){
-    //const idBuscar: number = 1;
-    this.categoriasService.obtenerCategoriaPorId(idBuscar).subscribe(response => {
-      console.log(response);
-    });
-  }
 
   crearVersion(){
     
     console.log("Entre al crear version");
     
-
-
     /*Reuerde sacar el id del usuario del storage y el id de oficina del storage tambien
     el campo oficinaid falta en el swagger */
    
@@ -168,7 +149,7 @@ export class DocumentoversionesComponent implements OnInit  {
 
     const versionData: VersionDTO = {
       documentoID: this.id,
-      numeroVersion: Number(this.formulario.value.version) || 0,
+      numeroVersion: this.formulario.value.version || 0,
       fechaCreacion: this.formulario.value.FechaCreacion || '',
       eliminado: false,
       usuarioID: 1,
@@ -181,10 +162,7 @@ export class DocumentoversionesComponent implements OnInit  {
       OficinaID: 1
     };
 
-  
-    //antes lo haia asi
-    //const version = this.formulario.value as VersionDTO; 
- 
+
     console.log(versionData);
   
     this.versionesService.crearVersion(versionData).subscribe(response => {
@@ -206,48 +184,119 @@ export class DocumentoversionesComponent implements OnInit  {
   
   }
 
-  actualizarCategoria() {
-    /*
-    if (!this.categoriaSeleccionada) return;
-      const categoriaActualizada: CategoriaDTO = {
-        id: this.categoriaSeleccionada.id,
-        nombre: this.formulario.value.nombre!,
-        descripcion: this.formulario.value.descripcion!
-      };
-      this.categoriasService.actualizarCategoria(categoriaActualizada).subscribe(response => {
+  actualizarVersion() {
+
+    if (this.formulario.invalid) {
+      Swal.fire('Error', 'Por favor, complete todos los campos requeridos', 'error');
+      console.log("Complete todos los cambios");
+      return;
+    }
+
+    const versionData: VersionDTO = {
+      id: this.versionAEditar?.id,
+      documentoID: this.id,
+      numeroVersion: this.formulario.value.version || 0,
+      fechaCreacion: this.formulario.value.FechaCreacion || '',
+      eliminado: false,
+      usuarioID: 1,
+      docDinamico: Boolean(this.formulario.get('docDinamico')?.value),
+      obsoleto: Boolean(this.formulario.get('obsoleto')?.value),
+      numeroSCD: this.formulario.get('numeroSCD')?.value || '',
+      justificacion: this.formulario.value.justificacion || '',
+      archivo: this.formulario.value.archivo || null,
+      UsuarioLogID: 1,
+      OficinaID: 1
+    };
+
+  
+    
+    this.versionesService.actualizarVersion(versionData).subscribe(response => {
         console.log(response);
         this.obtenerVersionesCargarTabla();
         this.cancelarEdicion();
         this.limpiarErroresFormulario();
         Swal.fire('Editada!', 'La categoría ha sido editada.', 'success');
-      });
-      */
-  }
-
-  editarVersion(idVersion: number) {
-
-    this.estaEditando = true;
-    console.log(idVersion);
-    /*
-    // Método para cargar los datos de la categoría seleccionada y activar el modo de edición
-    this.estaEditando = true;
-    this.categoriaSeleccionada = element;
-    // Cargar los datos de la categoría en el formulario
-    this.formulario.patchValue({
-      nombre: element.nombre,
-      descripcion: element.descripcion
     });
-    this.limpiarErroresFormulario();
-    */
+    
+      
   }
+
+ 
+
+
+
+
+
+  async editarVersion(idVersion: number) {
+    console.log(idVersion);
+    this.estaEditando = true;
+
+    try {
+        const response = await firstValueFrom(this.versionesService.obtenerVersionPorId(idVersion));
+        
+        if (response) {
+            this.versionAEditar = response;
+            console.log(this.versionAEditar);
+
+            // Convertimos la fecha
+            const fechaCreacion = new Date(this.versionAEditar.fechaCreacion);
+            const fechaFormateada = fechaCreacion.toISOString().split('T')[0];
+
+            // Obtener el archivo
+            if (this.versionAEditar?.urlVersion) {
+              // Descargar el archivo usando el servicio
+              const blob = await firstValueFrom(this.filtroVerticalService.descargarArchivo(this.versionAEditar.urlVersion));
+                
+                
+              // Obtener el nombre del archivo de manera segura
+              const fileName = (this.versionAEditar.archivo as any)?.fileName || 'documento.pdf';
+
+
+              // Crear un objeto File a partir del Blob
+              const file = new File([blob as Blob], fileName, {
+                    type: 'application/pdf'
+                });
+                
+
+                // Actualizar el formulario con todos los datos
+                this.formulario.patchValue({
+                    nombreDocumento: this.objetoDocumentoParaCargarDatosQuemados?.asunto,
+                    nombreUsuario: 'Juan Pérez',
+                    oficina: 'Oficina Central',
+                    version: this.versionAEditar.numeroVersion,
+                    numeroSCD: this.versionAEditar.numeroSCD,
+                    justificacion: this.versionAEditar.justificacion,
+                    FechaCreacion: fechaFormateada,
+                    docDinamico: this.versionAEditar.docDinamico,
+                    obsoleto: this.versionAEditar.obsoleto,
+                    archivo: file
+                });
+            }
+        } else {
+            console.log("Error al obtener los datos para la edicion");
+        }
+    } catch (error) {
+        console.error('Error al editar la versión:', error);
+        Swal.fire('Error', 'No se pudieron cargar los datos para la edición', 'error');
+    }
+}
+
+
+
+
+
+
+
 
   cancelarEdicion() {
     this.estaEditando = false;
-    this.categoriaSeleccionada = null;
+    this.versionAEditar = null;
     this.formulario.reset(); // Limpiar el formulario
     this.formulario.markAsPristine();  // Marcar como 'pristino'
     this.formulario.markAsUntouched(); // Marcar como 'intacto'
     this.formulario.updateValueAndValidity(); // Recalcular estado de validez
+    this.limpiarErroresFormulario();
+    this.cargarCamposQuemadosEnHtml();
   }
 
   eliminarVersion(idEliminar: number) {
@@ -340,6 +389,7 @@ export class DocumentoversionesComponent implements OnInit  {
     this.formulario.markAsUntouched(); // Marcar como 'intacto'
     this.formulario.updateValueAndValidity(); // Recalcular estado de validez
     this.limpiarErroresFormulario(); // Eliminar los errores
+    this.cargarCamposQuemadosEnHtml();
   }
 
   onSearchChange(event: any) {

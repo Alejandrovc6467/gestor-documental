@@ -10,7 +10,7 @@
     
   
     
-    <form (ngSubmit)="crearVersion()" [formGroup]="formulario">
+    <form [formGroup]="formulario" (submit)="$event.preventDefault()">
 
         <div class="contenedor_formulario">
 
@@ -95,12 +95,12 @@
             <div class="contenedor_boton">
                
                 @if(estaEditando){
-                    <button mat-flat-button type="button" class="boton_amarillo" (click)="actualizarCategoria()" [disabled]="formulario.invalid"> <mat-icon name="pie-chart-outline" class="nav__icon">edit</mat-icon>Editar </button>
+                    <button mat-flat-button type="button" class="boton_amarillo" (click)="actualizarVersion()" [disabled]="formulario.invalid"> <mat-icon name="pie-chart-outline" class="nav__icon">edit</mat-icon>Editar </button>
                     <button mat-flat-button type="button" class="boton_amarillo" (click)="cancelarEdicion()"> <mat-icon name="pie-chart-outline" class="nav__icon">cancel</mat-icon> Cancelar </button>
                 }@else {
                     <button mat-flat-button type="button"  class="boton_amarillo" (click)="limpiarFormulario()"> <mat-icon name="pie-chart-outline" class="nav__icon">cleaning_services</mat-icon>Limpiar</button>
                     <button mat-flat-button type="button"  class="boton_amarillo" (click)="realizarBusqueda()"><mat-icon name="pie-chart-outline" class="nav__icon">search</mat-icon>Buscar</button>
-                    <button mat-flat-button type="submit"  class="boton_amarillo" [disabled]="formulario.invalid || formulario.pristine"><mat-icon name="pie-chart-outline" class="nav__icon">add</mat-icon>Agregar</button>
+                    <button mat-flat-button type="button" class="boton_amarillo" (click)="crearVersion()" [disabled]="formulario.invalid || formulario.pristine"> <mat-icon name="pie-chart-outline" class="nav__icon">add</mat-icon>Agregar</button>
                 }
                 
             </div>
