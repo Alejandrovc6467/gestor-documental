@@ -1,7 +1,6 @@
 
 import { RouterLink } from '@angular/router';
 
-
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -119,14 +118,11 @@ export class DocumentosComponent implements OnInit {
     this.obtenerSubClasificaciones();
     this.obtenerClasificaciones();
 
-    this.formulario.updateValueAndValidity();
-
   
     this.obtenerDocumentosCargarTabla();
 
     this.actualizarTablaRelaciones();
 
-    
   }
 
 
@@ -172,13 +168,70 @@ export class DocumentosComponent implements OnInit {
       console.log(response);
     });
   }
-  
-  crearDocumento() {
+
+
+  guardarDocumento() {
+    
     if (this.formulario.invalid) {
-      Swal.fire('Error', 'Por favor, complete todos los campos requeridos', 'error');
-      console.log("Error al registrar documento");
       return;
     }
+
+    this.marcarErrores();
+    
+    if (this.estaEditando) {
+      this.actualizarDocumento();
+    } else {
+      this.crearDocumento();
+    }
+  }
+
+
+  /*
+    formulario = this.formbuilder.group({
+    tipoDocumento: [0, [Validators.required]],
+    categoriaID: [0, [Validators.required]],
+    normaID: [0, [Validators.required]],
+    etapaID: [0, [Validators.required]],
+    asunto: ['', [Validators.required]],
+    codigo: ['', [Validators.required]],
+    oficinaID: [0, [Validators.required]],
+    descargable: [false],
+    activo: [false],
+    descripcion: ['', [Validators.required]],
+    doctoID: [0],
+    clasificacionID: [0],
+    subClasificacionID: [0],
+    vigencia: ['']
+  });
+  */
+
+
+  marcarErrores() {
+    // Lista de los campos requeridos
+    const camposRequeridos = ['tipoDocumento', 'categoriaID', 'normaID', 'etapaID', 'asunto', 'codigo' , 'oficinaID', 'descripcion' ];
+  
+    camposRequeridos.forEach(campo => {
+      const control = this.formulario.get(campo);
+  
+      // Marca el campo como tocado
+      control?.markAsTouched();
+  
+      // Si el campo está vacío, establece el error de 'required'
+      if (!control?.value) {
+        control?.setErrors({ required: true, pattern: true });
+      }
+    });
+  }
+  
+
+
+  
+  crearDocumento() {
+  
+    if (this.formulario.invalid) {
+      return;
+    }
+
   
     // Mostrar ventana de confirmación antes de crear el documento
     Swal.fire({
@@ -225,13 +278,14 @@ export class DocumentosComponent implements OnInit {
             console.log(response);
   
             if (response) {
-              this.formulario.reset();
+           
               this.doctos = []; // Limpiar la lista de doctos relacionados
-              this.limpiarErroresFormulario();
-              this.obtenerDocumentosCargarTabla();
               this.palabrasClaveComponent.limpiarPalabrasClave();
               this.limpiarRelacionesDocumento();
+              this.obtenerDocumentosCargarTabla();
+              this.limpiarFormulario();
               Swal.fire('Creado', 'El documento ha sido creado exitosamente', 'success');
+
             } else {
               Swal.fire('Error', 'El documento no ha sido creado exitosamente', 'error');
             }
@@ -249,10 +303,9 @@ export class DocumentosComponent implements OnInit {
   actualizarDocumento() {
    
     if (this.formulario.invalid) {
-      Swal.fire('Error', 'Por favor, complete todos los campos requeridos', 'error');
-      console.log("Complete todos los cambios");
-      return;
+      return; /// este no estaba eb tipo docuemento quitar si falla , esto es de hoy lunes intentando cambiar los botones
     }
+
 
     Swal.fire({
       title: '¿Estás seguro?',
@@ -302,13 +355,14 @@ export class DocumentosComponent implements OnInit {
           console.log(response);
 
           if(response){
-            this.formulario.reset();
+          
             this.doctos = []; // Limpiar la lista de doctos relacionados
             this.actualizarTablaRelaciones();
             this.palabrasClaveComponent.limpiarPalabrasClave();
-            this.limpiarErroresFormulario();
             this.obtenerDocumentosCargarTabla();
+            this.limpiarFormulario();
             Swal.fire('Editado', 'El documento ha sido editado exitosamente', 'success');
+
           }else{
             Swal.fire('Error', 'El documento no ha sido editado exitosamente', 'error');
           }
@@ -365,7 +419,7 @@ export class DocumentosComponent implements OnInit {
         //carga tabla relaciones documentos
         this.limpiarRelacionesDocumento();
         this.doctos = documentoAEditar.doctos;
-        this.actualizarTablaRelaciones();
+        
 
         //cargar lista de palabras clave
         this.palabrasClaveComponent.limpiarPalabrasClave();
@@ -379,20 +433,55 @@ export class DocumentosComponent implements OnInit {
     
     });
 
-    this.limpiarErroresFormulario();
+    // Marcar como pristine después de cargar los datos
+    this.formulario.markAsPristine();
+    // Marcar como untouched para evitar mensajes de error
+    Object.keys(this.formulario.controls).forEach(key => {
+      const control = this.formulario.get(key);
+      if (control) {
+        control.markAsUntouched();
+      }
+    });
     
   }
 
-  cancelarEdicion() {
-    this.estaEditando = false;
-    this.categoriaSeleccionada = null;
+
+
+
+  limpiarFormulario(){
+    
+    const camposRequeridos: string[] = ['tipoDocumento', 'categoriaID','normaID', 'etapaID','asunto', 'codigo','oficinaID', 'descargable','activo', 'descripcion','doctoID', 'clasificacionID', 'subClasificacionID', 'vigencia'];
+    camposRequeridos.forEach(campo => {
+      const control = this.formulario.get(campo);
+      if (control) {
+        // Verificar si el campo es booleano y asignar false en lugar de un valor vacío
+        if (campo === 'descargable' || campo === 'activo') {
+          control.setValue(false);
+        } else {
+          control.setValue('');
+        }
+      }
+    });
+
     this.palabrasClaveComponent.limpiarPalabrasClave();
     this.limpiarRelacionesDocumento();
-    this.formulario.reset(); // Limpiar el formulario
-    this.formulario.markAsPristine();  // Marcar como 'pristino'
-    this.formulario.markAsUntouched(); // Marcar como 'intacto'
-    this.formulario.updateValueAndValidity(); // Recalcular estado de validez
+
+  
+   //limpiar los errores del formulario
+   Object.keys(this.formulario.controls).forEach(key => {
+    this.formulario.get(key)?.setErrors(null); // Eliminar los errores de cada control
+   });
+
+   this.formulario.updateValueAndValidity();
+
+    // Reseteamos los estados del componente
+    this.estaEditando = false;
+    this.categoriaSeleccionada = null;
+
   }
+
+
+
 
   eliminarDocumento(idEliminar: number) {
     // Mostrar el SweetAlert para confirmar la eliminación
@@ -421,6 +510,7 @@ export class DocumentosComponent implements OnInit {
                 console.log(response);
                 if(response){
                   this.obtenerDocumentosCargarTabla();
+                  this.limpiarFormulario();
                   Swal.fire('Eliminado!', 'El documento ha sido eliminado.', 'success');
                 }else{
                   Swal.fire('Error!', 'El documento no ha sido eliminado.', 'error');
@@ -650,13 +740,7 @@ export class DocumentosComponent implements OnInit {
     this.setTable(dataFiltrada);
   }
 
-  limpiarFormulario() {
-    this.formulario.reset(); // Resetea los campos del formulario
-    this.formulario.markAsPristine();  // Marcar como 'pristino'
-    this.formulario.markAsUntouched(); // Marcar como 'intacto'
-    this.formulario.updateValueAndValidity(); // Recalcular estado de validez
-    this.limpiarErroresFormulario(); // Eliminar los errores
-  }
+
 
   onSearchChange(event: any) {
     const filterValue = event.target.value?.trim().toLowerCase() || '';
@@ -675,59 +759,77 @@ export class DocumentosComponent implements OnInit {
 
   // validaciones ********************************************************************************************************************
 
-  obtenerErrorDescripcion() {
-    const descripcion = this.formulario.controls.descripcion;
-    if (descripcion.hasError('required')) {
-      return 'El campo descripción es obligatorio';
+
+  obtenerErrorDocSG() {
+    const tipoDocumento = this.formulario.controls.tipoDocumento;
+    if (tipoDocumento.hasError('required')) {
+      return 'El campo tipo documento es obligatorio';
     }
+      
     return '';
   }
 
-  obtenerErrorNombre(){
-    /*
-    const nombre = this.formulario.controls.nombre;
+  obtenerErrorCategoria() {
+    const tipoDocumento = this.formulario.controls.categoriaID;
+    if (tipoDocumento.hasError('required')) {
+      return 'El campo categoría es obligatorio';
+    }
    
-    if (nombre.hasError('required')) {
-      return 'El campo nombre es obligatorio';
-    }
-
-    
-    if (nombre.hasError('pattern')) {
-      return 'El campo nombre solo puede contener letras';
-    }
-    
-    return ''; 
-    */
-  }
-
-  limpiarErroresFormulario() {
-    Object.keys(this.formulario.controls).forEach(key => {
-      this.formulario.get(key)?.setErrors(null); // Eliminar los errores de cada control
-    });
-  }
-
-  obtenerErrorClasificacionId() {
-    const clasificacionId = this.formulario.controls.clasificacionID;
-  
-    if (clasificacionId.hasError('required')) {
-      return 'El campo clasificación es obligatorio';
-    }
-  
     return '';
   }
 
-  obtenerErrorSubclasificacionId() {
-    
+
+  obtenerErrorNorma() {
+    const tipoDocumento = this.formulario.controls.normaID;
+    if (tipoDocumento.hasError('required')) {
+      return 'El campo norma es obligatorio';
+    }
+   
+    return '';
   }
 
-  obtenerErrorDoctoId(){
-
+  obtenerErrorEtapa() {
+    const tipoDocumento = this.formulario.controls.etapaID;
+    if (tipoDocumento.hasError('required')) {
+      return 'El campo etapa es obligatorio';
+    }
+   
+    return '';
   }
 
-  obtenerErrorDocRelacionado(){
-
+  
+  obtenerErrorAsunto() {
+    const tipoDocumento = this.formulario.controls.asunto;
+    if (tipoDocumento.hasError('required')) {
+      return 'El campo asunto es obligatorio';
+    }
+   
+    return '';
   }
+
+
+  obtenerErrorCodigo() {
+    const tipoDocumento = this.formulario.controls.codigo;
+    if (tipoDocumento.hasError('required')) {
+      return 'El campo código es obligatorio';
+    }
+   
+    return '';
+  }
+
+  obtenerErrorOficina() {
+    const tipoDocumento = this.formulario.controls.oficinaID;
+    if (tipoDocumento.hasError('required')) {
+      return 'El campo oficina es obligatorio';
+    }
+   
+    return '';
+  }
+
+
+  noRequerido(){
+    return '';
+  }
+
  
-
-
 }

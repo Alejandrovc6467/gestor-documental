@@ -9,7 +9,7 @@
 
    
     
-    <form (submit)="crearDocumento()" [formGroup]="formulario">
+    <form (submit)="guardarDocumento()" [formGroup]="formulario">
 
         <div class="contenedor_formulario">
 
@@ -28,7 +28,7 @@
                                 </mat-option>
                               }
                         </mat-select>
-                        <mat-error>{{ obtenerErrorClasificacionId() }}</mat-error>
+                        <mat-error>{{ obtenerErrorDocSG() }}</mat-error>
                     </mat-form-field>
                 </div>
                 
@@ -42,7 +42,7 @@
                                 </mat-option>
                               }
                         </mat-select>
-                        <mat-error>{{ obtenerErrorClasificacionId() }}</mat-error>
+                        <mat-error>{{ obtenerErrorCategoria() }}</mat-error>
                     </mat-form-field>
                 </div>
     
@@ -61,7 +61,7 @@
                                 </mat-option>
                               }
                         </mat-select>
-                        <mat-error>{{ obtenerErrorClasificacionId() }}</mat-error>
+                        <mat-error>{{ obtenerErrorNorma() }}</mat-error>
                     </mat-form-field>
                 </div>
                 
@@ -75,7 +75,7 @@
                                 </mat-option>
                               }
                         </mat-select>
-                        <mat-error>{{ obtenerErrorClasificacionId() }}</mat-error>
+                        <mat-error>{{ obtenerErrorEtapa() }}</mat-error>
                     </mat-form-field>
                 </div>
     
@@ -87,13 +87,13 @@
             <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Asunto título</mat-label>
                 <input matInput formControlName="asunto">
-                <mat-error>{{obtenerErrorNombre()}}</mat-error>
+                <mat-error>{{obtenerErrorAsunto()}}</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Código</mat-label>
                 <input matInput formControlName="codigo">
-                <mat-error>{{obtenerErrorNombre()}}</mat-error>
+                <mat-error>{{obtenerErrorCodigo()}}</mat-error>
             </mat-form-field>
 
 
@@ -107,7 +107,7 @@
                             </mat-option>
                         }
                     </mat-select>
-                <mat-error>{{ obtenerErrorClasificacionId() }}</mat-error>
+                <mat-error>{{ obtenerErrorOficina() }}</mat-error>
             </mat-form-field>
             
                         
@@ -121,7 +121,7 @@
             <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Descripción</mat-label>
                 <textarea matInput formControlName="descripcion" ></textarea>
-                <mat-error>{{obtenerErrorDescripcion()}}</mat-error>
+                <mat-error>{{noRequerido()}}</mat-error>
             </mat-form-field>
 
 
@@ -137,7 +137,7 @@
                                 </mat-option>
                               }
                         </mat-select>
-                        <mat-error>{{ obtenerErrorClasificacionId() }}</mat-error>
+                        <mat-error>{{ noRequerido() }}</mat-error>
                     </mat-form-field>
                 </div>
                 
@@ -151,7 +151,7 @@
                             </mat-option>
                           }
                       </mat-select>
-                      <mat-error>{{ obtenerErrorClasificacionId() }}</mat-error>
+                      <mat-error>{{ noRequerido() }}</mat-error>
                     </mat-form-field>
                   </div>
     
@@ -172,7 +172,7 @@
                             </mat-option>
                         }
                       </mat-select>
-                      <mat-error>{{ obtenerErrorSubclasificacionId() }}</mat-error>
+                      <mat-error>{{ noRequerido() }}</mat-error>
                     </mat-form-field>
                   </div>
                 
@@ -180,7 +180,7 @@
                     <mat-form-field appearance="outline" class="full-widthdoble">
                         <mat-label>Vigencia</mat-label>
                         <input matInput formControlName="vigencia">
-                        <mat-error>{{obtenerErrorNombre()}}</mat-error>
+                        <mat-error>{{noRequerido()}}</mat-error>
                     </mat-form-field>
                 </div>
     
@@ -215,7 +215,7 @@
                           </mat-option>
                         }
                       </mat-select>
-                      <mat-error>{{ obtenerErrorDoctoId() }}</mat-error>
+                      <mat-error>{{ noRequerido() }}</mat-error>
                     </mat-form-field>
                   </div>
                   
@@ -223,7 +223,7 @@
                     <mat-form-field appearance="outline" class="full-widthdoble">
                       <mat-label>Doc relacionado</mat-label>
                       <input matInput formControlName="docRelacionado">
-                      <mat-error>{{ obtenerErrorDocRelacionado() }}</mat-error>
+                      <mat-error>{{ noRequerido() }}</mat-error>
                     </mat-form-field>
                   </div>
                 </div>
@@ -302,16 +302,17 @@
              
 
             <div class="contenedor_boton">
-               
-                @if(estaEditando){
-                    <button mat-flat-button type="button" class="boton_amarillo" (click)="actualizarDocumento()" [disabled]="formulario.invalid"> <mat-icon name="pie-chart-outline" class="nav__icon">edit</mat-icon>Editar </button>
-                    <button mat-flat-button type="button" class="boton_amarillo" (click)="cancelarEdicion()"> <mat-icon name="pie-chart-outline" class="nav__icon">cancel</mat-icon> Cancelar </button>
-                }@else {
-                    <button mat-flat-button type="button"  class="boton_amarillo" (click)="limpiarFormulario()"> <mat-icon name="pie-chart-outline" class="nav__icon">cleaning_services</mat-icon>Limpiar</button>
-                    <button mat-flat-button type="button"  class="boton_amarillo" (click)="realizarBusqueda()"><mat-icon name="pie-chart-outline" class="nav__icon">search</mat-icon>Buscar</button>
-                    <button mat-flat-button type="submit"  class="boton_amarillo" [disabled]="formulario.invalid || formulario.pristine"><mat-icon name="pie-chart-outline" class="nav__icon">add</mat-icon>Agregar</button>
-                }
-                
+                <button mat-flat-button type="button" class="boton_amarillo" (click)="limpiarFormulario()">
+                    <mat-icon name="pie-chart-outline" class="nav__icon">cleaning_services</mat-icon>Limpiar
+                </button>
+                <button mat-flat-button type="button" class="boton_amarillo" (click)="realizarBusqueda()">
+                    <mat-icon name="pie-chart-outline" class="nav__icon">search</mat-icon>Buscar
+                </button>
+
+                <button mat-flat-button type="submit" class="boton_amarillo">
+                    <mat-icon name="pie-chart-outline" class="nav__icon">{{estaEditando ? 'edit' : 'add'}}</mat-icon>
+                    {{estaEditando ? 'Actualizar' : 'Agregar'}}
+                </button>
             </div>
 
         </div>
