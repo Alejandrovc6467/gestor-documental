@@ -1,6 +1,4 @@
 
-
-
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -22,7 +20,6 @@ import { EliminarDTO } from '../../Core/models/EliminarDTO';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 
-
 @Component({
   selector: 'app-subclasificaciones',
   standalone: true,
@@ -34,7 +31,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   ]
 })
 export class SubclasificacionesComponent implements OnInit {
-  
   
   subclasificaionesService = inject(SubclasificacionesService);
   clasificacionesService = inject(ClasificacionesService);
@@ -51,14 +47,14 @@ export class SubclasificacionesComponent implements OnInit {
   ngOnInit(): void {
     this.obtenerClasificaciones();
     this.obtenerCategoriasCargarTabla();
-    this.formulario.updateValueAndValidity();
   }
   
   constructor(){}
 
+
   private formbuilder = inject(FormBuilder);
   formulario = this.formbuilder.group({
-    nombre: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
+    nombre: ['', [Validators.required, Validators.pattern('^(?!\\s*$)[a-zA-Z0-9 ]+$')]],
     descripcion: ['', [Validators.required]],
     clasificacionID: [0, [Validators.required]]
   });
@@ -66,7 +62,7 @@ export class SubclasificacionesComponent implements OnInit {
   obtenerClasificaciones(){
     this.clasificacionesService.obtenerClasificaciones().subscribe(response => {
       this.clasificaciones = response;
-    })};
+  })};
 
 
 
@@ -87,91 +83,178 @@ export class SubclasificacionesComponent implements OnInit {
     });
   }
 
-  crearCategoria(){
+  guardarSubclasificacion() {
     
-    if(this.formulario.invalid){
-      alert("Formulario invalido");
-    }else{
-
-      const categoria = this.formulario.value as SubclasificacionDTO; 
-      
-      // Asegurarse de que clasificacionId sea un número válido
-      categoria.clasificacionID = Number(categoria.clasificacionID);
-
-      categoria.eliminado = false;
-      categoria.usuarioID = 1;
-      categoria.oficinaID = 1;
-      console.log(categoria);
-  
-      this.subclasificaionesService.crearSubclasificacion(categoria).subscribe(response => {
-        console.log(response);
-        if(response){
-          this.obtenerCategoriasCargarTabla();
-          this.formulario.reset();
-          this.limpiarErroresFormulario();
-          Swal.fire('Creada!', 'La subclasificación ha sido creada.', 'success');
-        }else{
-          Swal.fire('Error!', 'La subclasificación no ha sido creada.', 'error');
-        }
-       
-      });
-
+    if (this.formulario.invalid) {
+      return;
     }
 
+    this.marcarErrores();
+    
+    if (this.estaEditando) {
+      this.actualizarCategoria();
+    } else {
+      this.crearCategoria();
+    }
+  }
+
+
+  marcarErrores() {
+    // Lista de los campos requeridos
+    const camposRequeridos = ['nombre', 'descripcion', 'clasificacionID'];
   
+    camposRequeridos.forEach(campo => {
+      const control = this.formulario.get(campo);
+  
+      // Marca el campo como tocado
+      control?.markAsTouched();
+  
+      // Si el campo está vacío, establece el error de 'required'
+      if (!control?.value) {
+        control?.setErrors({ required: true, pattern: true });
+      }
+    });
+  }
+  
+
+  crearCategoria(){
+    
+    if (this.formulario.invalid) {
+      return;
+    }
+
+
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¿Deseas crear la subclasificación?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, crear',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+        const categoria = this.formulario.value as SubclasificacionDTO; 
+          
+        // Asegurarse de que clasificacionId sea un número válido
+        categoria.clasificacionID = Number(categoria.clasificacionID);
+
+        categoria.eliminado = false;
+        categoria.usuarioID = 1;
+        categoria.oficinaID = 1;
+        console.log(categoria);
+      
+        this.subclasificaionesService.crearSubclasificacion(categoria).subscribe(response => {
+          console.log(response);
+          if(response){
+            this.obtenerCategoriasCargarTabla();
+            this.limpiarFormulario();
+            Swal.fire('Creada!', 'La subclasificación ha sido creada.', 'success');
+          }else{
+            Swal.fire('Error!', 'La subclasificación no ha sido creada.', 'error');
+          }
+          
+        });
+
+      }
+    });
   
   }
+
 
   actualizarCategoria() {
 
-    if (!this.subclasificaionSeleccionada) return;
-      const subclasificacionActualizada: SubclasificacionDTO = {
-        id: this.subclasificaionSeleccionada.id,
-        nombre: this.formulario.value.nombre!,
-        descripcion: this.formulario.value.descripcion!,
-        clasificacionID: this.formulario.value.clasificacionID!,
-        eliminado: false,
-        usuarioID: 1,
-        oficinaID:1
-      };
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¿Deseas actualizar la subclasificación?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, actualizar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
 
-      console.log(this.subclasificaionSeleccionada);
-      this.subclasificaionesService.actualizarSubclasificacion(subclasificacionActualizada).subscribe(response => {
-        console.log(response);
-        if(response){
-          this.obtenerCategoriasCargarTabla();
-          this.cancelarEdicion();
-          this.limpiarErroresFormulario();
-          Swal.fire('Editada!', 'La subclasificación ha sido editada.', 'success');
-        }else{
-          Swal.fire('Error!', 'La subclasificación no ha sido editada.', 'error');
-        }
-       
-      });
+        if (!this.subclasificaionSeleccionada) return;
+        const subclasificacionActualizada: SubclasificacionDTO = {
+          id: this.subclasificaionSeleccionada.id,
+          nombre: this.formulario.value.nombre!,
+          descripcion: this.formulario.value.descripcion!,
+          clasificacionID: this.formulario.value.clasificacionID!,
+          eliminado: false,
+          usuarioID: 1,
+          oficinaID:1
+        };
+
+        console.log(this.subclasificaionSeleccionada);
+        this.subclasificaionesService.actualizarSubclasificacion(subclasificacionActualizada).subscribe(response => {
+          console.log(response);
+          if(response){
+            this.obtenerCategoriasCargarTabla();
+            this.limpiarFormulario();
+            Swal.fire('Editada!', 'La subclasificación ha sido editada.', 'success');
+          }else{
+            Swal.fire('Error!', 'La subclasificación no ha sido editada.', 'error');
+          }
+        
+        });
+
+      }
+    });
+
+    
   }
 
   editarCategoria(element: SubclasificacionDTO) {
-    // Método para cargar los datos de la categoría seleccionada y activar el modo de edición
     this.estaEditando = true;
     this.subclasificaionSeleccionada = element;
-    // Cargar los datos de la categoría en el formulario
     this.formulario.patchValue({
       nombre: element.nombre,
       descripcion: element.descripcion,
       clasificacionID: element.clasificacionID
     });
-    this.limpiarErroresFormulario();
-  }
+  
+    // Marcar como pristine después de cargar los datos
+    this.formulario.markAsPristine();
+    // Marcar como untouched para evitar mensajes de error
+    Object.keys(this.formulario.controls).forEach(key => {
+       const control = this.formulario.get(key);
+       if (control) {
+         control.markAsUntouched();
+       }
+    });
 
-  cancelarEdicion() {
+  }
+  
+
+  limpiarFormulario(){
+    
+    const camposRequeridos: string[] = ['nombre', 'descripcion', 'clasificacionID'];
+    camposRequeridos.forEach(campo => {
+      const control = this.formulario.get(campo);
+      if (control) {
+        control.setValue('');//limpiar todos los campos
+      }
+    });
+
+  
+   //limpiar los errores del formulario
+   Object.keys(this.formulario.controls).forEach(key => {
+    this.formulario.get(key)?.setErrors(null); // Eliminar los errores de cada control
+   });
+
+   this.formulario.updateValueAndValidity();
+
+    // Reseteamos los estados del componente
     this.estaEditando = false;
     this.subclasificaionSeleccionada = null;
-    this.formulario.reset(); // Limpiar el formulario
-    this.formulario.markAsPristine();  // Marcar como 'pristino'
-    this.formulario.markAsUntouched(); // Marcar como 'intacto'
-    this.formulario.updateValueAndValidity(); // Recalcular estado de validez
+
   }
 
+ 
 
   eliminarCategoria(idEliminar: number) {
     // Mostrar el SweetAlert para confirmar la eliminación
@@ -200,6 +283,7 @@ export class SubclasificacionesComponent implements OnInit {
                 console.log(response);
                 if(response){
                   this.obtenerCategoriasCargarTabla();
+                  this.limpiarFormulario();
                   Swal.fire('Eliminado!', 'La Subclasificación ha sido eliminada.', 'success');
                 }else{
                   Swal.fire('Error!', 'La Subclasificación no ha sido eliminada.', 'error');
@@ -261,13 +345,7 @@ export class SubclasificacionesComponent implements OnInit {
     this.setTable(dataFiltrada);
   }
 
-  limpiarFormulario() {
-    this.formulario.reset(); // Resetea los campos del formulario
-    this.formulario.markAsPristine();  // Marcar como 'pristino'
-    this.formulario.markAsUntouched(); // Marcar como 'intacto'
-    this.formulario.updateValueAndValidity(); // Recalcular estado de validez
-    this.limpiarErroresFormulario(); // Eliminar los errores
-  }
+
  
   onSearchChange(event: any) {
     const filterValue = event.target.value?.trim().toLowerCase() || '';
@@ -286,29 +364,33 @@ export class SubclasificacionesComponent implements OnInit {
     if (descripcion.hasError('required')) {
       return 'El campo descripción es obligatorio';
     }
+      
     return '';
   }
 
   obtenerErrorNombre(){
+
     const nombre = this.formulario.controls.nombre;
    
     if (nombre.hasError('required')) {
       return 'El campo nombre es obligatorio';
     }
 
-    
     if (nombre.hasError('pattern')) {
-      return 'El campo nombre solo puede contener letras';
+
+      if (nombre.value?.trim() === "") {
+        return 'El campo nombre no puede contener solo espacios';
+      }
+
+      return 'El campo nombre solo puede contener letras y números';
     }
-    
+
+
     return ''; 
+
   }
 
-  limpiarErroresFormulario() {
-    Object.keys(this.formulario.controls).forEach(key => {
-      this.formulario.get(key)?.setErrors(null); // Eliminar los errores de cada control
-    });
-  }
+
 
   obtenerErrorClasificacionId() {
     const clasificacionId = this.formulario.controls.clasificacionID;

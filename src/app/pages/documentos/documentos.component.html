@@ -101,9 +101,9 @@
             <mat-form-field appearance="outline" class="full-widthdoble">
                 <mat-label>Oficina</mat-label>
                     <mat-select formControlName="oficinaID">
-                        @for (clasificacion of listaClasificaciones; track clasificacion.id) {
-                            <mat-option [value]="clasificacion.id">
-                              {{ clasificacion.nombre }}
+                        @for (oficina of listaOficinas; track oficina.id) {
+                            <mat-option [value]="oficina.id">
+                              {{ oficina.nombre }}
                             </mat-option>
                         }
                     </mat-select>

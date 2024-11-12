@@ -6,7 +6,7 @@
         <h5>Subclasificaciones</h5>
     </div>
     
-    <form (submit)="crearCategoria()" [formGroup]="formulario">
+    <form (submit)="guardarSubclasificacion()" [formGroup]="formulario">
 
         <div class="contenedor_formulario">
 
@@ -37,17 +37,17 @@
             </mat-form-field>
 
             <div class="contenedor_boton">
-               
-               
-                @if(estaEditando){
-                    <button mat-flat-button type="button" class="boton_amarillo" (click)="actualizarCategoria()" [disabled]="formulario.invalid"> <mat-icon name="pie-chart-outline" class="nav__icon">edit</mat-icon>Editar </button>
-                    <button mat-flat-button type="button" class="boton_amarillo" (click)="cancelarEdicion()"> <mat-icon name="pie-chart-outline" class="nav__icon">cancel</mat-icon> Cancelar </button>
-                }@else {
-                    <button mat-flat-button type="button"  class="boton_amarillo" (click)="limpiarFormulario()"> <mat-icon name="pie-chart-outline" class="nav__icon">cleaning_services</mat-icon>Limpiar</button>
-                    <button mat-flat-button type="button"  class="boton_amarillo" (click)="realizarBusqueda()"><mat-icon name="pie-chart-outline" class="nav__icon">search</mat-icon>Buscar</button>
-                    <button mat-flat-button type="submit"  class="boton_amarillo" [disabled]="formulario.invalid || formulario.pristine"><mat-icon name="pie-chart-outline" class="nav__icon">add</mat-icon>Agregar</button>
-                }
-                
+                <button mat-flat-button type="button" class="boton_amarillo" (click)="limpiarFormulario()">
+                    <mat-icon name="pie-chart-outline" class="nav__icon">cleaning_services</mat-icon>Limpiar
+                </button>
+                <button mat-flat-button type="button" class="boton_amarillo" (click)="realizarBusqueda()">
+                    <mat-icon name="pie-chart-outline" class="nav__icon">search</mat-icon>Buscar
+                </button>
+
+                <button mat-flat-button type="submit" class="boton_amarillo">
+                    <mat-icon name="pie-chart-outline" class="nav__icon">{{estaEditando ? 'edit' : 'add'}}</mat-icon>
+                    {{estaEditando ? 'Actualizar' : 'Agregar'}}
+                </button>
             </div>
 
         </div>

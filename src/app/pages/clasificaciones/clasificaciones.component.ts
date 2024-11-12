@@ -1,5 +1,4 @@
 
-
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,7 +14,6 @@ import Swal from 'sweetalert2';
 import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-mat-paginator-intl/custom-mat-paginator-intl.component';
 import { EliminarDTO } from '../../Core/models/EliminarDTO';
 import { MatTooltipModule } from '@angular/material/tooltip';
-
 
 
 @Component({
@@ -42,14 +40,15 @@ export class ClasificacionesComponent implements OnInit {
 
   ngOnInit(): void {
     this.obtenerCategoriasCargarTabla();
-    this.formulario.updateValueAndValidity();
   }
   
+
   constructor(){}
+
 
   private formbuilder = inject(FormBuilder);
   formulario = this.formbuilder.group({
-    nombre: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
+    nombre: ['', [Validators.required, Validators.pattern('^(?!\\s*$)[a-zA-Z0-9 ]+$')]],
     descripcion: ['', [Validators.required]]
   });
 
@@ -69,80 +68,171 @@ export class ClasificacionesComponent implements OnInit {
     });
   }
 
+  guardarClasificacion() {
+    
+    if (this.formulario.invalid) {
+      return;
+    }
+
+    this.marcarErrores();
+    
+    if (this.estaEditando) {
+      this.actualizarClasificacion();
+    } else {
+      this.crearClasificacion();
+    }
+  }
+
+
+  marcarErrores() {
+    // Lista de los campos requeridos
+    const camposRequeridos = ['nombre', 'descripcion'];
+  
+    camposRequeridos.forEach(campo => {
+      const control = this.formulario.get(campo);
+  
+      // Marca el campo como tocado
+      control?.markAsTouched();
+  
+      // Si el campo está vacío, establece el error de 'required'
+      if (!control?.value) {
+        control?.setErrors({ required: true, pattern: true });
+      }
+    });
+  }
+  
+
   crearClasificacion(){
     
-    if(this.formulario.invalid){
-      alert("Formulario invalido");
-    }else{
-
-      const categoria = this.formulario.value as CategoriaDTO; 
-      categoria.usuarioID = 1;
-      categoria.oficinaID = 1;
-      console.log(categoria);
-  
-      this.clasificacionesService.crearClasificacion(categoria).subscribe(response => {
-        console.log(response);
-        this.obtenerCategoriasCargarTabla();
-        this.formulario.reset();
-        this.limpiarErroresFormulario();
-        Swal.fire('Creada!', 'La clasificación ha sido creada.', 'success');
-      });
-
+    if (this.formulario.invalid) {
+      return;
     }
+
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¿Deseas crear la clasificación?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, crear',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+        const categoria = this.formulario.value as CategoriaDTO; 
+        categoria.usuarioID = 1;
+        categoria.oficinaID = 1;
+        console.log(categoria);
+      
+        this.clasificacionesService.crearClasificacion(categoria).subscribe(response => {
+          console.log(response);
+          if(response){
+            this.obtenerCategoriasCargarTabla();
+            this.limpiarFormulario();
+            Swal.fire('Creada!', 'La clasificación ha sido creada.', 'success');
+          }else{
+            Swal.fire('Error!', 'La clasificación no ha sido creada.', 'error');
+          }
+          
+        });
+    
+      }
+    });
+    
+
+   
+    
 
   
   
   }
 
   actualizarClasificacion() {
-    if (!this.categoriaSeleccionada) return;
-      const categoriaActualizada: CategoriaDTO = {
-        id: this.categoriaSeleccionada.id,
-        nombre: this.formulario.value.nombre!,
-        descripcion: this.formulario.value.descripcion!,
-        usuarioID: 1,
-        oficinaID: 1
-      };
-      this.clasificacionesService.actualizarClasificacion(categoriaActualizada).subscribe(response => {
-        console.log(response);
-        this.obtenerCategoriasCargarTabla();
-        this.cancelarEdicion();
-        this.limpiarErroresFormulario();
-        Swal.fire('Editada!', 'La clasificación ha sido editada.', 'success');
-      });
+
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¿Deseas actualizar la clasificación?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, actualizar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+        if (!this.categoriaSeleccionada) return;
+        const categoriaActualizada: CategoriaDTO = {
+          id: this.categoriaSeleccionada.id,
+          nombre: this.formulario.value.nombre!,
+          descripcion: this.formulario.value.descripcion!,
+          usuarioID: 1,
+          oficinaID: 1
+        };
+        this.clasificacionesService.actualizarClasificacion(categoriaActualizada).subscribe(response => {
+          console.log(response);
+          if(response){
+            this.obtenerCategoriasCargarTabla();
+            this.limpiarFormulario();
+            Swal.fire('Editada!', 'La clasificación ha sido editada.', 'success');
+          }else{
+            Swal.fire('Error!', 'La clasificación no ha sido editada.', 'error');
+          }
+       
+        });
+
+      }
+    });
+
   }
 
   editarClasificacion(element: CategoriaDTO) {
-    // Método para cargar los datos de la categoría seleccionada y activar el modo de edición
+   
     this.estaEditando = true;
     this.categoriaSeleccionada = element;
-    // Cargar los datos de la categoría en el formulario
     this.formulario.patchValue({
       nombre: element.nombre,
       descripcion: element.descripcion
     });
-    this.limpiarErroresFormulario();
+    
+     // Marcar como pristine después de cargar los datos
+     this.formulario.markAsPristine();
+     // Marcar como untouched para evitar mensajes de error
+     Object.keys(this.formulario.controls).forEach(key => {
+       const control = this.formulario.get(key);
+       if (control) {
+         control.markAsUntouched();
+       }
+     });
+
   }
 
-  cancelarEdicion() {
+  limpiarFormulario(){
+    
+    const camposRequeridos: string[] = ['nombre', 'descripcion'];
+    camposRequeridos.forEach(campo => {
+      const control = this.formulario.get(campo);
+      if (control) {
+        control.setValue('');//limpiar todos los campos
+      }
+    });
+
+  
+   //limpiar los errores del formulario
+   Object.keys(this.formulario.controls).forEach(key => {
+    this.formulario.get(key)?.setErrors(null); // Eliminar los errores de cada control
+   });
+
+   this.formulario.updateValueAndValidity();
+
+    // Reseteamos los estados del componente
     this.estaEditando = false;
     this.categoriaSeleccionada = null;
-    this.formulario.reset(); // Limpiar el formulario
-    this.formulario.markAsPristine();  // Marcar como 'pristino'
-    this.formulario.markAsUntouched(); // Marcar como 'intacto'
-    this.formulario.updateValueAndValidity(); // Recalcular estado de validez
+
   }
 
-  /*
-  eliminarCategoria(idEliminar:number){
 
-    this.clasificacionesService.eliminarCategoria(idEliminar).subscribe( response => {
-      console.log(response);
-      this.obtenerCategoriasCargarTabla();
-    });
-    
-  }
-    */
 
   eliminarClasificacion(idEliminar: number) {
     // Mostrar el SweetAlert para confirmar la eliminación
@@ -171,6 +261,7 @@ export class ClasificacionesComponent implements OnInit {
                 console.log(response);
                 if(response){
                   this.obtenerCategoriasCargarTabla();
+                  this.limpiarFormulario();
                   Swal.fire('Eliminado!', 'La clasificación ha sido eliminada.', 'success');
                 }else{
                   Swal.fire('Error!', 'La clasificación no ha sido eliminada.', 'error');
@@ -217,13 +308,6 @@ export class ClasificacionesComponent implements OnInit {
     this.setTable(dataFiltrada);
   }
 
-  limpiarFormulario() {
-    this.formulario.reset(); // Resetea los campos del formulario
-    this.formulario.markAsPristine();  // Marcar como 'pristino'
-    this.formulario.markAsUntouched(); // Marcar como 'intacto'
-    this.formulario.updateValueAndValidity(); // Recalcular estado de validez
-    this.limpiarErroresFormulario(); // Eliminar los errores
-  }
 
 
  
@@ -240,32 +324,35 @@ export class ClasificacionesComponent implements OnInit {
 
   // validaciones **********************************************************
   obtenerErrorDescripcion() {
+    
     const descripcion = this.formulario.controls.descripcion;
     if (descripcion.hasError('required')) {
       return 'El campo descripción es obligatorio';
     }
+      
     return '';
   }
 
   obtenerErrorNombre(){
+
     const nombre = this.formulario.controls.nombre;
    
     if (nombre.hasError('required')) {
       return 'El campo nombre es obligatorio';
     }
 
-    
     if (nombre.hasError('pattern')) {
-      return 'El campo nombre solo puede contener letras';
-    }
-    
-    return ''; 
-  }
 
-  limpiarErroresFormulario() {
-    Object.keys(this.formulario.controls).forEach(key => {
-      this.formulario.get(key)?.setErrors(null); // Eliminar los errores de cada control
-    });
+      if (nombre.value?.trim() === "") {
+        return 'El campo nombre no puede contener solo espacios';
+      }
+
+      return 'El campo nombre solo puede contener letras y números';
+    }
+
+
+    return ''; 
+
   }
 
 

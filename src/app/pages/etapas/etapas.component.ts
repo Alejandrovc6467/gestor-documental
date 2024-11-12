@@ -19,6 +19,7 @@ import { CustomMatPaginatorIntlComponent } from '../../Core/components/custom-ma
 import { EliminarDTO } from '../../Core/models/EliminarDTO';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+
 @Component({
   selector: 'app-etapas',
   standalone: true,
@@ -30,6 +31,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   ]
 })
 export class EtapasComponent implements OnInit{
+
   etapasService = inject(EtapasService);
   normasService = inject(NormasService);
   listaEtapas! : EtapaDTO[];
@@ -46,36 +48,30 @@ export class EtapasComponent implements OnInit{
   ngOnInit(): void {
     this.obtenerCategoriasCargarTabla();
     this.obtenerEtapasHuerfanas();
-    this.formulario.updateValueAndValidity();
     this.obtenerNormas();
     this.obtenerEtapas();
-   
   }
+
 
   constructor(){}
 
+
   private formbuilder = inject(FormBuilder);
   formulario = this.formbuilder.group({
-    nombre: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
+    nombre: ['', [Validators.required, Validators.pattern('^(?!\\s*$)[a-zA-Z0-9 ]+$')]],
     descripcion: ['', [Validators.required]],
     color: ['#ff0000', [Validators.required]],
-    etapaPadreID: [0, [Validators.required]],
-    normaID: [0, [Validators.required]],
-   
+    etapaPadreID: [0],
+    normaID: [0, [Validators.required]]
   });
 
-  obtenerNormas(){
-    this.normasService.obtenerNormas().subscribe(response => {
-      this.listaNormas = response;
-    })};
+
 
   //CRUD **********************************************************
   obtenerCategorias(){
     this.etapasService.obtenerEtapas().subscribe(response => {
       this.listaEtapas = response;
     });
-
-
 
   }
 
@@ -86,63 +82,143 @@ export class EtapasComponent implements OnInit{
     });
   }
 
+
+  guardarEtapa() {
+    
+    if (this.formulario.invalid) {
+      return;
+    }
+
+    this.marcarErrores();
+    
+    if (this.estaEditando) {
+      this.actualizarCategoria();
+    } else {
+      this.crearCategoria();
+    }
+  }
+
+
+  marcarErrores() {
+    // Lista de los campos requeridos
+    const camposRequeridos = ['nombre', 'descripcion', 'color',  'normaID'  ];
+  
+    camposRequeridos.forEach(campo => {
+      const control = this.formulario.get(campo);
+  
+      // Marca el campo como tocado
+      control?.markAsTouched();
+  
+      // Si el campo está vacío, establece el error de 'required'
+      if (!control?.value) {
+        control?.setErrors({ required: true, pattern: true });
+      }
+    });
+  }
+  
+
   crearCategoria(){
     
-    if(this.formulario.invalid){
-      alert("Formulario invalido");
-    }else{
-
-      const etapa = this.formulario.value as EtapaDTO; 
-      
-      // Asegurarse de que clasificacionId sea un número válido
-      //etapa.normaId = Number(etapa.normaId);
-      etapa.eliminado = false;
-      etapa.usuarioID = 1;
-      etapa.oficinaID = 1;
-
-      console.log(etapa);
-  
-      this.etapasService.crearEtapa(etapa).subscribe(response => {
-        console.log(response);
-        this.obtenerCategoriasCargarTabla();
-        this.obtenerEtapasHuerfanas();
-        this.formulario.reset();
-        this.limpiarErroresFormulario();
-        Swal.fire('Creada!', 'La Etapa ha sido creada.', 'success');
-      });
-
+    if (this.formulario.invalid) {
+      return;
     }
+
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¿Deseas crear este Tipo de documento?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, crear',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+
+        const etapa = this.formulario.value as EtapaDTO; 
+      
+    
+        etapa.eliminado = false;
+        etapa.usuarioID = 1;
+        etapa.oficinaID = 1;
+    
+        console.log(etapa);
+      
+        this.etapasService.crearEtapa(etapa).subscribe(response => {
+            console.log(response);
+            if(response){
+              this.obtenerCategoriasCargarTabla();
+              this.obtenerEtapasHuerfanas();
+              this.limpiarFormulario();
+              Swal.fire('Creada!', 'La Etapa ha sido creada.', 'success');
+            }else{
+              Swal.fire('Error!', 'La Etapa no ha sido creada.', 'error');
+            }
+           
+        });
+
+      }
+    });
+
+  
+
+ 
   
   }
 
   actualizarCategoria() {
-    if (!this.categoriaSeleccionada) return;
-      const categoriaActualizada: EtapaDTO = {
-        id: this.categoriaSeleccionada.id,
-        nombre: this.formulario.value.nombre!,
-        descripcion: this.formulario.value.descripcion!,
-        eliminado: false,
-        color: this.formulario.value.color!,
-        etapaPadreID: this.formulario.value.etapaPadreID!,
-        normaID: this.formulario.value.normaID!,
-        usuarioID:1,
-        oficinaID:1,
-        consecutivo: this.categoriaSeleccionada.consecutivo
-      };
-      this.etapasService.actualizarEtapa(categoriaActualizada).subscribe(response => {
-        console.log(response);
-        this.obtenerCategoriasCargarTabla();
-        this.cancelarEdicion();
-        this.limpiarErroresFormulario();
-        Swal.fire('Editada!', 'La categoría ha sido editada.', 'success');
-      });
+
+
+    
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¿Deseas actualizar la etapa?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, actualizar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+
+        if (!this.categoriaSeleccionada) return;
+          const categoriaActualizada: EtapaDTO = {
+            id: this.categoriaSeleccionada.id,
+            nombre: this.formulario.value.nombre!,
+            descripcion: this.formulario.value.descripcion!,
+            eliminado: false,
+            color: this.formulario.value.color!,
+            etapaPadreID: this.formulario.value.etapaPadreID!,
+            normaID: this.formulario.value.normaID!,
+            usuarioID:1,
+            oficinaID:1,
+            consecutivo: this.categoriaSeleccionada.consecutivo
+          };
+          this.etapasService.actualizarEtapa(categoriaActualizada).subscribe(response => {
+            console.log(response);
+            if(response){
+              this.obtenerCategoriasCargarTabla();
+              this.limpiarFormulario();
+              Swal.fire('Editada!', 'La etapa ha sido editada.', 'success');
+            }else{
+              Swal.fire('Error!', 'La etapa no ha sido editada.', 'error');
+            }
+          
+          });
+
+      
+      }
+    });
+
   }
 
   editarCategoria(element: EtapaDTO) {
-    // Método para cargar los datos de la categoría seleccionada y activar el modo de edición
+   
     this.estaEditando = true;
     this.categoriaSeleccionada = element;
-    // Cargar los datos de la categoría en el formulario
     this.formulario.patchValue({
       nombre: element.nombre,
       descripcion: element.descripcion,
@@ -150,23 +226,51 @@ export class EtapasComponent implements OnInit{
       etapaPadreID: element.etapaPadreID,
       normaID: element.normaID
     });
-    this.limpiarErroresFormulario();
+
+
+     // Marcar como pristine después de cargar los datos
+     this.formulario.markAsPristine();
+     // Marcar como untouched para evitar mensajes de error
+     Object.keys(this.formulario.controls).forEach(key => {
+       const control = this.formulario.get(key);
+       if (control) {
+         control.markAsUntouched();
+       }
+     });
+  
   }
 
-  cancelarEdicion() {
+  limpiarFormulario(){
+    
+    const camposRequeridos: string[] = ['nombre', 'descripcion', 'color', 'etapaPadreID', 'normaID'];
+    camposRequeridos.forEach(campo => {
+      const control = this.formulario.get(campo);
+      if (control) {
+        control.setValue('');//limpiar todos los campos
+      }
+    });
+
+  
+   //limpiar los errores del formulario
+   Object.keys(this.formulario.controls).forEach(key => {
+    this.formulario.get(key)?.setErrors(null); // Eliminar los errores de cada control
+   });
+
+   this.formulario.updateValueAndValidity();
+
+    // Reseteamos los estados del componente
     this.estaEditando = false;
     this.categoriaSeleccionada = null;
-    this.formulario.reset(); // Limpiar el formulario
-    this.formulario.markAsPristine();  // Marcar como 'pristino'
-    this.formulario.markAsUntouched(); // Marcar como 'intacto'
-    this.formulario.updateValueAndValidity(); // Recalcular estado de validez
+
   }
+
+
 
 
   eliminarCategoria(idEliminar: number) {
 
     console.log(idEliminar);
-    // Mostrar el SweetAlert para confirmar la eliminación
+  
     Swal.fire({
         title: '¿Desea eliminar la Etapa?',
         text: 'Esta acción no se puede deshacer.',
@@ -191,9 +295,10 @@ export class EtapasComponent implements OnInit{
                 console.log(response);
                 if(response){
                   this.obtenerCategoriasCargarTabla();
+                  this.limpiarFormulario();
                   Swal.fire('Eliminado!', 'La etapa ha sido eliminada.', 'success');
                 }else{
-                  Swal.fire('Error!', 'La etapa no ha sido eliminada.', 'success');
+                  Swal.fire('Error!', 'La etapa no ha sido eliminada.', 'error');
                 }
                 
             });
@@ -210,7 +315,11 @@ export class EtapasComponent implements OnInit{
       this.listaEtapas = response;
     });
   }
-
+  
+  obtenerNormas(){
+    this.normasService.obtenerNormas().subscribe(response => {
+      this.listaNormas = response;
+  })};
 
   obtenerEtapasHuerfanas(){
     this.etapasService.obtenerEtapasHuerfanas().subscribe(response => {
@@ -268,14 +377,7 @@ export class EtapasComponent implements OnInit{
     this.setTable(dataFiltrada);
   }
 
-  limpiarFormulario() {
-    this.formulario.reset(); // Resetea los campos del formulario
-    this.formulario.markAsPristine();  // Marcar como 'pristino'
-    this.formulario.markAsUntouched(); // Marcar como 'intacto'
-    this.formulario.updateValueAndValidity(); // Recalcular estado de validez
-    this.limpiarErroresFormulario(); // Eliminar los errores
-  }
-
+ 
 
  
   onSearchChange(event: any) {
@@ -290,44 +392,59 @@ export class EtapasComponent implements OnInit{
 
 
   // validaciones **********************************************************
+
   obtenerErrorDescripcion() {
+    
     const descripcion = this.formulario.controls.descripcion;
     if (descripcion.hasError('required')) {
       return 'El campo descripción es obligatorio';
     }
+      
     return '';
   }
-
+ 
   obtenerErrorNombre(){
+
     const nombre = this.formulario.controls.nombre;
    
     if (nombre.hasError('required')) {
       return 'El campo nombre es obligatorio';
     }
 
-    
     if (nombre.hasError('pattern')) {
-      return 'El campo nombre solo puede contener letras';
+
+      if (nombre.value?.trim() === "") {
+        return 'El campo nombre no puede contener solo espacios';
+      }
+
+      return 'El campo nombre solo puede contener letras y números';
     }
-    
+
+
     return ''; 
+
   }
 
-  limpiarErroresFormulario() {
-    Object.keys(this.formulario.controls).forEach(key => {
-      this.formulario.get(key)?.setErrors(null); // Eliminar los errores de cada control
-    });
-  }
 
-  obtenerErrorClasificacionId() {
-    /*
-    const clasificacionId = this.formulario.controls.clasificacionId;
+
+  obtenerErrorNormaId() {
+    const normaID = this.formulario.controls.normaID;
   
-    if (clasificacionId.hasError('required')) {
-      return 'El campo clasificación es obligatorio';
+    if (normaID.hasError('required')) {
+      return 'El campo norma es obligatorio';
     }
   
     return '';
-    */
+  }
+
+
+  obtenerErrorEtapaId() {
+    const etapaPadreID = this.formulario.controls.etapaPadreID;
+  
+    if (etapaPadreID.hasError('required')) {
+      return 'El campo etapa es obligatorio';
+    }
+  
+    return '';
   }
 }

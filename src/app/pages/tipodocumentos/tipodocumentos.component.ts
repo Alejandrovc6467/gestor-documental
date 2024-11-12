@@ -264,11 +264,9 @@ export class TipodocumentosComponent implements OnInit  {
                 console.log(response);
 
                 if(response){
-
                   this.obtenerCategoriasCargarTabla();
                   this.limpiarFormulario();
                   Swal.fire('Eliminado!', 'El tipo de documento ha sido eliminado.', 'success');
-
                 }else{
                   Swal.fire('Error!', 'El tipo de documento no ha sido eliminado.', 'error');
                 }

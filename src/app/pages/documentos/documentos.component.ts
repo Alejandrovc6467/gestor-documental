@@ -2,7 +2,7 @@
 import { RouterLink } from '@angular/router';
 
 
-import { AfterViewInit, Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -42,8 +42,6 @@ import { OficinaDTO } from '../../Core/models/OficinaDTO';
 import { EliminarDTO } from '../../Core/models/EliminarDTO';
 import { PalabrasClaveComponent } from '../../Core/components/palabras-clave/palabras-clave.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
-
-import { timer } from 'rxjs';
 
 
 @Component({
@@ -231,6 +229,8 @@ export class DocumentosComponent implements OnInit {
               this.doctos = []; // Limpiar la lista de doctos relacionados
               this.limpiarErroresFormulario();
               this.obtenerDocumentosCargarTabla();
+              this.palabrasClaveComponent.limpiarPalabrasClave();
+              this.limpiarRelacionesDocumento();
               Swal.fire('Creado', 'El documento ha sido creado exitosamente', 'success');
             } else {
               Swal.fire('Error', 'El documento no ha sido creado exitosamente', 'error');
@@ -386,6 +386,8 @@ export class DocumentosComponent implements OnInit {
   cancelarEdicion() {
     this.estaEditando = false;
     this.categoriaSeleccionada = null;
+    this.palabrasClaveComponent.limpiarPalabrasClave();
+    this.limpiarRelacionesDocumento();
     this.formulario.reset(); // Limpiar el formulario
     this.formulario.markAsPristine();  // Marcar como 'pristino'
     this.formulario.markAsUntouched(); // Marcar como 'intacto'

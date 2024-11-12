@@ -46,8 +46,6 @@ export class DocumentoversionesComponent implements OnInit  {
 
   private dialog = inject(MatDialog); // Usa inject en lugar del constructor
 
-
-
   categoriasService = inject(CategoriasService);
   documentosService = inject(DocumentosService);
   versionesService = inject(VersionesService);
@@ -116,7 +114,7 @@ export class DocumentoversionesComponent implements OnInit  {
 
       });
 
-    }, 2000);
+    }, 1000);
     
     
  
@@ -226,7 +224,10 @@ export class DocumentoversionesComponent implements OnInit  {
       */
   }
 
-  editarCategoria(element: CategoriaDTO) {
+  editarVersion(idVersion: number) {
+
+    this.estaEditando = true;
+    console.log(idVersion);
     /*
     // Método para cargar los datos de la categoría seleccionada y activar el modo de edición
     this.estaEditando = true;
