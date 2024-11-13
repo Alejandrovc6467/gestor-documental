@@ -27,7 +27,7 @@
 
 .contenedor_boton{
     width: 100%;
-    max-width: 2000px;
+    max-width: 1000px;
     display: flex;
     justify-content: start;
 }

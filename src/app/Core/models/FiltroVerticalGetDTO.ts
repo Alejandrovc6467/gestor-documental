@@ -8,7 +8,7 @@ export interface ArchivoDTO {
     length: number;
     name: string | null;
     fileName: string;
-  }
+}
 
 
 export interface FiltroVerticalGetDTO {

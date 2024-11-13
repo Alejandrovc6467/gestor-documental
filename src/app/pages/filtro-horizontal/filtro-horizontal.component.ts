@@ -85,7 +85,7 @@ export class FiltroHorizontalComponent {
 
   ngOnInit(): void {
 
-    this.obtenerCategoriasCargarTabla();
+   // this.obtenerCategoriasCargarTabla();
 
     this.obtenerDocumentos();
 
@@ -104,16 +104,16 @@ export class FiltroHorizontalComponent {
   private formbuilder = inject(FormBuilder);
   
   formulario = this.formbuilder.group({
-    asunto: ['', [Validators.required]],
-    codigo: ['', [Validators.required]],
-    version: ['', [Validators.required]],
-    normaID: [0, [Validators.required]],
-    tipoDocumento: [0, [Validators.required]],
-    categoriaID: [0, [Validators.required]],
-    oficinaID: [0, [Validators.required]],
-    doctoID: [0,  [Validators.required]],
-    clasificacionID: [0,  [Validators.required]],
-    palabraClave: ['', [Validators.required]]
+    asunto: [''],
+    codigo: [''],
+    version: [''],
+    normaID: [0],
+    tipoDocumento: [0],
+    categoriaID: [0],
+    oficinaID: [0],
+    doctoID: [0],
+    clasificacionID: [0],
+    palabraClave: ['']
 
   });
 
@@ -131,9 +131,21 @@ export class FiltroHorizontalComponent {
   
 
   aplicarFiltro() {
-    if (this.formulario.valid) {
+   
+      console.log('Entro a aplicar filtro');
+
       // Obtener los valores del formulario
       const filtros = this.formulario.value;
+
+
+      const camposVacios = Object.values(filtros).every(valor => valor === null || valor === '' || valor === 0);
+
+      if (camposVacios) {
+        Swal.fire('Campos vacíos', 'Por favor ingrese al menos un criterio para aplicar el filtro.', 'warning');
+        return; // Detiene la ejecución de la función si todos los campos están vacíos
+      }
+          
+      
       
       // Filtrar la lista de documentos según los criterios
       let documentosFiltrados = this.listaDocumentos?.filter(doc => {
@@ -185,16 +197,24 @@ export class FiltroHorizontalComponent {
           cumpleFiltros = cumpleFiltros && doc.clasificacionID === filtros.clasificacionID;
         }
 
+        
         // Filtrar por palabra clave
         if (filtros.palabraClave) {
-          cumpleFiltros = cumpleFiltros && doc.palabraClave.toLowerCase().includes(filtros.palabraClave.toLowerCase());
+          cumpleFiltros = cumpleFiltros && 
+            Array.isArray(doc.palabraClave) &&
+            doc.palabraClave.some(palabra => 
+              palabra.toLowerCase().includes(filtros.palabraClave?.toLowerCase())
+            );
         }
+
+        
 
         return cumpleFiltros;
       });
 
       // Si no hay documentos filtrados, mostrar mensaje
       if (!documentosFiltrados || documentosFiltrados.length === 0) {
+        this.setTable(documentosFiltrados); 
         Swal.fire('Sin resultados', 'No se encontraron documentos que coincidan con los criterios de búsqueda.', 'info');
        
         return;
@@ -203,7 +223,7 @@ export class FiltroHorizontalComponent {
       // Actualizar la tabla con los resultados filtrados
       this.setTable(documentosFiltrados);
      
-    }
+    
   }
 
 
@@ -237,7 +257,6 @@ export class FiltroHorizontalComponent {
   
   }
 
-
   observarDocumento(element: FiltroVerticalGetExtendidaDTO) {
     if (element.archivo.contentType === 'application/pdf') {
       console.log(element.urlArchivo);
@@ -251,7 +270,6 @@ export class FiltroHorizontalComponent {
       });
     }
   }
-
 
   doctosData: DoctocDTO[] = [];
 
@@ -288,7 +306,6 @@ export class FiltroHorizontalComponent {
   obtenerOficinas(){
     this.oficinasService.obtenerOficinas().subscribe(response => {
       this.listaOficinas = response;
-      console.log( this.listaOficinas);
   })};
 
   obtenerNormas(){

@@ -9,7 +9,6 @@ import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl, MatPaginatorModule} from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
-import Swal from 'sweetalert2';
 import { RouterLink } from '@angular/router';
 import { NormasService } from '../../Core/services/normas.service';
 import { TipodocumentoService } from '../../Core/services/tipodocumento.service';
@@ -47,8 +46,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 })
 export class FiltroHorizontalProcesoComponent {
 
-
-  private dialog = inject(MatDialog); // Usa inject en lugar del constructor
+  private dialog = inject(MatDialog);
 
   etapas: EtapaDTO[] = [];
   etapaService = inject(EtapasService);
@@ -62,9 +60,6 @@ export class FiltroHorizontalProcesoComponent {
   documentosService = inject(DocumentosService);
 
 
-
-
-  
   listaNormas! : CategoriaDTO[];
   listaTipoDocumentos! : TipodocumentoDTO[];
   listaDocumentos! : FiltroVerticalGetDTO[];
@@ -72,7 +67,6 @@ export class FiltroHorizontalProcesoComponent {
   listaOficinas! : OficinaDTO[];
   listaDoctos! : DoctocDTO[];
   listaClasificaciones!: ClasificacionDTO[];
-
 
 
   listCategoriasdataSource = new MatTableDataSource<FiltroVerticalGetExtendidaDTO>([]);
@@ -83,15 +77,11 @@ export class FiltroHorizontalProcesoComponent {
   categoriaSeleccionada!: CategoriaDTO | null;
 
 
-
-
-
   ngOnInit(): void {
 
     this.obtenerCategoriasCargarTabla();
 
     this.obtenerDocumentos();
-
     this.obtenerTipoDocumentos();
     this.obtenerCategorias();
     this.obtenerNormas();
@@ -107,28 +97,11 @@ export class FiltroHorizontalProcesoComponent {
   private formbuilder = inject(FormBuilder);
   
   formulario = this.formbuilder.group({
-   
     normaID: [0, [Validators.required]]
-   
-
   });
 
 
-    // Agregar este método para manejar el cambio de norma
-    onNormaSelected() {
-      const normaId = this.formulario.get('normaID')?.value;
-      if (normaId) {
-        console.log('Norma seleccionada:', normaId);
-        this.etapaService.obtenerEtapasPorNorma(normaId).subscribe(
-          (etapas) => {
-            this.etapas = etapas;
-          },
-          (error) => {
-            console.error('Error al obtener las etapas:', error);
-          }
-        );
-      }
-    }
+
 
   //CRUD *******************************************************************************
   
@@ -140,102 +113,48 @@ export class FiltroHorizontalProcesoComponent {
   }
 
   obtenerCategoriaPorId(idBuscar:number){
-    //const idBuscar: number = 1;
     this.categoriasService.obtenerCategoriaPorId(idBuscar).subscribe(response => {
       console.log(response);
     });
   }
 
-  aplicarFiltro() {
-    /*
-    if (this.formulario.valid) {
-      // Obtener los valores del formulario
-      const filtros = this.formulario.value;
-      
-      // Filtrar la lista de documentos según los criterios
-      let documentosFiltrados = this.listaDocumentos?.filter(doc => {
-        let cumpleFiltros = true;
 
-        // Filtrar por asunto (si no está vacío)
-        if (filtros.asunto) {
-          cumpleFiltros = cumpleFiltros && doc.asunto.toLowerCase().includes(filtros.asunto.toLowerCase());
-        }
+  // Filtro principal *************************************************************************************
 
-        // Filtrar por código
-        if (filtros.codigo) {
-          cumpleFiltros = cumpleFiltros && doc.codigo.toLowerCase().includes(filtros.codigo.toLowerCase());
-        }
-
-        // Filtrar por versión
-        if (filtros.version) {
-          //cumpleFiltros = cumpleFiltros && doc.versionID.toString() === filtros.version;
-          cumpleFiltros = cumpleFiltros && doc.versionID.toString().includes(filtros.version);
-        }
-
-        // Filtrar por norma (si no es 0 - "Todos")
-        if (filtros.normaID && filtros.normaID !== 0) {
-          cumpleFiltros = cumpleFiltros && doc.normaID === filtros.normaID;
-        }
-
-        // Filtrar por tipo de documento
-        if (filtros.tipoDocumento && filtros.tipoDocumento !== 0) {
-          cumpleFiltros = cumpleFiltros && doc.tipoDocumento === filtros.tipoDocumento;
-        }
-
-        // Filtrar por categoría
-        if (filtros.categoriaID && filtros.categoriaID !== 0) {
-          cumpleFiltros = cumpleFiltros && doc.categoriaID === filtros.categoriaID;
-        }
-
-        // Filtrar por oficina
-        if (filtros.oficinaID && filtros.oficinaID !== 0) {
-          cumpleFiltros = cumpleFiltros && doc.oficinaID === filtros.oficinaID;
-        }
-
-        // Filtrar por docto
-        if (filtros.doctoID && filtros.doctoID !== 0) {
-          cumpleFiltros = cumpleFiltros && doc.doctoId === filtros.doctoID;
-        }
-
-        // Filtrar por clasificación
-        if (filtros.clasificacionID && filtros.clasificacionID !== 0) {
-          cumpleFiltros = cumpleFiltros && doc.clasificacionID === filtros.clasificacionID;
-        }
-
-        // Filtrar por palabra clave
-        if (filtros.palabraClave) {
-          cumpleFiltros = cumpleFiltros && doc.palabraClave.toLowerCase().includes(filtros.palabraClave.toLowerCase());
-        }
-
-        return cumpleFiltros;
-      });
-
-      // Si no hay documentos filtrados, mostrar mensaje
-      if (!documentosFiltrados || documentosFiltrados.length === 0) {
-        Swal.fire('Sin resultados', 'No se encontraron documentos que coincidan con los criterios de búsqueda.', 'info');
-       
-        return;
-      }
-
-      // Actualizar la tabla con los resultados filtrados
-      this.setTable(documentosFiltrados);
-     
+  // Agregar este método para manejar el cambio de norma
+  onNormaSelected() {
+    const normaId = this.formulario.get('normaID')?.value;
+      if (normaId) {
+        console.log('Norma seleccionada:', normaId);
+        this.etapaService.obtenerEtapasPorNorma(normaId).subscribe(
+          (etapas) => {
+             this.etapas = etapas;
+          },
+            (error) => {
+              console.error('Error al obtener las etapas:', error);
+          }
+        );
     }
-      */
+  }
+
+  aplicarFiltro() {
+
+    console.log('Aplicar filtro presionado');
+
+    if (this.formulario.valid) {
+      console.log('invalido');
+      return;
+      
+    }
+
+      
   }
 
 
 
-  // Método para descargar el documento
-  /*
-  descargarDocumento(archivo: any) {
-    const link = document.createElement('a');
-    link.href = archivo.url; // La URL donde está el archivo
-    link.download = archivo.fileName; // El nombre que se mostrará al descargar
-    link.click(); // Simulamos el click para iniciar la descarga
-  }
-    */
 
+  // Descar y visualizacion de documentos ***********************************************************************************
+  
   descargarDocumento(archivo: any) {
     this.filtroVerticalService.manejarDescargaArchivo(archivo);
   }
@@ -264,6 +183,7 @@ export class FiltroHorizontalProcesoComponent {
       this.openModal();
     });
   }
+
 
   openModal() {
     this.dialog.open(DoctosModalComponent, {
@@ -298,9 +218,7 @@ export class FiltroHorizontalProcesoComponent {
   obtenerOficinas(){
     this.oficinasService.obtenerOficinas().subscribe(response => {
       this.listaOficinas = response;
-      console.log( this.listaOficinas);
   })};
-
 
   obtenerClasificaciones(){
     this.clasificacionesService.obtenerClasificaciones().subscribe(response => {
@@ -314,11 +232,11 @@ export class FiltroHorizontalProcesoComponent {
 
   
 
+
   // Otros ***************************************************************************************************
 
 
-
-  //no esta siendo utilizado
+  //cuando este el filtro funcionando
   obtenerCategoriasCargarTabla(){
     this.filtroVerticalService.obtenerFiltroVertical().subscribe(response => {
       this.listaDocumentos = response;
@@ -357,6 +275,9 @@ export class FiltroHorizontalProcesoComponent {
 
   }
   
+
+  // Busqueda en input buscar de tabla *****************************************************************************
+
   realizarBusqueda() {
     this.filtrarData();
   }
@@ -378,16 +299,6 @@ export class FiltroHorizontalProcesoComponent {
     */
   }
 
-  limpiarFormulario() {
-    this.formulario.reset(); // Resetea los campos del formulario
-    this.formulario.markAsPristine();  // Marcar como 'pristino'
-    this.formulario.markAsUntouched(); // Marcar como 'intacto'
-    this.formulario.updateValueAndValidity(); // Recalcular estado de validez
-    this.limpiarErroresFormulario(); // Eliminar los errores
-  }
-
-
- 
   onSearchChange(event: any) {
     /*
     const filterValue = event.target.value?.trim().toLowerCase() || '';
@@ -401,39 +312,21 @@ export class FiltroHorizontalProcesoComponent {
   }
 
 
-  // validaciones *************************************************************************************
+  // validaciones **********************************************************************************************************
 
-  obtenerErrorDescripcion() {
-    /*
-    const descripcion = this.formulario.controls.descripcion;
-    if (descripcion.hasError('required')) {
-      return 'El campo descripción es obligatorio';
+  obtenerErrorNorma(){
+    const norma = this.formulario.controls.normaID;
+    if (norma.hasError('required')) {
+      return 'El campo norma es obligatorio';
     }
     return '';
-    */
   }
-
-  obtenerErrorNombre(){
-    /*
-    const nombre = this.formulario.controls.nombre;
-   
-    if (nombre.hasError('required')) {
-      return 'El campo nombre es obligatorio';
-    }
-
-    
-    if (nombre.hasError('pattern')) {
-      return 'El campo nombre solo puede contener letras';
-    }
-    */
-    return ''; 
-  }
+  
 
   limpiarErroresFormulario() {
     Object.keys(this.formulario.controls).forEach(key => {
       this.formulario.get(key)?.setErrors(null); // Eliminar los errores de cada control
     });
   }
-
 
 }

@@ -81,7 +81,7 @@ export class FiltroVerticalComponent {
 
   ngOnInit(): void {
 
-    this.obtenerCategoriasCargarTabla();
+    //this.obtenerCategoriasCargarTabla();
 
     this.obtenerDocumentos();
 
@@ -100,16 +100,16 @@ export class FiltroVerticalComponent {
   private formbuilder = inject(FormBuilder);
   
   formulario = this.formbuilder.group({
-    asunto: ['', [Validators.required]],
-    codigo: ['', [Validators.required]],
-    version: ['', [Validators.required]],
-    normaID: [0, [Validators.required]],
-    tipoDocumento: [0, [Validators.required]],
-    categoriaID: [0, [Validators.required]],
-    oficinaID: [0, [Validators.required]],
-    doctoID: [0,  [Validators.required]],
-    clasificacionID: [0,  [Validators.required]],
-    palabraClave: ['', [Validators.required]]
+    asunto: [''],
+    codigo: [''],
+    version: [''],
+    normaID: [0],
+    tipoDocumento: [0],
+    categoriaID: [0],
+    oficinaID: [0],
+    doctoID: [0],
+    clasificacionID: [0],
+    palabraClave: ['']
 
   });
 
@@ -125,87 +125,107 @@ export class FiltroVerticalComponent {
   }
 
   obtenerCategoriaPorId(idBuscar:number){
-    //const idBuscar: number = 1;
     this.categoriasService.obtenerCategoriaPorId(idBuscar).subscribe(response => {
       console.log(response);
     });
   }
 
   aplicarFiltro() {
-    if (this.formulario.valid) {
-      // Obtener los valores del formulario
-      const filtros = this.formulario.value;
-      
-      // Filtrar la lista de documentos según los criterios
-      let documentosFiltrados = this.listaDocumentos?.filter(doc => {
-        let cumpleFiltros = true;
+   
+    console.log('Entro a aplicar filtro');
 
-        // Filtrar por asunto (si no está vacío)
-        if (filtros.asunto) {
-          cumpleFiltros = cumpleFiltros && doc.asunto.toLowerCase().includes(filtros.asunto.toLowerCase());
-        }
+    // Obtener los valores del formulario
+    const filtros = this.formulario.value;
 
-        // Filtrar por código
-        if (filtros.codigo) {
-          cumpleFiltros = cumpleFiltros && doc.codigo.toLowerCase().includes(filtros.codigo.toLowerCase());
-        }
 
-        // Filtrar por versión
-        if (filtros.version) {
-          //cumpleFiltros = cumpleFiltros && doc.versionID.toString() === filtros.version;
-          cumpleFiltros = cumpleFiltros && doc.versionID.toString().includes(filtros.version);
-        }
+    const camposVacios = Object.values(filtros).every(valor => valor === null || valor === '' || valor === 0);
 
-        // Filtrar por norma (si no es 0 - "Todos")
-        if (filtros.normaID && filtros.normaID !== 0) {
-          cumpleFiltros = cumpleFiltros && doc.normaID === filtros.normaID;
-        }
+    if (camposVacios) {
+      Swal.fire('Campos vacíos', 'Por favor ingrese al menos un criterio para aplicar el filtro.', 'warning');
+      return; // Detiene la ejecución de la función si todos los campos están vacíos
+    }
+        
+    
+    
+    // Filtrar la lista de documentos según los criterios
+    let documentosFiltrados = this.listaDocumentos?.filter(doc => {
+      let cumpleFiltros = true;
 
-        // Filtrar por tipo de documento
-        if (filtros.tipoDocumento && filtros.tipoDocumento !== 0) {
-          cumpleFiltros = cumpleFiltros && doc.tipoDocumento === filtros.tipoDocumento;
-        }
-
-        // Filtrar por categoría
-        if (filtros.categoriaID && filtros.categoriaID !== 0) {
-          cumpleFiltros = cumpleFiltros && doc.categoriaID === filtros.categoriaID;
-        }
-
-        // Filtrar por oficina
-        if (filtros.oficinaID && filtros.oficinaID !== 0) {
-          cumpleFiltros = cumpleFiltros && doc.oficinaID === filtros.oficinaID;
-        }
-
-        // Filtrar por docto
-        if (filtros.doctoID && filtros.doctoID !== 0) {
-          cumpleFiltros = cumpleFiltros && doc.doctoId === filtros.doctoID;
-        }
-
-        // Filtrar por clasificación
-        if (filtros.clasificacionID && filtros.clasificacionID !== 0) {
-          cumpleFiltros = cumpleFiltros && doc.clasificacionID === filtros.clasificacionID;
-        }
-
-        // Filtrar por palabra clave
-        if (filtros.palabraClave) {
-          cumpleFiltros = cumpleFiltros && doc.palabraClave.toLowerCase().includes(filtros.palabraClave.toLowerCase());
-        }
-
-        return cumpleFiltros;
-      });
-
-      // Si no hay documentos filtrados, mostrar mensaje
-      if (!documentosFiltrados || documentosFiltrados.length === 0) {
-        Swal.fire('Sin resultados', 'No se encontraron documentos que coincidan con los criterios de búsqueda.', 'info');
-       
-        return;
+      // Filtrar por asunto (si no está vacío)
+      if (filtros.asunto) {
+        cumpleFiltros = cumpleFiltros && doc.asunto.toLowerCase().includes(filtros.asunto.toLowerCase());
       }
 
-      // Actualizar la tabla con los resultados filtrados
-      this.setTable(documentosFiltrados);
+      // Filtrar por código
+      if (filtros.codigo) {
+        cumpleFiltros = cumpleFiltros && doc.codigo.toLowerCase().includes(filtros.codigo.toLowerCase());
+      }
+
+      // Filtrar por versión
+      if (filtros.version) {
+        //cumpleFiltros = cumpleFiltros && doc.versionID.toString() === filtros.version;
+        cumpleFiltros = cumpleFiltros && doc.versionID.toString().includes(filtros.version);
+      }
+
+      // Filtrar por norma (si no es 0 - "Todos")
+      if (filtros.normaID && filtros.normaID !== 0) {
+        cumpleFiltros = cumpleFiltros && doc.normaID === filtros.normaID;
+      }
+
+      // Filtrar por tipo de documento
+      if (filtros.tipoDocumento && filtros.tipoDocumento !== 0) {
+        cumpleFiltros = cumpleFiltros && doc.tipoDocumento === filtros.tipoDocumento;
+      }
+
+      // Filtrar por categoría
+      if (filtros.categoriaID && filtros.categoriaID !== 0) {
+        cumpleFiltros = cumpleFiltros && doc.categoriaID === filtros.categoriaID;
+      }
+
+      // Filtrar por oficina
+      if (filtros.oficinaID && filtros.oficinaID !== 0) {
+        cumpleFiltros = cumpleFiltros && doc.oficinaID === filtros.oficinaID;
+      }
+
+      // Filtrar por docto
+      if (filtros.doctoID && filtros.doctoID !== 0) {
+        cumpleFiltros = cumpleFiltros && doc.doctoId === filtros.doctoID;
+      }
+
+      // Filtrar por clasificación
+      if (filtros.clasificacionID && filtros.clasificacionID !== 0) {
+        cumpleFiltros = cumpleFiltros && doc.clasificacionID === filtros.clasificacionID;
+      }
+
+      
+      // Filtrar por palabra clave
+      if (filtros.palabraClave) {
+        cumpleFiltros = cumpleFiltros && 
+          Array.isArray(doc.palabraClave) &&
+          doc.palabraClave.some(palabra => 
+            palabra.toLowerCase().includes(filtros.palabraClave?.toLowerCase())
+          );
+      }
+
+      
+
+      return cumpleFiltros;
+    });
+
+    // Si no hay documentos filtrados, mostrar mensaje
+    if (!documentosFiltrados || documentosFiltrados.length === 0) {
+      this.setTable(documentosFiltrados); 
+      Swal.fire('Sin resultados', 'No se encontraron documentos que coincidan con los criterios de búsqueda.', 'info');
      
+      return;
     }
+
+    // Actualizar la tabla con los resultados filtrados
+    this.setTable(documentosFiltrados);
+   
+  
   }
+
 
 
 
@@ -268,7 +288,6 @@ export class FiltroVerticalComponent {
   obtenerOficinas(){
     this.oficinasService.obtenerOficinas().subscribe(response => {
       this.listaOficinas = response;
-      console.log( this.listaOficinas);
   })};
 
   obtenerNormas(){
