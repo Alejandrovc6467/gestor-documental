@@ -208,8 +208,33 @@ export class FiltroHorizontalComponent {
 
 
 
-  descargarDocumento(archivo: any) {
-    this.filtroVerticalService.manejarDescargaArchivo(archivo);
+  descargarDocumento(archivo: any, descargable: boolean) {
+    if(descargable){
+
+      Swal.fire({
+        title: '¿Desea descargar el documento?',
+        text: 'Esta acción no se puede deshacer.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Sí'
+     
+    }).then((result) => {
+        if (result.isConfirmed) {
+
+          this.filtroVerticalService.manejarDescargaArchivo(archivo);
+
+          Swal.fire('Descargado!', 'El documento ha sido descargado.', 'success');
+        }
+      });
+
+     
+    }else{
+      Swal.fire('Error!', 'El documento no es descargable.', 'error');
+    }
+  
   }
 
 

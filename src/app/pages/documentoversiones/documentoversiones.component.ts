@@ -25,6 +25,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { firstValueFrom } from 'rxjs';
 import { FiltroVerticalService } from '../../Core/services/filtro-vertical.service';
 import { RouterLink } from '@angular/router';
+import { EliminarDTO } from '../../Core/models/EliminarDTO';
 
 
 @Component({
@@ -261,7 +262,7 @@ export class DocumentoversionesComponent implements OnInit  {
 
     Swal.fire({
       title: '¿Estás seguro?',
-      text: '¿Deseas actualizar este Tipo de documento?',
+      text: '¿Deseas actualizar la versión?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -420,6 +421,8 @@ export class DocumentoversionesComponent implements OnInit  {
 
 
   eliminarVersion(idEliminar: number) {
+
+    console.log(idEliminar);
    
     Swal.fire({
         title: '¿Desea eliminar la versión?',
@@ -433,8 +436,16 @@ export class DocumentoversionesComponent implements OnInit  {
      
     }).then((result) => {
         if (result.isConfirmed) {
+
+
+          const eliminarDTO:  EliminarDTO = {
+            objetoID: idEliminar,
+            usuarioID: 1,// esto sale del local
+            oficinaID: 1// y este
+          };
+
             // Si el usuario confirma, proceder con la eliminación
-            this.versionesService.eliminarVersion(idEliminar).subscribe(response => {
+            this.versionesService.eliminarVersion(eliminarDTO).subscribe(response => {
                 console.log(response);
                 if(response){
                   this.obtenerVersionesCargarTabla();

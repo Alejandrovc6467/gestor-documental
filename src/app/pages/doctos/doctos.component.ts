@@ -145,7 +145,7 @@ export class DoctosComponent implements OnInit  {
 
     Swal.fire({
       title: '¿Estás seguro?',
-      text: '¿Deseas actualizar este Tipo de documento?',
+      text: '¿Deseas actualizar este docto?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',

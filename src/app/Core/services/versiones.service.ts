@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { VersionDTO } from '../models/VersionDTO';
+import { EliminarDTO } from '../models/EliminarDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -80,8 +81,10 @@ export class VersionesService {
   }
 
 
-  public eliminarVersion(id:number){
-    return this.http.delete(`${this.urlBase}/${id}`);
+  
+
+  public eliminarVersion(eliminarDTO: EliminarDTO): Observable<any> {
+    return this.http.delete(this.urlBase, { body: eliminarDTO });
   }
 
   

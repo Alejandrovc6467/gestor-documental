@@ -125,7 +125,7 @@ export class EtapasComponent implements OnInit{
 
     Swal.fire({
       title: '¿Estás seguro?',
-      text: '¿Deseas crear este Tipo de documento?',
+      text: '¿Deseas crear esta etapa?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
