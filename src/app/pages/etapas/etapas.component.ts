@@ -46,10 +46,12 @@ export class EtapasComponent implements OnInit{
 
 
   ngOnInit(): void {
-    this.obtenerCategoriasCargarTabla();
+    // this.obtenerCategoriasCargarTabla();
     this.obtenerEtapasHuerfanas();
     this.obtenerNormas();
     this.obtenerEtapas();
+    this.setTable([]);
+    this.obtenerEtapass();
   }
 
 
@@ -68,7 +70,7 @@ export class EtapasComponent implements OnInit{
 
 
   //CRUD **********************************************************
-  obtenerCategorias(){
+  obtenerEtapass(){
     this.etapasService.obtenerEtapas().subscribe(response => {
       this.listaEtapas = response;
     });
@@ -148,7 +150,7 @@ export class EtapasComponent implements OnInit{
         this.etapasService.crearEtapa(etapa).subscribe(response => {
             console.log(response);
             if(response){
-              this.obtenerCategoriasCargarTabla();
+              // this.obtenerCategoriasCargarTabla();
               this.obtenerEtapasHuerfanas();
               this.limpiarFormulario();
               Swal.fire('Creada!', 'La Etapa ha sido creada.', 'success');
@@ -200,7 +202,7 @@ export class EtapasComponent implements OnInit{
           this.etapasService.actualizarEtapa(categoriaActualizada).subscribe(response => {
             console.log(response);
             if(response){
-              this.obtenerCategoriasCargarTabla();
+              // this.obtenerCategoriasCargarTabla();
               this.limpiarFormulario();
               Swal.fire('Editada!', 'La etapa ha sido editada.', 'success');
             }else{
@@ -294,7 +296,7 @@ export class EtapasComponent implements OnInit{
             this.etapasService.eliminarEtapa(eliminarDTO).subscribe(response => {
                 console.log(response);
                 if(response){
-                  this.obtenerCategoriasCargarTabla();
+                  // this.obtenerCategoriasCargarTabla();
                   this.limpiarFormulario();
                   Swal.fire('Eliminado!', 'La etapa ha sido eliminada.', 'success');
                 }else{
@@ -335,7 +337,7 @@ export class EtapasComponent implements OnInit{
   }
 
   setTable(data: EtapaDTO[]) {
-    console.log(data);
+   
     setTimeout(() => {
       // Mapear los datos para agregar el nombre de la norma y el nombre de la etapa padre
       const dataConNormaYPadreNombre: EtapaExtendidaDTO[] = data.map(etapa => {
@@ -358,37 +360,43 @@ export class EtapasComponent implements OnInit{
     }, 3000);
   }
   
+ 
   realizarBusqueda() {
+    if (this.textoBuscar.trim() === '') {
+      this.setTable([]); // Si no hay texto de búsqueda, tabla vacía
+      return;
+    }
     this.filtrarData();
   }
 
-  filtrarData(){
-
+  filtrarData() {
     const data = this.listaEtapas.slice();
-    if(!this.textoBuscar){
-     this.setTable(data);
+    if (!this.textoBuscar.trim()) {
+      this.setTable([]);
       return;
     }
+    setTimeout(() => {
+      const dataFiltrada = data.filter(item => {
+        return item.nombre.toLowerCase().includes(this.textoBuscar.toLowerCase());
+      });
 
-    const dataFiltrada = data.filter(item => {
-      return item.nombre.includes(this.textoBuscar);
-    })
-
-    this.setTable(dataFiltrada);
+      this.setTable(dataFiltrada);
+    }, 1000); 
   }
 
- 
-
- 
   onSearchChange(event: any) {
-    const filterValue = event.target.value?.trim().toLowerCase() || '';
+    const filterValue = (event.target.value || '').trim();
+    this.textoBuscar = filterValue;
+    
+    /*  // Con esto lo hago sin necesidad de presionar el boton buscar
     if (!filterValue) {
-      // Si esta vacio, mostrar toda la lista
-      this.setTable(this.listaEtapas);
+      this.setTable([]);
       return;
     }
-    //pude haber hecho todo el filtro aqui, pero se requeria la necesidad del boton buscar
+    this.filtrarData(); 
+    */
   }
+
 
 
   // validaciones **********************************************************

@@ -61,8 +61,10 @@ export class DocumentoversionesComponent implements OnInit  {
 
 
   ngOnInit(): void {
-    this.obtenerVersionesCargarTabla();
+    //this.obtenerVersionesCargarTabla();
     this.cargarCamposQuemadosEnHtml();
+    this.setTable([]);
+    this.obtenerVersiones();
   }
   
   constructor(private datePipe: DatePipe) { } // Inyectar DatePipe
@@ -122,6 +124,14 @@ export class DocumentoversionesComponent implements OnInit  {
 
 
   //CRUD ************************************************************************************************
+
+
+
+  obtenerVersiones(){
+    this.versionesService.obtenerVersionesPorId(this.id).subscribe(response => {
+      this.listaCategorias = response;
+    });
+  }
 
   guardarVersion() {
     
@@ -234,7 +244,7 @@ export class DocumentoversionesComponent implements OnInit  {
     
             console.log(response);
             if(response){
-              this.obtenerVersionesCargarTabla();
+              // //
               this.limpiarFormulario();
               Swal.fire('Creada!', 'La versión ha sido creada.', 'success');
             }else{
@@ -294,7 +304,7 @@ export class DocumentoversionesComponent implements OnInit  {
             console.log(response);
             if(response){
             
-              this.obtenerVersionesCargarTabla();
+              // //
               this.limpiarFormulario();
               Swal.fire('Editada!', 'La versión ha sido editada.', 'success');
 
@@ -448,7 +458,7 @@ export class DocumentoversionesComponent implements OnInit  {
             this.versionesService.eliminarVersion(eliminarDTO).subscribe(response => {
                 console.log(response);
                 if(response){
-                  this.obtenerVersionesCargarTabla();
+                  // //
                   this.limpiarFormulario();
                   Swal.fire('Eliminada!', 'La versión ha sido eliminada.', 'success');
                 }else{
@@ -484,7 +494,6 @@ export class DocumentoversionesComponent implements OnInit  {
   obtenerVersionesCargarTabla(){
     this.versionesService.obtenerVersionesPorId(this.id).subscribe(response => {
       this.listaCategorias = response;
-      console.log(this.listaCategorias);
       this.setTable(this.listaCategorias);
     });
   }
@@ -492,39 +501,55 @@ export class DocumentoversionesComponent implements OnInit  {
   setTable(data:VersionDTO[]){
     this.listCategoriasdataSource = new MatTableDataSource<VersionDTO>(data);
     this.listCategoriasdataSource.paginator = this.paginator;
-    console.log(this.listaCategorias);
   }
   
+  
   realizarBusqueda() {
+    if (this.textoBuscar.trim() === '') {
+      this.setTable([]); // Si no hay texto de búsqueda, tabla vacía
+      return;
+    }
     this.filtrarData();
   }
 
-  filtrarData(){
-
-    /*
+  filtrarData() {
     const data = this.listaCategorias.slice();
-    if(!this.textoBuscar){
-     this.setTable(data);
+    
+    if (!this.textoBuscar.trim()) {
+      this.setTable([]);
       return;
     }
-
-    const dataFiltrada = data.filter(item => {
-      return item.nombre.includes(this.textoBuscar);
-    })
-
-    this.setTable(dataFiltrada);
-    */
+    
+    setTimeout(() => {
+      const dataFiltrada = data.filter(item => {
+        // Extrae el nombre del archivo del urlVersion
+        const nombreArchivo = item.urlVersion?.split('\\').pop();
+        
+        // Convierte el numeroVersion a string para compararlo con textoBuscar
+        const numeroVersionStr = item.numeroVersion.toString();
+  
+        // Aplica el filtro basado en el nombre del archivo o en el numeroVersion
+        return nombreArchivo?.toLowerCase().includes(this.textoBuscar.toLowerCase()) ||
+               numeroVersionStr.includes(this.textoBuscar);
+      });
+  
+      this.setTable(dataFiltrada);
+    }, 1000);
   }
-
+  
+  
 
   onSearchChange(event: any) {
-    const filterValue = event.target.value?.trim().toLowerCase() || '';
+    const filterValue = (event.target.value || '').trim();
+    this.textoBuscar = filterValue;
+    
+    /*  // Con esto lo hago sin necesidad de presionar el boton buscar
     if (!filterValue) {
-      // Si esta vacio, mostrar toda la lista
-      this.setTable(this.listaCategorias);
+      this.setTable([]);
       return;
     }
-    //pude haber hecho todo el filtro aqui, pero se requeria la necesidad del boton buscar
+    this.filtrarData(); 
+    */
   }
 
 

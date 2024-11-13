@@ -39,7 +39,9 @@ export class DoctosComponent implements OnInit  {
 
 
   ngOnInit(): void {
-    this.obtenerCategoriasCargarTabla();
+    // this.obtenerCategoriasCargarTabla();
+    this.setTable([]);
+    this.obtenerDoctocs();
   }
   
 
@@ -127,7 +129,7 @@ export class DoctosComponent implements OnInit  {
         this.doctocService.crearDoctoc(categoria).subscribe(response => {
           console.log(response);
           if(response){
-            this.obtenerCategoriasCargarTabla();
+            // this.obtenerCategoriasCargarTabla();
             this.limpiarFormulario();
             Swal.fire('Creado!', 'El Doctoc ha sido creado.', 'success');
           }else{
@@ -166,7 +168,7 @@ export class DoctosComponent implements OnInit  {
         this.doctocService.actualizarDoctoc(categoriaActualizada).subscribe(response => {
           console.log(response);
           if(response){
-            this.obtenerCategoriasCargarTabla();
+            // this.obtenerCategoriasCargarTabla();
             this.limpiarFormulario();
             Swal.fire('Editado!', 'El Doctoc ha sido editado.', 'success');
           }else{
@@ -254,7 +256,7 @@ export class DoctosComponent implements OnInit  {
             this.doctocService.eliminarDoctoc(eliminarDTO).subscribe(response => {
                 console.log(response);
                 if(response){
-                  this.obtenerCategoriasCargarTabla();
+                  // this.obtenerCategoriasCargarTabla();
                   this.limpiarFormulario();
                   Swal.fire('Eliminado!', 'El Doctoc ha sido eliminado.', 'success');
                 }else{
@@ -284,37 +286,46 @@ export class DoctosComponent implements OnInit  {
   }
   
   realizarBusqueda() {
+    if (this.textoBuscar.trim() === '') {
+      this.setTable([]); // Si no hay texto de búsqueda, tabla vacía
+      return;
+    }
     this.filtrarData();
   }
 
-  filtrarData(){
 
+  filtrarData() {
     const data = this.listaCategorias.slice();
-    if(!this.textoBuscar){
-     this.setTable(data);
+    if (!this.textoBuscar.trim()) {
+      this.setTable([]);
       return;
     }
+    setTimeout(() => {
+      const dataFiltrada = data.filter(item => {
+        return item.nombre.toLowerCase().includes(this.textoBuscar.toLowerCase());
+      });
 
-    const dataFiltrada = data.filter(item => {
-      return item.nombre.includes(this.textoBuscar);
-    })
+      this.setTable(dataFiltrada);
+    }, 1000); 
+  }
 
-    this.setTable(dataFiltrada);
+  onSearchChange(event: any) {
+    const filterValue = (event.target.value || '').trim();
+    this.textoBuscar = filterValue;
+    
+    /*  // Con esto lo hago sin necesidad de presionar el boton buscar
+    if (!filterValue) {
+      this.setTable([]);
+      return;
+    }
+    this.filtrarData(); 
+    */
   }
 
 
 
  
-  onSearchChange(event: any) {
-    const filterValue = event.target.value?.trim().toLowerCase() || '';
-    if (!filterValue) {
-      // Si esta vacio, mostrar toda la lista
-      this.setTable(this.listaCategorias);
-      return;
-    }
-    //pude haber hecho todo el filtro aqui, pero se requeria la necesidad del boton buscar
-  }
-
+ 
 
   // validaciones **********************************************************
   obtenerErrorDescripcion() {

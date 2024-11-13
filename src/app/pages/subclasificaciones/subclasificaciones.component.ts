@@ -45,8 +45,10 @@ export class SubclasificacionesComponent implements OnInit {
 
 
   ngOnInit(): void {
+    // this.obtenerCategoriasCargarTabla();
     this.obtenerClasificaciones();
-    this.obtenerCategoriasCargarTabla();
+    this.setTable([]);
+    this.obtenerSubclasificaciones();
   }
   
   constructor(){}
@@ -67,7 +69,7 @@ export class SubclasificacionesComponent implements OnInit {
 
 
   //CRUD **********************************************************
-  obtenerCategorias(){
+  obtenerSubclasificaciones(){
     this.subclasificaionesService.obtenerSubclasificaciones().subscribe(response => {
       this.listaSubclasificaciones = response;
     });
@@ -149,7 +151,7 @@ export class SubclasificacionesComponent implements OnInit {
         this.subclasificaionesService.crearSubclasificacion(categoria).subscribe(response => {
           console.log(response);
           if(response){
-            this.obtenerCategoriasCargarTabla();
+            // this.obtenerCategoriasCargarTabla();
             this.limpiarFormulario();
             Swal.fire('Creada!', 'La subclasificación ha sido creada.', 'success');
           }else{
@@ -193,7 +195,7 @@ export class SubclasificacionesComponent implements OnInit {
         this.subclasificaionesService.actualizarSubclasificacion(subclasificacionActualizada).subscribe(response => {
           console.log(response);
           if(response){
-            this.obtenerCategoriasCargarTabla();
+            // this.obtenerCategoriasCargarTabla();
             this.limpiarFormulario();
             Swal.fire('Editada!', 'La subclasificación ha sido editada.', 'success');
           }else{
@@ -282,7 +284,7 @@ export class SubclasificacionesComponent implements OnInit {
             this.subclasificaionesService.eliminarSubclasificacion(eliminarDTO).subscribe(response => {
                 console.log(response);
                 if(response){
-                  this.obtenerCategoriasCargarTabla();
+                  // this.obtenerCategoriasCargarTabla();
                   this.limpiarFormulario();
                   Swal.fire('Eliminado!', 'La Subclasificación ha sido eliminada.', 'success');
                 }else{
@@ -326,35 +328,41 @@ export class SubclasificacionesComponent implements OnInit {
     }, 3000);
   }
   
+ 
   realizarBusqueda() {
+    if (this.textoBuscar.trim() === '') {
+      this.setTable([]); // Si no hay texto de búsqueda, tabla vacía
+      return;
+    }
     this.filtrarData();
   }
 
-  filtrarData(){
-
+  filtrarData() {
     const data = this.listaSubclasificaciones.slice();
-    if(!this.textoBuscar){
-     this.setTable(data);
+    if (!this.textoBuscar.trim()) {
+      this.setTable([]);
       return;
     }
+    setTimeout(() => {
+      const dataFiltrada = data.filter(item => {
+        return item.nombre.toLowerCase().includes(this.textoBuscar.toLowerCase());
+      });
 
-    const dataFiltrada = data.filter(item => {
-      return item.nombre.includes(this.textoBuscar);
-    })
-
-    this.setTable(dataFiltrada);
+      this.setTable(dataFiltrada);
+    }, 1000); 
   }
 
-
- 
   onSearchChange(event: any) {
-    const filterValue = event.target.value?.trim().toLowerCase() || '';
+    const filterValue = (event.target.value || '').trim();
+    this.textoBuscar = filterValue;
+    
+    /*  // Con esto lo hago sin necesidad de presionar el boton buscar
     if (!filterValue) {
-      // Si esta vacio, mostrar toda la lista
-      this.setTable(this.listaSubclasificaciones);
+      this.setTable([]);
       return;
     }
-    //pude haber hecho todo el filtro aqui, pero se requeria la necesidad del boton buscar
+    this.filtrarData(); 
+    */
   }
 
 

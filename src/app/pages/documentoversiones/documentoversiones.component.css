@@ -68,6 +68,7 @@
 }
 
 .buscar-input {
+    margin-top: 15px;
     margin-left: auto; /* Empuja el input hacia la derecha */
     width: 300px; /* Ancho opcional para el input */
     display: flex;
