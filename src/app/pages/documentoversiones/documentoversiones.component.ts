@@ -525,17 +525,19 @@ export class DocumentoversionesComponent implements OnInit  {
         // Extrae el nombre del archivo del urlVersion
         const nombreArchivo = item.urlVersion?.split('\\').pop();
         
-        // Convierte el numeroVersion a string para compararlo con textoBuscar
+        // Convierte numeroVersion a string para compararlo con textoBuscar
         const numeroVersionStr = item.numeroVersion.toString();
   
-        // Aplica el filtro basado en el nombre del archivo o en el numeroVersion
+        // Aplica el filtro basado en nombre del archivo, numeroVersion o fechaCreacion
         return nombreArchivo?.toLowerCase().includes(this.textoBuscar.toLowerCase()) ||
-               numeroVersionStr.includes(this.textoBuscar);
+               numeroVersionStr.includes(this.textoBuscar) ||
+               item.fechaCreacion.includes(this.textoBuscar);
       });
   
       this.setTable(dataFiltrada);
     }, 1000);
   }
+  
   
   
 

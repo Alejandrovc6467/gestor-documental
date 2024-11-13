@@ -119,7 +119,9 @@ export class DocumentosComponent implements OnInit {
     this.obtenerClasificaciones();
 
   
-    this.obtenerDocumentosCargarTabla();
+    // this.obtenerDocumentosCargarTabla();
+    this.setTable([]);
+    this.obtenerDocumentos();
 
     this.actualizarTablaRelaciones();
 
@@ -282,7 +284,7 @@ export class DocumentosComponent implements OnInit {
               this.doctos = []; // Limpiar la lista de doctos relacionados
               this.palabrasClaveComponent.limpiarPalabrasClave();
               this.limpiarRelacionesDocumento();
-              this.obtenerDocumentosCargarTabla();
+              // this.obtenerDocumentosCargarTabla();
               this.limpiarFormulario();
               Swal.fire('Creado', 'El documento ha sido creado exitosamente', 'success');
 
@@ -359,7 +361,7 @@ export class DocumentosComponent implements OnInit {
             this.doctos = []; // Limpiar la lista de doctos relacionados
             this.actualizarTablaRelaciones();
             this.palabrasClaveComponent.limpiarPalabrasClave();
-            this.obtenerDocumentosCargarTabla();
+            // this.obtenerDocumentosCargarTabla();
             this.limpiarFormulario();
             Swal.fire('Editado', 'El documento ha sido editado exitosamente', 'success');
 
@@ -509,7 +511,7 @@ export class DocumentosComponent implements OnInit {
             this.documentosService.eliminarDocumento(eliminarDTO).subscribe(response => {
                 console.log(response);
                 if(response){
-                  this.obtenerDocumentosCargarTabla();
+                  // this.obtenerDocumentosCargarTabla();
                   this.limpiarFormulario();
                   Swal.fire('Eliminado!', 'El documento ha sido eliminado.', 'success');
                 }else{
@@ -722,36 +724,45 @@ export class DocumentosComponent implements OnInit {
   }
   
   realizarBusqueda() {
+    if (this.textoBuscar.trim() === '') {
+      this.setTable([]); // Si no hay texto de búsqueda, tabla vacía
+      return;
+    }
     this.filtrarData();
   }
 
-  filtrarData(){
-
-    const data = this.listaCategorias.slice();
-    if(!this.textoBuscar){
-     this.setTable(data);
+  filtrarData() {
+    const data = this.listaDocumentos.slice();
+    if (!this.textoBuscar.trim()) {
+      this.setTable([]);
       return;
     }
-
-    const dataFiltrada = data.filter(item => {
-      return item.nombre.includes(this.textoBuscar);
-    })
-
-    this.setTable(dataFiltrada);
+    setTimeout(() => {
+      const dataFiltrada = data.filter(item => {
+        // Verifica si el texto de búsqueda está en el asunto o en el código del item
+        return (
+          item.asunto?.toLowerCase().includes(this.textoBuscar.toLowerCase()) ||
+          item.codigo?.toLowerCase().includes(this.textoBuscar.toLowerCase())
+        );
+      });
+  
+      this.setTable(dataFiltrada);
+    }, 1000); 
   }
-
-
+  
 
   onSearchChange(event: any) {
-    const filterValue = event.target.value?.trim().toLowerCase() || '';
+    const filterValue = (event.target.value || '').trim();
+    this.textoBuscar = filterValue;
+    
+    /*  // Con esto lo hago sin necesidad de presionar el boton buscar
     if (!filterValue) {
-      // Si esta vacio, mostrar toda la lista
-      this.setTable(this.listaCategorias);
+      this.setTable([]);
       return;
     }
-    //pude haber hecho todo el filtro aqui, pero se requeria la necesidad del boton buscar
+    this.filtrarData(); 
+    */
   }
-
 
 
 
