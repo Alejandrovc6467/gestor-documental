@@ -4,18 +4,39 @@ import { SeguridadService } from '../services/seguridad.service';
 
 export const administradorGuard: CanActivateFn = (route, state) => {
 
-  /** hacer un guard nuevo (un archivo) para cada rol, y hacerlo similar a este */
 
+  // hacer un guard nuevo (un archivo) para cada rol, y hacerlo similar a este
+
+  
   const seguridadService = inject(SeguridadService);
   const router = inject(Router);
 
-
-  //quitar P  este es solo para pruebas
+  //quitar  este es solo para pruebas
   if(seguridadService.isAuthenticatedP()){
     return true;
   }else{
     return router.navigate(['/iniciosesionprincipal']);
   }
+
+
+
+  /*
+  const seguridadService = inject(SeguridadService);
+  const router = inject(Router);
+
+  // Obtener los roles permitidos desde los datos de la ruta
+  const rolesPermitidos = route.data['rolesPermitidos'] as string[];
+
+  // Verificar si el usuario tiene alguno de los roles permitidos
+  if (rolesPermitidos.some(rol => seguridadService.isUserInRole(rol))) {
+    return true;
+  } else {
+    return router.navigate(['/iniciosesionprincipal']);
+  }
+    */
+
+
+
 
 
 };

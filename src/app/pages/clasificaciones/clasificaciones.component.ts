@@ -40,8 +40,6 @@ export class ClasificacionesComponent implements OnInit {
 
   ngOnInit(): void {
     // this.obtenerCategoriasCargarTabla();
-    this.setTable([]);
-    this.obtenerClasificaciones();
   }
   
 
@@ -130,7 +128,8 @@ export class ClasificacionesComponent implements OnInit {
         this.clasificacionesService.crearClasificacion(categoria).subscribe(response => {
           console.log(response);
           if(response){
-            // this.obtenerCategoriasCargarTabla();
+           
+            this.limpiarTabla();
             this.limpiarFormulario();
             Swal.fire('Creada!', 'La clasificación ha sido creada.', 'success');
           }else{
@@ -175,7 +174,7 @@ export class ClasificacionesComponent implements OnInit {
         this.clasificacionesService.actualizarClasificacion(categoriaActualizada).subscribe(response => {
           console.log(response);
           if(response){
-            // this.obtenerCategoriasCargarTabla();
+            this.limpiarTabla();
             this.limpiarFormulario();
             Swal.fire('Editada!', 'La clasificación ha sido editada.', 'success');
           }else{
@@ -262,7 +261,7 @@ export class ClasificacionesComponent implements OnInit {
             this.clasificacionesService.eliminarClasificacion(eliminarDTO).subscribe(response => {
                 console.log(response);
                 if(response){
-                  // this.obtenerCategoriasCargarTabla();
+                  this.limpiarTabla();
                   this.limpiarFormulario();
                   Swal.fire('Eliminado!', 'La clasificación ha sido eliminada.', 'success');
                 }else{
@@ -290,14 +289,24 @@ export class ClasificacionesComponent implements OnInit {
     this.listCategoriasdataSource = new MatTableDataSource<CategoriaDTO>(data);
     this.listCategoriasdataSource.paginator = this.paginator;
   }
+
+
+  limpiarTabla(){
+    this.listaCategorias = [];
+    this.setTable([]);
+  }
+  
   
   realizarBusqueda() {
+    this.limpiarTabla();
+    this.obtenerClasificaciones();
     this.filtrarData();
   }
 
   filtrarData() {
-    const data = this.listaCategorias.slice();
+   
     setTimeout(() => {
+      const data = this.listaCategorias.slice();
       const dataFiltrada = data.filter(item => {
         return item.nombre.toLowerCase().includes(this.textoBuscar.toLowerCase());
       });

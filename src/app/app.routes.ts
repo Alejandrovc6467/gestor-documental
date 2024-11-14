@@ -22,8 +22,11 @@ import { ReporteDescargaDeDocumentosComponent } from './pages/Reportes/reporte-d
 import { ReporteDocumentosSinMovimientosComponent } from './pages/Reportes/reporte-documentos-sin-movimientos/reporte-documentos-sin-movimientos.component';
 import { SidebarComponent } from './layout/sidebar/sidebar.component';
 import { IniciosesionoficinasComponent } from './pages/iniciosesionoficinas/iniciosesionoficinas.component';
+import { administradorGuard } from './Core/guards/administrador.guard';
 
 
+
+//  { path: 'oficinas', component: OficinasComponent, canActivate:[administradorGuard]},
 
 export const routes: Routes = [
 
@@ -34,7 +37,7 @@ export const routes: Routes = [
             {path: 'consultas/filtroHorizontal', component:FiltroHorizontalComponent},
             {path: 'consultas/filtroProceso', component:FiltroHorizontalProcesoComponent},
             {path: 'consultas/filtroVertical', component:FiltroVerticalComponent},
-            {path: 'documentos', component:DocumentosComponent},
+            {path: 'documentos', component:DocumentosComponent, canActivate:[administradorGuard]},
             {path: 'documentos/versiones/:id', component:DocumentoversionesComponent},
             {path: 'normas', component:NormasComponent},
             {path: 'etapas', component:EtapasComponent},
