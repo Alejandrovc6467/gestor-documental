@@ -36,7 +36,7 @@ export class SeguridadService {
         // Aquí puedes almacenar información en el localStorage
         localStorage.setItem('isAuthenticated', 'true');
         localStorage.setItem('correo', response.correo.toString());
-        localStorage.setItem('usuarioID', response.nombre.toString());
+        localStorage.setItem('usuarioID', response.id.toString());
         localStorage.setItem('rolID', response.apellido.toString());
         
 
@@ -59,13 +59,13 @@ export class SeguridadService {
 
 
   isAuthenticated(): boolean {
+    return localStorage.getItem('isAuthenticated') === 'true';
+  }
 
-    const autenticado = localStorage.getItem('isAuthenticated');
-    if(autenticado === 'true'){
-      return true;
-    }
-    return false;
-
+  // Nuevo método para verificar roles
+  hasRole(allowedRoles: string[]): boolean {
+    const userRole = localStorage.getItem('rolID');
+    return userRole ? allowedRoles.includes(userRole) : false;
   }
 
   logout(): void {
