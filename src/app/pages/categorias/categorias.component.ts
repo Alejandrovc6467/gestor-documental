@@ -37,6 +37,9 @@ export class CategoriasComponent implements OnInit {
   estaEditando: boolean = false;
   categoriaSeleccionada!: CategoriaDTO | null;
 
+  usuarioIDLogin: number = Number(localStorage.getItem('usuarioID'));
+  oficinaIDLogin: number = Number(localStorage.getItem('oficinaSeleccionadaId'));
+
 
   ngOnInit(): void {
     // this.obtenerCategoriasCargarTabla();
@@ -123,8 +126,8 @@ export class CategoriasComponent implements OnInit {
 
         const categoria = this.formulario.value as CategoriaDTO; 
 
-        categoria.usuarioID = 1;
-        categoria.oficinaID = 1;
+        categoria.usuarioID = this.usuarioIDLogin;
+        categoria.oficinaID = this.oficinaIDLogin;
         console.log(categoria);
       
         this.categoriasService.crearCategoria(categoria).subscribe(response => {
@@ -164,8 +167,8 @@ export class CategoriasComponent implements OnInit {
           id: this.categoriaSeleccionada.id,
           nombre: this.formulario.value.nombre!,
           descripcion: this.formulario.value.descripcion!,
-          usuarioID: 1,
-          oficinaID: 1
+          usuarioID: this.usuarioIDLogin,
+          oficinaID: this.oficinaIDLogin
         };
         this.categoriasService.actualizarCategoria(categoriaActualizada).subscribe(response => {
           console.log(response);
@@ -194,6 +197,9 @@ export class CategoriasComponent implements OnInit {
       nombre: element.nombre,
       descripcion: element.descripcion
     });
+
+    this.categoriaSeleccionada.usuarioID = this.usuarioIDLogin;
+    this.categoriaSeleccionada.oficinaID = this.oficinaIDLogin;
 
     // Marcar como pristine después de cargar los datos
     this.formulario.markAsPristine();
@@ -250,8 +256,8 @@ export class CategoriasComponent implements OnInit {
 
           const eliminarDTO:  EliminarDTO = {
             objetoID: idEliminar,
-            usuarioID: 1,// esto sale del local
-            oficinaID: 1// y este
+            usuarioID: this.usuarioIDLogin,// esto sale del local
+            oficinaID: this.oficinaIDLogin// y este
           };
 
             // Si el usuario confirma, proceder con la eliminación

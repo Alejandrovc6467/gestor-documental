@@ -62,6 +62,8 @@ export class DocumentoversionesComponent implements OnInit  {
   objetoDocumentoParaCargarDatosQuemados!: DocumentoGetDTO | null;
   filtroVerticalService = inject(FiltroVerticalService);
 
+  usuarioIDLogin: number = Number(localStorage.getItem('usuarioID'));
+  oficinaIDLogin: number = Number(localStorage.getItem('oficinaSeleccionadaId'));
 
   ngOnInit(): void {
     //this.obtenerVersionesCargarTabla();
@@ -228,14 +230,14 @@ export class DocumentoversionesComponent implements OnInit  {
             numeroVersion: this.formulario.value.version || 0,
             fechaCreacion: this.formulario.value.FechaCreacion || '',
             eliminado: false,
-            usuarioID: 1,
+            usuarioID: this.usuarioIDLogin,
             docDinamico: Boolean(this.formulario.get('docDinamico')?.value),
             obsoleto: Boolean(this.formulario.get('obsoleto')?.value),
             numeroSCD: this.formulario.get('numeroSCD')?.value || '',
             justificacion: this.formulario.value.justificacion || '',
             archivo: this.formulario.value.archivo || null,
-            UsuarioLogID: 1,
-            OficinaID: 1
+            UsuarioLogID: this.usuarioIDLogin,
+            OficinaID: this.oficinaIDLogin
           };
     
     
@@ -290,14 +292,14 @@ export class DocumentoversionesComponent implements OnInit  {
           numeroVersion: this.formulario.value.version || 0,
           fechaCreacion: this.formulario.value.FechaCreacion || '',
           eliminado: false,
-          usuarioID: 1,
+          usuarioID: this.usuarioIDLogin,
           docDinamico: Boolean(this.formulario.get('docDinamico')?.value),
           obsoleto: Boolean(this.formulario.get('obsoleto')?.value),
           numeroSCD: this.formulario.get('numeroSCD')?.value || '',
           justificacion: this.formulario.value.justificacion || '',
           archivo: this.formulario.value.archivo || null,
-          UsuarioLogID: 1,
-          OficinaID: 1
+          UsuarioLogID: this.usuarioIDLogin,
+          OficinaID: this.oficinaIDLogin
         };
     
         
@@ -451,8 +453,8 @@ export class DocumentoversionesComponent implements OnInit  {
 
           const eliminarDTO:  EliminarDTO = {
             objetoID: idEliminar,
-            usuarioID: 1,// esto sale del local
-            oficinaID: 1// y este
+            usuarioID: this.usuarioIDLogin,// esto sale del local
+            oficinaID: this.oficinaIDLogin// y este
           };
 
             // Si el usuario confirma, proceder con la eliminación
@@ -494,7 +496,7 @@ export class DocumentoversionesComponent implements OnInit  {
         idMovimiento: 0,
         versionID: element.id,
         fechaIngreso: new Date().toISOString(),
-        usuarioID: 1,
+        usuarioID: this.usuarioIDLogin,
         movimiento: false
       };
       this.movimientoService.RegistrarMovimiento(movimiento).subscribe(response => {

@@ -44,6 +44,9 @@ export class EtapasComponent implements OnInit{
   estaEditando: boolean = false;
   categoriaSeleccionada!: EtapaDTO | null;
 
+  usuarioIDLogin: number = Number(localStorage.getItem('usuarioID'));
+  oficinaIDLogin: number = Number(localStorage.getItem('oficinaSeleccionadaId'));
+
 
   ngOnInit(): void {
     // this.obtenerCategoriasCargarTabla();
@@ -141,8 +144,8 @@ export class EtapasComponent implements OnInit{
       
     
         etapa.eliminado = false;
-        etapa.usuarioID = 1;
-        etapa.oficinaID = 1;
+        etapa.usuarioID = this.usuarioIDLogin;
+        etapa.oficinaID = this.oficinaIDLogin;
     
         console.log(etapa);
       
@@ -195,8 +198,8 @@ export class EtapasComponent implements OnInit{
             color: this.formulario.value.color!,
             etapaPadreID: this.formulario.value.etapaPadreID!,
             normaID: this.formulario.value.normaID!,
-            usuarioID:1,
-            oficinaID:1,
+            usuarioID:this.usuarioIDLogin,
+            oficinaID:this.oficinaIDLogin,
             consecutivo: this.categoriaSeleccionada.consecutivo
           };
           this.etapasService.actualizarEtapa(categoriaActualizada).subscribe(response => {
@@ -229,6 +232,9 @@ export class EtapasComponent implements OnInit{
       etapaPadreID: element.etapaPadreID,
       normaID: element.normaID
     });
+
+    this.categoriaSeleccionada.usuarioID = this.usuarioIDLogin;
+    this.categoriaSeleccionada.oficinaID = this.oficinaIDLogin;
 
 
      // Marcar como pristine después de cargar los datos
@@ -289,8 +295,8 @@ export class EtapasComponent implements OnInit{
 
           const eliminarDTO:  EliminarDTO = {
             objetoID: idEliminar,
-            usuarioID: 1,// esto sale del local
-            oficinaID: 1// y este
+            usuarioID: this.usuarioIDLogin,// esto sale del local
+            oficinaID: this.oficinaIDLogin// y este
           };
 
             // Si el usuario confirma, proceder con la eliminación

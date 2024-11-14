@@ -78,7 +78,8 @@ export class FiltroVerticalComponent {
   estaEditando: boolean = false;
   categoriaSeleccionada!: CategoriaDTO | null;
 
-
+  usuarioIDLogin: number = Number(localStorage.getItem('usuarioID'));
+  oficinaIDLogin: number = Number(localStorage.getItem('oficinaSeleccionadaId'));
 
 
 
@@ -121,7 +122,7 @@ export class FiltroVerticalComponent {
   //CRUD *******************************************************************************
   
   obtenerDocumentos(){
-    const usuarioID = 1;
+    const usuarioID = this.usuarioIDLogin;
     this.filtroVerticalService.obtenerFiltroVertical(usuarioID).subscribe(response => {
       this.listaDocumentos = response;
       console.log(this.listaDocumentos);
@@ -256,7 +257,7 @@ export class FiltroVerticalComponent {
             idMovimiento: 0,
             versionID: element.versionID,
             fechaIngreso: new Date().toISOString(),
-            usuarioID: 1,
+            usuarioID: this.usuarioIDLogin,
             movimiento: true
           };
           this.movimientoService.RegistrarMovimiento(movimiento).subscribe(response => {
@@ -290,7 +291,7 @@ export class FiltroVerticalComponent {
         idMovimiento: 0,
         versionID: element.versionID,
         fechaIngreso: new Date().toISOString(),
-        usuarioID: 1,
+        usuarioID: this.usuarioIDLogin,
         movimiento: false
       };
   
