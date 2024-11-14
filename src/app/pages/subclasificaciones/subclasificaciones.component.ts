@@ -43,6 +43,8 @@ export class SubclasificacionesComponent implements OnInit {
   estaEditando: boolean = false;
   subclasificaionSeleccionada!: SubclasificacionDTO | null;
 
+  usuarioIDLogin: number = Number(localStorage.getItem('usuarioID'));
+  oficinaIDLogin: number = Number(localStorage.getItem('oficinaSeleccionadaId'));
 
   ngOnInit(): void {
     // this.obtenerCategoriasCargarTabla();
@@ -143,8 +145,8 @@ export class SubclasificacionesComponent implements OnInit {
         categoria.clasificacionID = Number(categoria.clasificacionID);
 
         categoria.eliminado = false;
-        categoria.usuarioID = 1;
-        categoria.oficinaID = 1;
+        categoria.usuarioID = this.usuarioIDLogin;
+        categoria.oficinaID = this.oficinaIDLogin;
         console.log(categoria);
       
         this.subclasificaionesService.crearSubclasificacion(categoria).subscribe(response => {
@@ -187,8 +189,8 @@ export class SubclasificacionesComponent implements OnInit {
           descripcion: this.formulario.value.descripcion!,
           clasificacionID: this.formulario.value.clasificacionID!,
           eliminado: false,
-          usuarioID: 1,
-          oficinaID:1
+          usuarioID: this.usuarioIDLogin,
+          oficinaID:this.oficinaIDLogin
         };
 
         console.log(this.subclasificaionSeleccionada);
@@ -219,6 +221,9 @@ export class SubclasificacionesComponent implements OnInit {
       descripcion: element.descripcion,
       clasificacionID: element.clasificacionID
     });
+
+    element.usuarioID = this.usuarioIDLogin;
+    element.oficinaID = this.oficinaIDLogin;
   
     // Marcar como pristine después de cargar los datos
     this.formulario.markAsPristine();
@@ -277,8 +282,8 @@ export class SubclasificacionesComponent implements OnInit {
 
           const eliminarDTO:  EliminarDTO = {
             objetoID: idEliminar,
-            usuarioID: 1,// esto sale del local
-            oficinaID: 1// y este
+            usuarioID: this.usuarioIDLogin,// esto sale del local
+            oficinaID: this.oficinaIDLogin// y este
           };
 
             // Si el usuario confirma, proceder con la eliminación

@@ -82,7 +82,8 @@ export class FiltroHorizontalComponent {
   categoriaSeleccionada!: CategoriaDTO | null;
   movimientoService = inject(MovimientoService);
 
-
+  usuarioIDLogin: number = Number(localStorage.getItem('usuarioID'));
+  oficinaIDLogin: number = Number(localStorage.getItem('oficinaSeleccionadaId'));
 
 
 
@@ -126,8 +127,8 @@ export class FiltroHorizontalComponent {
   
   obtenerDocumentos(){
 
-    const usuarioID = 1;
-    this.filtroVerticalService.obtenerFiltroVertical(1).subscribe(response => {
+    const usuarioID = this.usuarioIDLogin;
+    this.filtroVerticalService.obtenerFiltroVertical(usuarioID).subscribe(response => {
       this.listaDocumentos = response;
       console.log(this.listaDocumentos);
     });
@@ -252,7 +253,7 @@ export class FiltroHorizontalComponent {
             idMovimiento: 0,
             versionID: element.id,
             fechaIngreso: new Date().toISOString(),
-            usuarioID: 1,
+            usuarioID: this.usuarioIDLogin,
             movimiento: true
           };
           this.movimientoService.RegistrarMovimiento(movimiento).subscribe(response => {
@@ -288,7 +289,7 @@ export class FiltroHorizontalComponent {
         idMovimiento: 0,
         versionID: element.versionID,
         fechaIngreso: new Date().toISOString(),
-        usuarioID: 1,
+        usuarioID: this.usuarioIDLogin,
         movimiento: false
       };
   

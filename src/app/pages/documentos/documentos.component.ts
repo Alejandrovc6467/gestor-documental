@@ -88,7 +88,8 @@ export class DocumentosComponent implements OnInit {
   palabrasClave: string[] = [];
   idDocumentoAEditar: number = 0;
 
-
+  usuarioIDLogin: number = Number(localStorage.getItem('usuarioID'));
+  oficinaIDLogin: number = Number(localStorage.getItem('oficinaSeleccionadaId'));
 
   //tabla Relaciones
   listaRelacionesdataSource = new MatTableDataSource<RelacionDocumentoDTO>([]);
@@ -250,8 +251,8 @@ export class DocumentosComponent implements OnInit {
           activo: this.formulario.value.activo || false,
           descargable: this.formulario.value.descargable || false,
           doctoId: this.formulario.value.doctoID || 0,
-          usuarioID: 1,
-          oficinaUsuarioID: 1,
+          usuarioID: this.usuarioIDLogin,
+          oficinaUsuarioID: this.oficinaIDLogin,
           clasificacionID: 1,
           normaID: 1,
           versionID: 1,
@@ -326,8 +327,8 @@ export class DocumentosComponent implements OnInit {
         activo: this.formulario.value.activo || false,
         descargable: this.formulario.value.descargable || false,
         doctoId: this.formulario.value.doctoID || 0,
-        usuarioID: 1,
-        oficinaUsuarioID: 1,
+        usuarioID: this.usuarioIDLogin,
+        oficinaUsuarioID: this.oficinaIDLogin,
         clasificacionID:1,
         normaID:1,
         versionID:1,
@@ -399,6 +400,8 @@ export class DocumentosComponent implements OnInit {
           subClasificacionID: documentoAEditar.subClasificacionID ,
           vigencia: documentoAEditar.vigencia
         });
+
+
 
         //cargo los catalogos que dependen de estos seguan su eleccion
         this.onNormaChange(documentoAEditar.normaID);
@@ -488,8 +491,8 @@ export class DocumentosComponent implements OnInit {
 
           const eliminarDTO:  EliminarDTO = {
             objetoID: idEliminar,
-            usuarioID: 1,// esto sale del local
-            oficinaID: 1// y este
+            usuarioID: this.usuarioIDLogin,// esto sale del local
+            oficinaID: this.oficinaIDLogin// y este
           };
 
 

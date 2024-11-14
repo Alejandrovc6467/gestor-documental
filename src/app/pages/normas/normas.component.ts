@@ -37,6 +37,9 @@ export class NormasComponent  implements OnInit{
   estaEditando: boolean = false;
   categoriaSeleccionada!: NormaDTO | null;
 
+  usuarioIDLogin: number = Number(localStorage.getItem('usuarioID'));
+  oficinaIDLogin: number = Number(localStorage.getItem('oficinaSeleccionadaId'));
+
 
   ngOnInit(): void {
     // this.obtenerNormasCargarTabla();
@@ -122,8 +125,8 @@ export class NormasComponent  implements OnInit{
       if (result.isConfirmed) {
 
         const categoria = this.formulario.value as NormaDTO; 
-        categoria.usuarioID = 1;
-        categoria.oficinaID = 1;
+        categoria.usuarioID = this.usuarioIDLogin;
+        categoria.oficinaID = this.oficinaIDLogin;
         console.log(categoria);
     
         this.normasService.crearNorma(categoria).subscribe(response => {
@@ -167,8 +170,8 @@ export class NormasComponent  implements OnInit{
           id: this.categoriaSeleccionada.id,
           nombre: this.formulario.value.nombre!,
           descripcion: this.formulario.value.descripcion!,
-          usuarioID : 1,
-          oficinaID :1
+          usuarioID : this.usuarioIDLogin,
+          oficinaID :this.oficinaIDLogin
         };
         this.normasService.actualizarNorma(categoriaActualizada).subscribe(response => {
           console.log(response);
@@ -197,6 +200,8 @@ export class NormasComponent  implements OnInit{
       descripcion: element.descripcion
     });
 
+    this.categoriaSeleccionada.usuarioID = this.usuarioIDLogin;
+    this.categoriaSeleccionada.oficinaID = this.oficinaIDLogin;
     // Marcar como pristine después de cargar los datos
     this.formulario.markAsPristine();
     // Marcar como untouched para evitar mensajes de error
@@ -256,8 +261,8 @@ export class NormasComponent  implements OnInit{
 
           const eliminarDTO:  EliminarDTO = {
             objetoID: idEliminar,
-            usuarioID: 1,// esto sale del local
-            oficinaID: 1// y este
+            usuarioID: this.usuarioIDLogin,// esto sale del local
+            oficinaID: this.oficinaIDLogin// y este
           };
 
             // Si el usuario confirma, proceder con la eliminación
