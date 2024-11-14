@@ -12,7 +12,7 @@ export const administradorGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
 
   //quitar  este es solo para pruebas
-  if(seguridadService.isAuthenticatedP()){
+  if(seguridadService.isAuthenticated()){
     return true;
   }else{
     return router.navigate(['/iniciosesionprincipal']);
@@ -34,6 +34,7 @@ export const administradorGuard: CanActivateFn = (route, state) => {
     return router.navigate(['/iniciosesionprincipal']);
   }
     */
+
 
 
 

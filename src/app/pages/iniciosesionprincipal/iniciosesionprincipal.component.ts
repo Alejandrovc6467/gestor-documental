@@ -9,6 +9,11 @@ import { MatTableModule } from '@angular/material/table';
 import Swal from 'sweetalert2';
 import { SeguridadService } from '../../Core/services/seguridad.service';
 import { Router } from '@angular/router';
+import { OficinasService } from '../../Core/services/oficinas.service';
+import { OficinaDTO } from '../../Core/models/OficinaDTO';
+import { UsuarioOficinaService } from '../../Core/services/usuario-oficina.service';
+import { UsuarioOficinaDTO } from '../../Core/models/UsuarioOficinaDTO';
+
 
 @Component({
   selector: 'app-iniciosesionprincipal',
@@ -18,8 +23,15 @@ import { Router } from '@angular/router';
   styleUrl: './iniciosesionprincipal.component.css'
 })
 export class IniciosesionprincipalComponent {
+
   seguridadService = inject(SeguridadService);
+  oficinasService = inject(OficinasService);
+  usuarioOficinaService = inject(UsuarioOficinaService);
   router = inject(Router);
+
+  listaOficinasTabla! : OficinaDTO[];
+
+  listaUsuarioOficinas! : UsuarioOficinaDTO[];
 
 
   private formbuilder = inject(FormBuilder);
@@ -36,37 +48,21 @@ export class IniciosesionprincipalComponent {
       this.mostrarErrores();
       return;
     }
-  
-    /*
-    this.seguridadService.loggin2(this.formulario.value.user!, this.formulario.value.password!).subscribe({
-      next: () => this.inicioSesionCorrecto() ,
-      error: (err) => {
-        console.log("Credenciales incorrectas", err);
-        this.errorLoggin();
-      },
-    });
-    */
 
     this.seguridadService.loggin(this.formulario.value.user!, this.formulario.value.password!)
     .subscribe(
       response => {
-        if (response) {
-          console.log(response);
-          // Aquí puedes llamar a una función para manejar el inicio de sesión correcto
-          // this.inicioSesionCorrecto();
-        } else {
-          this.errorLoggin();
-        }
+
+        console.log(response);
+        this.inicioSesionCorrecto(response.id);
+       
       },
       error => {
         // Aquí manejamos el error
-        if (error.status === 400) {
-          console.error('Error 400: Solicitud incorrecta');
-          alert('Error: Los datos proporcionados no son correctos.');
-          // Aquí puedes llamar a una función que muestre el error de inicio de sesión
+        if (error.status === 404) {
+          console.log("error");
           this.errorLoggin();
         } else {
-          console.error('Error en la solicitud:', error);
           alert('Ocurrió un error inesperado en el inicio de sesión.');
         }
       }
@@ -78,24 +74,49 @@ export class IniciosesionprincipalComponent {
   }
 
 
-  inicioSesionCorrecto(): void{
-
-
-    /*
+  /*
     Admistrador General 1 {todo}
 
     Administrador Norma 2 {Todos los cruds y Consultas y documentos, no puede meter categorias ni normas}  
     Administrador Digesto 3 {Todos los cruds y Consultas y documentos, no puede meter categorias ni normas}  
 
     Usuario General 4 {Solo reportes y consultas, todo lo demas lo quito}
+  */
 
-    */
+
+    inicioSesionCorrecto(id: number): void {
+      this.usuarioOficinaService.obtenerUsuarioOficinas().subscribe(response => {
+        this.listaUsuarioOficinas = response;
+    
+        // Filtrar las oficinas que corresponden al usuarioID
+        const oficinasUsuario = this.listaUsuarioOficinas.filter(item => item.usuarioID === id);
+    
+        // Verificar si el usuario está en más de una oficina
+        const conteoId = oficinasUsuario.length;
+    
+        if (conteoId > 1) {
+          // Guardar en localStorage los id de las oficinas en las que está el usuario
+          const oficinaIds = oficinasUsuario.map(item => item.oficinaID); // Extraer los id de las oficinas
+          localStorage.setItem('usuarioOficinas', JSON.stringify(oficinaIds)); // Guardar en localStorage
+    
+          // Redirigir al usuario a la página de selección de oficinas
+          this.router.navigate(['iniciosesionoficinas']);
+        } else {
+        
+          // Si solo hay una oficina, guardar ese id en el localStorage
+          localStorage.setItem('oficinaSeleccionadaId', oficinasUsuario[0].oficinaID.toString());
+          // Redirigir al usuario a la página de consultas
+          this.router.navigate(['consultas/filtroHorizontal']);
+        }
+      });
+    }
+    
 
 
-    //aqui depende de si las oficinas son 2 o mas lo paso al loggin de oficinas o sino lo paso directo al app
-    // y si lo paso directo setear la oficina seleccionada     localStorage.setItem('oficinaSeleccionadaId', this.formulario.value.oficinaId!);
-    this.router.navigate(['consultas/filtroHorizontal'])
-  }
+  obtenerOficinasParaTabla(){
+    this.oficinasService.obtenerOficinas().subscribe(response => {
+      this.listaOficinasTabla = response;
+  })};
 
 
 

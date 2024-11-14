@@ -36,8 +36,6 @@ export class IniciosesionoficinasComponent implements OnInit {
     this.obtenerOficinas();
     this.setOficinasEnLocalStorage();
     this.cargarOficinas();
-
- 
   }
 
   private formbuilder = inject(FormBuilder);
@@ -56,26 +54,26 @@ export class IniciosesionoficinasComponent implements OnInit {
 
 
   cargarUsuario() {
-  
-    localStorage.setItem('nombreUsuario', 'Cristiano Ronaldo');// esto deberia ser setead en el service, cuando hace el loggin
-
-    // Esto tomarlo del getNombreUsuario de localStorage
     this.formulario.patchValue({
-      user: localStorage.getItem('nombreUsuario')
+      user: localStorage.getItem('correo')
     });
  
   }
 
   cargarOficinas() {
     setTimeout(() => {
-      const oficinasLocal = JSON.parse(localStorage.getItem('oficinas') || '[]');
-      const oficinaIDs = oficinasLocal.map((oficina: { oficinaID: number }) => oficina.oficinaID);
 
-      this.listaOficinas = this.listaOficinas.filter(oficina => oficinaIDs.includes(oficina.id ?? 0));
-      console.log(this.listaOficinas);
+       // Obtener los IDs de las oficinas almacenados en localStorage
+      const oficinasIdsGuardadas = JSON.parse(localStorage.getItem('usuarioOficinas') || '[]');
+
+      // Filtrar las oficinas que coinciden con los IDs almacenados
+      this.listaOficinas = this.listaOficinas.filter(oficina => 
+        oficinasIdsGuardadas.includes(oficina.id)
+      );
 
       this.oficinasCargadas = true; // Actualizamos el indicador una vez que las oficinas están filtradas
-    }, 2000);
+    }, 1500);
+
   }
 
 
@@ -90,18 +88,14 @@ export class IniciosesionoficinasComponent implements OnInit {
   }
 
 
-
-
   loggin(): void {
 
-    console.log('Presionoin');
+    console.log('Presiono');
     if (this.formulario.invalid) {
       this.mostrarErrores();
       return;
     }
 
-
-    console.log('paso');
     localStorage.setItem('oficinaSeleccionadaId', this.formulario.value.oficinaId!);
     this.router.navigate(['/usuarios']);
   }
