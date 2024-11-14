@@ -37,6 +37,8 @@ export class TipodocumentosComponent implements OnInit  {
   estaEditando: boolean = false;
   categoriaSeleccionada!: TipodocumentoDTO | null;
 
+  usuarioIDLogin: number = Number(localStorage.getItem('usuarioID'));
+  oficinaIDLogin: number = Number(localStorage.getItem('oficinaSeleccionadaId'));
 
   ngOnInit(): void {
     //this.obtenerCategoriasCargarTabla();
@@ -122,8 +124,10 @@ export class TipodocumentosComponent implements OnInit  {
       if (result.isConfirmed) {
 
         const categoria = this.formulario.value as TipodocumentoDTO;
-        categoria.usuarioID = 1;
-        categoria.oficinaID = 1;
+        categoria.usuarioID = this.usuarioIDLogin;
+        categoria.oficinaID = this.oficinaIDLogin;
+
+        console.log(categoria);
       
         this.tipodocumentoService.crearTipodocumento(categoria).subscribe(response => {
           console.log(response);
@@ -166,9 +170,10 @@ export class TipodocumentosComponent implements OnInit  {
           id: this.categoriaSeleccionada.id,
           nombre: this.formulario.value.nombre!,
           descripcion: this.formulario.value.descripcion!,
-          usuarioID: 1,
-          oficinaID: 1
+          usuarioID: this.usuarioIDLogin,
+          oficinaID: this.oficinaIDLogin
         };
+
         this.tipodocumentoService.actualizarTipodocumento(categoriaActualizada).subscribe(response => {
           console.log(response);
           if(response){
@@ -199,6 +204,9 @@ export class TipodocumentosComponent implements OnInit  {
       nombre: element.nombre,
       descripcion: element.descripcion
     });
+
+    this.categoriaSeleccionada.usuarioID = this.usuarioIDLogin;
+    this.categoriaSeleccionada.oficinaID = this.oficinaIDLogin;
 
       // Marcar como pristine después de cargar los datos
       this.formulario.markAsPristine();
@@ -255,8 +263,8 @@ export class TipodocumentosComponent implements OnInit  {
 
           const eliminarDTO:  EliminarDTO = {
             objetoID: idEliminar,
-            usuarioID: 1,// esto sale del local
-            oficinaID: 1// y este
+            usuarioID: this.usuarioIDLogin,// esto sale del local
+            oficinaID: this.oficinaIDLogin// y este
           };
 
           console.log(eliminarDTO);
