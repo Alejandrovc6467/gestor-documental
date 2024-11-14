@@ -94,7 +94,7 @@
     <div class="reporte-info">
       <div class="reporte-header">
         <h3>Resultado del Reporte:</h3>
-        <p class="fecha-creacion">Fecha de creación: {{fechaCreacion | date:'dd-MM-yyyy HH:mm'}}</p>
+        <p class="fecha-creacion">Fecha de creación: {{fechaCreacion | date:'dd-MM-yyyy HH:mm a'}}</p>
       </div>
       <div class="fecha-filtro">
         <label>Fecha:</label>
@@ -144,7 +144,7 @@
             <td>{{doc.tipoDocumento}}</td>
             <td>{{doc.scd}}</td>
             <td>{{doc.version}}</td>
-            <td>{{doc.fecha| date:'dd/MM/yyyy'}}</td>
+            <td>{{doc.fecha| date:'dd/MM/yyyy hh:mm a'}}</td>
             <td>{{doc.resumenDelCambio}}</td>
           </tr>
         </tbody>

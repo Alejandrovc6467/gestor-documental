@@ -171,7 +171,7 @@ export class ReporteBitacoraDeMovimientosComponent implements OnInit {
       doc.nombreDocumento,
       doc.acceso,
       doc.version,
-      doc.fecha,
+      doc.fechaIngreso,
       doc.oficinaResponsable
     ]);
     
@@ -197,7 +197,7 @@ export class ReporteBitacoraDeMovimientosComponent implements OnInit {
       tabla += `<td>${doc.nombreDocumento}</td>`;
       tabla += `<td>${doc.acceso}</td>`;
       tabla += `<td>${doc.version}</td>`;
-      tabla += `<td>${doc.fecha}</td>`;
+      tabla += `<td>${doc.fechaIngreso}</td>`;
       tabla += `<td>${doc.oficinaResponsable}</td>`;
       tabla += '</tr>';
     });

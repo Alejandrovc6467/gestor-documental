@@ -5,7 +5,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { EtapaDTO, EtapaExtendidaDTO} from '../../Core/models/EtapaDTO';
 import { NormaDTO } from '../../Core/models/NormaDTO';
 import { EtapasService } from '../../Core/services/etapas.service';
@@ -47,7 +47,7 @@ export class EtapasComponent implements OnInit{
 
   ngOnInit(): void {
     // this.obtenerCategoriasCargarTabla();
-    this.obtenerEtapasHuerfanas();
+    //this.obtenerEtapasHuerfanas();
     this.obtenerNormas();
     this.obtenerEtapas();
    
@@ -367,7 +367,17 @@ export class EtapasComponent implements OnInit{
     this.listaEtapas = [];
     this.setTable([]);
   }
+  onNormaChange(event: MatSelectChange) {
+    const selectedId = event.value;
+    this.handleNormaChange(selectedId);
+  }
   
+  handleNormaChange(id: number) {
+    // Your logic here using the selected ID
+    this.etapasService.obtenerEtapasPorNorma(id).subscribe(response => {
+      this.listaEtapasPadre = response;
+    });
+  }
  
   realizarBusqueda() {
     this.limpiarTabla();
