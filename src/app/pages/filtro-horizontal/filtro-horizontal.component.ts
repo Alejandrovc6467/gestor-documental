@@ -226,9 +226,9 @@ export class FiltroHorizontalComponent {
 
 
 
-  descargarDocumento(element: any, descargable: boolean) {
+  descargarDocumento(element: any) {
     console.log(element);
-    if(descargable){
+    if(element.descargable){
 
       Swal.fire({
         title: '¿Desea descargar el documento?',
@@ -245,6 +245,7 @@ export class FiltroHorizontalComponent {
 
           this.filtroVerticalService.manejarDescargaArchivo(element.urlArchivo);
 
+          //Envio de datos a bitacora
           const movimiento:  MovimientoDTO = {
             idMovimiento: 0,
             versionID: element.id,
@@ -252,11 +253,13 @@ export class FiltroHorizontalComponent {
             usuarioID: 1,
             movimiento: true
           };
-      
           this.movimientoService.RegistrarMovimiento(movimiento).subscribe(response => {
             console.log(response);
           });
+
+
           Swal.fire('Descargado!', 'El documento ha sido descargado.', 'success');
+          
         }
       });
 

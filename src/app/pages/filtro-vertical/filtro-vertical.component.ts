@@ -231,22 +231,45 @@ export class FiltroVerticalComponent {
 
 
   descargarDocumento(element: any) {
-    this.filtroVerticalService.manejarDescargaArchivo(element.urlArchivo);
 
-    console.log(element);
-    const movimiento:  MovimientoDTO = {
-      idMovimiento: 0,
-      versionID: element.versionID,
-      fechaIngreso: new Date().toISOString(),
-      usuarioID: 1,
-      movimiento: true
-    };
+    if(element.descargable){
 
-    console.log(movimiento);
-    this.movimientoService.RegistrarMovimiento(movimiento).subscribe(response => {
-      console.log(response);
-    });
- 
+      Swal.fire({
+        title: '¿Desea descargar el documento?',
+        text: 'Esta acción no se puede deshacer.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Sí'
+     
+    }).then((result) => {
+        if (result.isConfirmed) {
+
+          this.filtroVerticalService.manejarDescargaArchivo(element.urlArchivo);
+
+          //envio de datos a bitacora
+          const movimiento:  MovimientoDTO = {
+            idMovimiento: 0,
+            versionID: element.versionID,
+            fechaIngreso: new Date().toISOString(),
+            usuarioID: 1,
+            movimiento: true
+          };
+          this.movimientoService.RegistrarMovimiento(movimiento).subscribe(response => {
+            console.log(response);
+          });
+      
+        }
+      });
+
+    }else{
+      Swal.fire('Error!', 'El documento no es descargable.', 'error');
+    }
+
+
+    
   }
 
 

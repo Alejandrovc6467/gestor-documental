@@ -35,6 +35,7 @@ import { ComponentFixture } from '@angular/core/testing';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MovimientoDTO } from '../../Core/models/MovimientoDTO';
 import { MovimientoService } from '../../Core/services/movimiento.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-filtro-horizontal-proceso',
@@ -159,18 +160,45 @@ export class FiltroHorizontalProcesoComponent {
   // Descar y visualizacion de documentos ***********************************************************************************
   
   descargarDocumento(element: any) {
-    this.filtroVerticalService.manejarDescargaArchivo(element.urlArchivo);
-    const movimiento:  MovimientoDTO = {
-      idMovimiento: 0,
-      versionID: element.versionID,
-      fechaIngreso: new Date().toISOString(),
-      usuarioID: 1,
-      movimiento: true
-    };
 
-    this.movimientoService.RegistrarMovimiento(movimiento).subscribe(response => {
-      console.log(response);
-    });
+    if(element.descargable){
+
+      Swal.fire({
+        title: '¿Desea descargar el documento?',
+        text: 'Esta acción no se puede deshacer.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Sí'
+     
+       }).then((result) => {
+        if (result.isConfirmed) {
+
+          this.filtroVerticalService.manejarDescargaArchivo(element.urlArchivo);
+
+          //envio de datos a bitacora
+          const movimiento:  MovimientoDTO = {
+            idMovimiento: 0,
+            versionID: element.versionID,
+            fechaIngreso: new Date().toISOString(),
+            usuarioID: 1,
+            movimiento: true
+          };
+          this.movimientoService.RegistrarMovimiento(movimiento).subscribe(response => {
+            console.log(response);
+          });
+
+
+        }
+      });
+
+
+    }else{
+      Swal.fire('Error!', 'El documento no es descargable.', 'error');
+    }
+
   }
 
 
