@@ -12,12 +12,18 @@ export class OficinasService {
   private http = inject(HttpClient);
   private urlBase = "http://gestordocumental.somee.com/api/Oficina";// esto se haria mas profesional creando un enviroment, que son ambiemtes de desarrolo uno para pruebas y otro para produccion
 
+  private urlBaseConCodigo = "http://gestordocumental.somee.com/api/Oficina/ObtenerOficinasCodigo";// esto se haria mas profesional creando un enviroment, que son ambiemtes de desarrolo uno para pruebas y otro para produccion
+
 
   constructor() { }
 
 
   public obtenerOficinas(): Observable<OficinaDTO[]>{
     return this.http.get<OficinaDTO[]> (this.urlBase);
+  }
+
+  public obtenerOficinasParaCatalogo(): Observable<OficinaDTO[]>{
+    return this.http.get<OficinaDTO[]> (this.urlBaseConCodigo);
   }
 
   public obtenerOficinaPorId(id:number): Observable<OficinaDTO>{

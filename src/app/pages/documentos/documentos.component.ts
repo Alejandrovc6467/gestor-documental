@@ -72,7 +72,8 @@ export class DocumentosComponent implements OnInit {
   listaTipoDocumentos! : TipodocumentoDTO[];
   listaCategorias! : CategoriaDTO[];
   listaNormas! : CategoriaDTO[];
-  listaOficinas! : OficinaDTO[];
+  listaOficinasCatalogo! : OficinaDTO[];
+  listaOficinasTabla! : OficinaDTO[];
   listaEtapasPorId! : EtapaDTO[];
   listaEtapas! : EtapaDTO[];
   listaDoctos! : DoctocDTO[];
@@ -112,7 +113,8 @@ export class DocumentosComponent implements OnInit {
     this.obtenerTipoDocumentos();
     this.obtenerCategorias();
     this.obtenerNormas();
-    this.obtenerOficinas();
+    this.obtenerOficinasParaCatalogo();
+    this.obtenerOficinasParaTabla();
     this.obtenerDoctos();
     this.obtenerEtapas();
     this.obtenerSubClasificaciones();
@@ -197,12 +199,14 @@ export class DocumentosComponent implements OnInit {
   
       // Marca el campo como tocado
       control?.markAsTouched();
+      
   
       // Si el campo está vacío, establece el error de 'required'
       if (!control?.value) {
         control?.setErrors({ required: true, pattern: true });
       }
     });
+    
   }
   
 
@@ -250,7 +254,8 @@ export class DocumentosComponent implements OnInit {
           oficinaUsuarioID: 1,
           clasificacionID: 1,
           normaID: 1,
-          versionID: 1
+          versionID: 1,
+          numeroVersion: 0 
         };
   
         console.log(documento);
@@ -325,7 +330,8 @@ export class DocumentosComponent implements OnInit {
         oficinaUsuarioID: 1,
         clasificacionID:1,
         normaID:1,
-        versionID:1
+        versionID:1,
+        numeroVersion:0
       };
 
       //usuarioID y oficinaUsuarioID los tomo del localStorage
@@ -391,7 +397,7 @@ export class DocumentosComponent implements OnInit {
           doctoID: documentoAEditar.doctoId ,
           clasificacionID: documentoAEditar.clasificacionID ,
           subClasificacionID: documentoAEditar.subClasificacionID ,
-          vigencia: documentoAEditar.vigencia 
+          vigencia: documentoAEditar.vigencia
         });
 
         //cargo los catalogos que dependen de estos seguan su eleccion
@@ -523,9 +529,14 @@ export class DocumentosComponent implements OnInit {
       this.listaNormas = response;
   })};
 
-  obtenerOficinas(){
+  obtenerOficinasParaCatalogo(){
+    this.oficinasService.obtenerOficinasParaCatalogo().subscribe(response => {
+      this.listaOficinasCatalogo = response;
+  })};
+
+  obtenerOficinasParaTabla(){
     this.oficinasService.obtenerOficinas().subscribe(response => {
-      this.listaOficinas = response;
+      this.listaOficinasTabla = response;
   })};
 
   onNormaChange(normaId: number) {
@@ -673,7 +684,7 @@ export class DocumentosComponent implements OnInit {
           const tipoDocumento = this.listaTipoDocumentos.find(tipo => tipo.id === documento.tipoDocumento);
           const etapa = this.listaEtapas.find(etp => etp.id === documento.etapaID);
           const norma = this.listaNormas.find(nrm => nrm.id === documento.normaID);
-          const oficina = this.listaOficinas.find(ofi => ofi.id === documento.oficinaID);
+          const oficina = this.listaOficinasTabla.find(ofi => ofi.id === documento.oficinaID);
           const clasificacion = this.listaClasificaciones.find(clas => clas.id === documento.clasificacionID);
           const subClasificacion = this.listaSubClasificaciones.find(sub => sub.id === documento.subClasificacionID);
           const docto = this.listaDoctos.find(doctoc => doctoc.id === documento.doctoId);

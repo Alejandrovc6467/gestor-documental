@@ -17,6 +17,8 @@ export interface DocumentoGetDTO {
     activo?: boolean;
     descargable?: boolean;
     doctoId?: number;
+    numeroVersion?: number;
+    
 }
 
 
@@ -57,5 +59,6 @@ export interface DocumentoGetById {
     versionID: number;
     usuarioID: number;
     oficinaUsuarioID: number;
+    numeroVersion?: number;
 }
   

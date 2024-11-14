@@ -24,6 +24,7 @@ export interface DocumentoDTO {
   versionID: number;
   usuarioID: number;
   oficinaUsuarioID: number;
+  numeroVersion: number;
 }
 
 

@@ -121,11 +121,13 @@ export class FiltroVerticalComponent {
   //CRUD *******************************************************************************
   
   obtenerDocumentos(){
-    this.filtroVerticalService.obtenerFiltroVertical().subscribe(response => {
+    const usuarioID = 1;
+    this.filtroVerticalService.obtenerFiltroVertical(usuarioID).subscribe(response => {
       this.listaDocumentos = response;
       console.log(this.listaDocumentos);
     });
   }
+
 
   obtenerCategoriaPorId(idBuscar:number){
     this.categoriasService.obtenerCategoriaPorId(idBuscar).subscribe(response => {

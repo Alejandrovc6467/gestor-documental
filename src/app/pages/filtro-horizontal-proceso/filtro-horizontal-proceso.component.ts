@@ -83,7 +83,7 @@ export class FiltroHorizontalProcesoComponent {
 
   ngOnInit(): void {
 
-    this.obtenerCategoriasCargarTabla();
+    //this.obtenerCategoriasCargarTabla();
 
     this.obtenerDocumentos();
     this.obtenerTipoDocumentos();
@@ -110,11 +110,13 @@ export class FiltroHorizontalProcesoComponent {
   //CRUD *******************************************************************************
   
   obtenerDocumentos(){
-    this.filtroVerticalService.obtenerFiltroVertical().subscribe(response => {
+    const usuarioID = 1;
+    this.filtroVerticalService.obtenerFiltroVertical(usuarioID).subscribe(response => {
       this.listaDocumentos = response;
       console.log(this.listaDocumentos);
     });
   }
+
 
   obtenerCategoriaPorId(idBuscar:number){
     this.categoriasService.obtenerCategoriaPorId(idBuscar).subscribe(response => {
@@ -292,13 +294,7 @@ export class FiltroHorizontalProcesoComponent {
 
 
   //cuando este el filtro funcionando
-  obtenerCategoriasCargarTabla(){
-    this.filtroVerticalService.obtenerFiltroVertical().subscribe(response => {
-      this.listaDocumentos = response;
-      this.setTable(this.listaDocumentos);
-      console.log(this.listaDocumentos);
-    });
-  }
+
 
   setTable(data:FiltroVerticalGetDTO[]){
 

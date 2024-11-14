@@ -22,10 +22,19 @@ export class FiltroVerticalService {
   constructor() { }
 
 
+
+  /*
   public obtenerFiltroVertical(): Observable<FiltroVerticalGetDTO[]>{
     return this.http.get<FiltroVerticalGetDTO[]> (this.urlBase);
   }
+  */
 
+  public obtenerFiltroVertical(id?: number): Observable<FiltroVerticalGetDTO[]> {
+    return this.http.get<FiltroVerticalGetDTO[]>(id ? `${this.urlBase}/${id}` : this.urlBase);
+  }
+  
+
+ 
    // Método actualizado para descargar archivo
    public descargarArchivo(ruta: string): Observable<Blob> {
     // Codificar la ruta para manejar caracteres especiales

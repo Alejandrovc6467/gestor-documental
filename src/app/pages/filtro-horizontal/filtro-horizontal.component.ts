@@ -125,7 +125,9 @@ export class FiltroHorizontalComponent {
   //CRUD *******************************************************************************
   
   obtenerDocumentos(){
-    this.filtroVerticalService.obtenerFiltroVertical().subscribe(response => {
+
+    const usuarioID = 1;
+    this.filtroVerticalService.obtenerFiltroVertical(1).subscribe(response => {
       this.listaDocumentos = response;
       console.log(this.listaDocumentos);
     });
@@ -356,6 +358,7 @@ export class FiltroHorizontalComponent {
 
 
   //no esta siendo utilizado
+  /*
   obtenerCategoriasCargarTabla(){
     this.filtroVerticalService.obtenerFiltroVertical().subscribe(response => {
       this.listaDocumentos = response;
@@ -363,6 +366,7 @@ export class FiltroHorizontalComponent {
       console.log(this.listaDocumentos);
     });
   }
+  */
 
   setTable(data:FiltroVerticalGetDTO[]){
 

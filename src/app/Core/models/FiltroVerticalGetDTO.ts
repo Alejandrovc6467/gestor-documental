@@ -32,6 +32,7 @@ export interface FiltroVerticalGetDTO {
     normaID: number;
     versionID: number;
     urlArchivo: string;
+    numeroVersion: number;
 }
 
 

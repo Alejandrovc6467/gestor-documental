@@ -101,7 +101,7 @@
             <mat-form-field appearance="outline" class="full-widthdoble">
                 <mat-label>Oficina</mat-label>
                     <mat-select formControlName="oficinaID">
-                        @for (oficina of listaOficinas; track oficina.id) {
+                        @for (oficina of listaOficinasCatalogo; track oficina.id) {
                             <mat-option [value]="oficina.id">
                               {{ oficina.nombre }}
                             </mat-option>
@@ -378,7 +378,7 @@
 
         <ng-container matColumnDef="version">
             <th mat-header-cell *matHeaderCellDef> Versión </th>
-            <td mat-cell *matCellDef="let element"  class="truncate-cell"  [matTooltip]="element.versionID" > {{element.versionID}} </td>
+            <td mat-cell *matCellDef="let element"  class="truncate-cell"  [matTooltip]="element.versionID" > {{element.numeroVersion}} </td>
         </ng-container>
 
         <ng-container matColumnDef="oficina">

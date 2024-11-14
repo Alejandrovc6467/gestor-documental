@@ -489,6 +489,7 @@ export class DocumentoversionesComponent implements OnInit  {
         width: '100vw',
       });
 
+      //envio de datos a bitacora
       const movimiento:  MovimientoDTO = {
         idMovimiento: 0,
         versionID: element.id,
@@ -496,7 +497,6 @@ export class DocumentoversionesComponent implements OnInit  {
         usuarioID: 1,
         movimiento: false
       };
-  
       this.movimientoService.RegistrarMovimiento(movimiento).subscribe(response => {
         console.log(response);
       });
