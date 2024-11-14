@@ -48,6 +48,19 @@ export class IniciosesionprincipalComponent {
 
 
   inicioSesionCorrecto(): void{
+
+
+    /*
+    Admistrador General 1 {todo}
+
+    Administrador Norma 2 {Todos los cruds, no puede meter categorias, normas}  es 
+    Administrador Digesto 3 {Todos los cruds, no puede meter categorias, normas}
+
+    Usuario General 4 {Solo reportes y consultas, todo lo demas lo quito}
+
+    */
+
+
     //aqui depende de si las oficinas son 2 o mas lo paso al loggin de oficinas o sino lo paso directo al app
     // y si lo paso directo setear la oficina seleccionada     localStorage.setItem('oficinaSeleccionadaId', this.formulario.value.oficinaId!);
     this.router.navigate(['/usuarios'])

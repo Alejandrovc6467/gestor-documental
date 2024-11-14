@@ -14,7 +14,7 @@ export class SeguridadService {
   private http = inject(HttpClient);
   private router = inject(Router); 
   private login_url = "http://gestordocumental.somee.com/api/ejemplo";
-  private tokenKey = 'authToken';
+  private tokenKey = 'authToken'; // Diego no pudo
 
 
   constructor() { }
