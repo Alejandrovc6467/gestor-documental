@@ -28,6 +28,8 @@ import { RouterLink } from '@angular/router';
 import { EliminarDTO } from '../../Core/models/EliminarDTO';
 import { MovimientoDTO } from '../../Core/models/MovimientoDTO';
 import { MovimientoService } from '../../Core/services/movimiento.service';
+import { OficinasService } from '../../Core/services/oficinas.service';
+import { OficinaDTO } from '../../Core/models/OficinaDTO';
 
 
 @Component({
@@ -51,6 +53,7 @@ export class DocumentoversionesComponent implements OnInit  {
   documentosService = inject(DocumentosService);
   versionesService = inject(VersionesService);
   movimientoService = inject(MovimientoService);
+  oficinasService = inject(OficinasService);
 
   listaCategorias! : VersionDTO[];
   listCategoriasdataSource = new MatTableDataSource<VersionDTO>([]);
@@ -64,6 +67,10 @@ export class DocumentoversionesComponent implements OnInit  {
 
   usuarioIDLogin: number = Number(localStorage.getItem('usuarioID'));
   oficinaIDLogin: number = Number(localStorage.getItem('oficinaSeleccionadaId'));
+  nombreLogin: string = localStorage.getItem('nombre')  || '';
+  apellidoLogin: string = localStorage.getItem('apellido') || '';
+  nombreOficina: string = '';
+  Oficina!: OficinaDTO | null ;
 
   ngOnInit(): void {
     //this.obtenerVersionesCargarTabla();
@@ -102,16 +109,28 @@ export class DocumentoversionesComponent implements OnInit  {
   //llamar este  en el onInit()
   cargarCamposQuemadosEnHtml(){
 
+
+
+
+    this.oficinasService.obtenerOficinaPorId(this.oficinaIDLogin).subscribe(response => {
+       this.Oficina = response;
+    });
+
+
     setTimeout(() => {
       this.documentosService.obtenerDocumentoPorId(this.id).subscribe(response => {
        
+
+
+
         this.objetoDocumentoParaCargarDatosQuemados = response;
 
         this.formulario.patchValue({
           nombreDocumento: this.objetoDocumentoParaCargarDatosQuemados?.asunto,
-          nombreUsuario: 'Juan Pérez',
-          oficina: 'Oficina Central'
+          nombreUsuario: this.nombreLogin + " " + this.apellidoLogin,
+          oficina: this.Oficina?.nombre
         });
+
 
         //console.log(this.objetoDocumentoParaCargarDatosQuemados);
 
@@ -364,8 +383,8 @@ export class DocumentoversionesComponent implements OnInit  {
                 // Actualizar el formulario con todos los datos
                 this.formulario.patchValue({
                     nombreDocumento: this.objetoDocumentoParaCargarDatosQuemados?.asunto,
-                    nombreUsuario: 'Juan Pérez',
-                    oficina: 'Oficina Central',
+                    nombreUsuario: this.nombreLogin + " "+ this.apellidoLogin,
+                    oficina: this.Oficina?.nombre,
                     version: this.versionAEditar.numeroVersion,
                     numeroSCD: this.versionAEditar.numeroSCD,
                     justificacion: this.versionAEditar.justificacion,

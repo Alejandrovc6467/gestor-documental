@@ -15,8 +15,11 @@ import { SeguridadService } from '../../Core/services/seguridad.service';
 export class SidebarComponent implements OnInit{
 
   seguridadService = inject(SeguridadService);
+  rolIdLogin: number = 0;
+
   
   ngOnInit(): void {
+    this.rolIdLogin = Number(localStorage.getItem('rolID'));
     this.initSidebar();
   }
 

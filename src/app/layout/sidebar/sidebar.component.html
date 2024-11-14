@@ -24,10 +24,12 @@
                         <span class="nav__name">Consultas</span>
                     </a>
 
-                    <a mat-button routerLink="/documentos" class="nav__link">
-                        <mat-icon name="folder-outline" class="nav__icon">description</mat-icon>
-                        <span class="nav__name">Documentos</span>
-                    </a>
+                    @if(rolIdLogin === 1 || rolIdLogin === 2 || rolIdLogin === 3){
+                        <a mat-button routerLink="/documentos" class="nav__link">
+                            <mat-icon name="folder-outline" class="nav__icon">description</mat-icon>
+                            <span class="nav__name">Documentos</span>
+                        </a>
+                    }
 
 
                     <div  class="nav__link_collapse collapse">
@@ -48,45 +50,61 @@
                     </div>
 
            
-                    <a routerLink="/normas" class="nav__link">
-                        <mat-icon name="pie-chart-outline" class="nav__icon">article</mat-icon>
-                        <span class="nav__name">Normas</span>
-                    </a>
-
+                    @if(rolIdLogin === 1){
+                        <a routerLink="/normas" class="nav__link">
+                            <mat-icon name="pie-chart-outline" class="nav__icon">article</mat-icon>
+                            <span class="nav__name">Normas</span>
+                        </a>
+                    }
+                   
                 
-                    <a routerLink="/etapas" class="nav__link">
-                        <mat-icon name="pie-chart-outline" class="nav__icon">insert_chart</mat-icon>
-                        <span class="nav__name">Etapas</span>
-                    </a>
+                    @if(rolIdLogin === 1 || rolIdLogin === 2 || rolIdLogin === 3){
+                        <a routerLink="/etapas" class="nav__link">
+                            <mat-icon name="pie-chart-outline" class="nav__icon">insert_chart</mat-icon>
+                            <span class="nav__name">Etapas</span>
+                        </a>
+                    }
 
+                    @if(rolIdLogin === 1 || rolIdLogin === 2 || rolIdLogin === 3){
+                        <a routerLink="/clasificaciones" class="nav__link">
+                            <mat-icon name="pie-chart-outline" class="nav__icon">schema</mat-icon>
+                            <span class="nav__name">Clasificaciones</span>
+                        </a>
+                    }
 
-                    <a routerLink="/clasificaciones" class="nav__link">
-                        <mat-icon name="pie-chart-outline" class="nav__icon">schema</mat-icon>
-                        <span class="nav__name">Clasificaciones</span>
-                    </a>
+                    @if(rolIdLogin === 1 || rolIdLogin === 2 || rolIdLogin === 3){
+                        <a routerLink="/subclasificaciones" class="nav__link">
+                            <mat-icon name="pie-chart-outline" class="nav__icon">account_tree</mat-icon>
+                            <span class="nav__name">Sub clasificaciones</span>
+                        </a>
+                    }
 
-                    <a routerLink="/subclasificaciones" class="nav__link">
-                        <mat-icon name="pie-chart-outline" class="nav__icon">account_tree</mat-icon>
-                        <span class="nav__name">Sub clasificaciones</span>
-                    </a>
+                    @if(rolIdLogin === 1){
+                        <a routerLink="/categorias" class="nav__link">
+                            <mat-icon name="pie-chart-outline" class="nav__icon">category</mat-icon>
+                            <span class="nav__name">Categorías</span>
+                        </a>
+                    }
 
-                    <a routerLink="/categorias" class="nav__link">
-                        <mat-icon name="pie-chart-outline" class="nav__icon">category</mat-icon>
-                        <span class="nav__name">Categorías</span>
-                    </a>
+                    @if(rolIdLogin === 1 || rolIdLogin === 2 || rolIdLogin === 3){
+                        <a routerLink="/doctos" class="nav__link">
+                            <mat-icon name="pie-chart-outline" class="nav__icon">receipt_long</mat-icon>
+                            <span class="nav__name">DocTos</span>
+                        </a>
+                    }
 
-                    <a routerLink="/doctos" class="nav__link">
-                        <mat-icon name="pie-chart-outline" class="nav__icon">receipt_long</mat-icon>
-                        <span class="nav__name">DocTos</span>
-                    </a>
+                    @if(rolIdLogin === 1 || rolIdLogin === 2 || rolIdLogin === 3){
+                        <a routerLink="/tipodocumentos" class="nav__link">
+                            <mat-icon name="pie-chart-outline" class="nav__icon">text_snippet</mat-icon>
+                            <span class="nav__name">Tipo documentos</span>
+                        </a>
+                    }
 
-                    <a routerLink="/tipodocumentos" class="nav__link">
-                        <mat-icon name="pie-chart-outline" class="nav__icon">text_snippet</mat-icon>
-                        <span class="nav__name">Tipo documentos</span>
-                    </a>
 
                 </div>
             </div>
+
+        
 
             <a  (click)="logout()" class="nav__link">
                 <mat-icon name="log-out-outline" class="nav__icon">logout</mat-icon>
