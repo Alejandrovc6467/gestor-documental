@@ -25,11 +25,6 @@ export const administradorGuard: CanActivateFn = (route, state) => {
 
 
 
-
-
-
-
-
   // hacer un guard nuevo (un archivo) para cada rol, y hacerlo similar a este
 
   

@@ -36,8 +36,10 @@ export class SeguridadService {
         // Aquí puedes almacenar información en el localStorage
         localStorage.setItem('isAuthenticated', 'true');
         localStorage.setItem('correo', response.correo.toString());
+        localStorage.setItem('nombre', response.nombre.toString());
+        localStorage.setItem('apellido', response.apellido.toString());
         localStorage.setItem('usuarioID', response.id.toString());
-        localStorage.setItem('rolID', response.apellido.toString());
+        localStorage.setItem('rolID', response.rolID.toString());
         
 
       }),
@@ -72,6 +74,8 @@ export class SeguridadService {
 
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('correo');
+    localStorage.removeItem('nombre');
+    localStorage.removeItem('apellido');
     localStorage.removeItem('usuarioID');
     localStorage.removeItem('rolID');
     localStorage.removeItem('oficinaSeleccionadaId');
