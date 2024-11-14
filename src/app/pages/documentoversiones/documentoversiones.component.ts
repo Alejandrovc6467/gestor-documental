@@ -66,8 +66,6 @@ export class DocumentoversionesComponent implements OnInit  {
   ngOnInit(): void {
     //this.obtenerVersionesCargarTabla();
     this.cargarCamposQuemadosEnHtml();
-    this.setTable([]);
-    this.obtenerVersiones();
   }
   
   constructor(private datePipe: DatePipe) { } // Inyectar DatePipe
@@ -129,10 +127,10 @@ export class DocumentoversionesComponent implements OnInit  {
   //CRUD ************************************************************************************************
 
 
-
   obtenerVersiones(){
     this.versionesService.obtenerVersionesPorId(this.id).subscribe(response => {
       this.listaCategorias = response;
+      console.log(response);
     });
   }
 
@@ -247,7 +245,7 @@ export class DocumentoversionesComponent implements OnInit  {
     
             console.log(response);
             if(response){
-              // //
+              this.limpiarTabla();
               this.limpiarFormulario();
               Swal.fire('Creada!', 'La versión ha sido creada.', 'success');
             }else{
@@ -307,7 +305,7 @@ export class DocumentoversionesComponent implements OnInit  {
             console.log(response);
             if(response){
             
-              // //
+              this.limpiarTabla();
               this.limpiarFormulario();
               Swal.fire('Editada!', 'La versión ha sido editada.', 'success');
 
@@ -461,7 +459,7 @@ export class DocumentoversionesComponent implements OnInit  {
             this.versionesService.eliminarVersion(eliminarDTO).subscribe(response => {
                 console.log(response);
                 if(response){
-                  // //
+                  this.limpiarTabla();
                   this.limpiarFormulario();
                   Swal.fire('Eliminada!', 'La versión ha sido eliminada.', 'success');
                 }else{
@@ -518,15 +516,27 @@ export class DocumentoversionesComponent implements OnInit  {
     this.listCategoriasdataSource = new MatTableDataSource<VersionDTO>(data);
     this.listCategoriasdataSource.paginator = this.paginator;
   }
+
+  limpiarTabla(){
+    this.listaCategorias = [];
+    this.setTable([]);
+  }
   
   
   realizarBusqueda() {
+
+    this.limpiarTabla();
+    this.obtenerVersiones();
     this.filtrarData();
   }
 
   filtrarData() {
-    const data = this.listaCategorias.slice();
+
+    
     setTimeout(() => {
+
+      const data = this.listaCategorias.slice();
+
       const dataFiltrada = data.filter(item => {
         // Extrae el nombre del archivo del urlVersion
         const nombreArchivo = item.urlVersion?.split('\\').pop();
@@ -539,9 +549,9 @@ export class DocumentoversionesComponent implements OnInit  {
                numeroVersionStr.includes(this.textoBuscar) ||
                item.fechaCreacion.includes(this.textoBuscar);
       });
-  
+
       this.setTable(dataFiltrada);
-    }, 1000);
+    }, 1500);
   }
   
   

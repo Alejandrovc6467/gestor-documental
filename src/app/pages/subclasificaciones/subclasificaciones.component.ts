@@ -47,8 +47,7 @@ export class SubclasificacionesComponent implements OnInit {
   ngOnInit(): void {
     // this.obtenerCategoriasCargarTabla();
     this.obtenerClasificaciones();
-    this.setTable([]);
-    this.obtenerSubclasificaciones();
+   
   }
   
   constructor(){}
@@ -151,7 +150,8 @@ export class SubclasificacionesComponent implements OnInit {
         this.subclasificaionesService.crearSubclasificacion(categoria).subscribe(response => {
           console.log(response);
           if(response){
-            // this.obtenerCategoriasCargarTabla();
+           
+            this.limpiarTabla();
             this.limpiarFormulario();
             Swal.fire('Creada!', 'La subclasificación ha sido creada.', 'success');
           }else{
@@ -195,7 +195,8 @@ export class SubclasificacionesComponent implements OnInit {
         this.subclasificaionesService.actualizarSubclasificacion(subclasificacionActualizada).subscribe(response => {
           console.log(response);
           if(response){
-            // this.obtenerCategoriasCargarTabla();
+           
+            this.limpiarTabla();
             this.limpiarFormulario();
             Swal.fire('Editada!', 'La subclasificación ha sido editada.', 'success');
           }else{
@@ -284,7 +285,8 @@ export class SubclasificacionesComponent implements OnInit {
             this.subclasificaionesService.eliminarSubclasificacion(eliminarDTO).subscribe(response => {
                 console.log(response);
                 if(response){
-                  // this.obtenerCategoriasCargarTabla();
+                  
+                  this.limpiarTabla();
                   this.limpiarFormulario();
                   Swal.fire('Eliminado!', 'La Subclasificación ha sido eliminada.', 'success');
                 }else{
@@ -328,14 +330,22 @@ export class SubclasificacionesComponent implements OnInit {
     }, 3000);
   }
   
+
+  limpiarTabla(){
+    this.listaSubclasificaciones = [];
+    this.setTable([]);
+  }
  
   realizarBusqueda() {
+    this.limpiarTabla();
+    this.obtenerSubclasificaciones();
     this.filtrarData();
   }
 
   filtrarData() {
-    const data = this.listaSubclasificaciones.slice();
+    
     setTimeout(() => {
+      const data = this.listaSubclasificaciones.slice();
       const dataFiltrada = data.filter(item => {
         return item.nombre.toLowerCase().includes(this.textoBuscar.toLowerCase());
       });

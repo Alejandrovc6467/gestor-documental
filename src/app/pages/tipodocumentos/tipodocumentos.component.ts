@@ -40,8 +40,6 @@ export class TipodocumentosComponent implements OnInit  {
 
   ngOnInit(): void {
     //this.obtenerCategoriasCargarTabla();
-    this.setTable([]);
-    this.obtenerCategorias();
   }
   
 
@@ -55,7 +53,8 @@ export class TipodocumentosComponent implements OnInit  {
   });
   
 
-  //CRUD **********************************************************
+  //CRUD **************************************************************************
+  
   obtenerCategorias(){
     this.tipodocumentoService.obtenerTipoducumentos().subscribe(response => {
       this.listaCategorias = response;
@@ -130,7 +129,7 @@ export class TipodocumentosComponent implements OnInit  {
           console.log(response);
           if(response){
     
-            // //
+            this.limpiarTabla();
             this.limpiarFormulario();
             Swal.fire('Creado!', 'El tipo de documento ha sido creado.', 'success');
     
@@ -175,6 +174,7 @@ export class TipodocumentosComponent implements OnInit  {
           if(response){
   
             // //
+            this.limpiarTabla();
             this.limpiarFormulario();
             Swal.fire('Editado!', 'El tipo de documento ha sido editado.', 'success');
   
@@ -266,7 +266,7 @@ export class TipodocumentosComponent implements OnInit  {
                 console.log(response);
 
                 if(response){
-                  // //
+                  this.limpiarTabla();
                   this.limpiarFormulario();
                   Swal.fire('Eliminado!', 'El tipo de documento ha sido eliminado.', 'success');
                 }else{
@@ -294,21 +294,31 @@ export class TipodocumentosComponent implements OnInit  {
     this.listCategoriasdataSource = new MatTableDataSource<TipodocumentoDTO>(data);
     this.listCategoriasdataSource.paginator = this.paginator;
   }
+
+  limpiarTabla(){
+    this.listaCategorias = [];
+    this.setTable([]);
+  }
+  
   
   realizarBusqueda() {
+    this.limpiarTabla();
+    this.obtenerCategorias();
     this.filtrarData();
   }
 
   filtrarData() {
-    const data = this.listaCategorias.slice();
-    
+   
     setTimeout(() => {
+
+      const data = this.listaCategorias.slice();
+
       const dataFiltrada = data.filter(item => {
-        return item.nombre.toLowerCase().includes(this.textoBuscar.toLowerCase());
+          return item.nombre.toLowerCase().includes(this.textoBuscar.toLowerCase());
       });
 
       this.setTable(dataFiltrada);
-    }, 1000); 
+    }, 1500); 
   }
 
   onSearchChange(event: any) {

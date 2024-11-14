@@ -120,8 +120,7 @@ export class DocumentosComponent implements OnInit {
 
   
     // this.obtenerDocumentosCargarTabla();
-    this.setTable([]);
-    this.obtenerDocumentos();
+    
 
     this.actualizarTablaRelaciones();
 
@@ -187,25 +186,6 @@ export class DocumentosComponent implements OnInit {
     }
   }
 
-
-  /*
-    formulario = this.formbuilder.group({
-    tipoDocumento: [0, [Validators.required]],
-    categoriaID: [0, [Validators.required]],
-    normaID: [0, [Validators.required]],
-    etapaID: [0, [Validators.required]],
-    asunto: ['', [Validators.required]],
-    codigo: ['', [Validators.required]],
-    oficinaID: [0, [Validators.required]],
-    descargable: [false],
-    activo: [false],
-    descripcion: ['', [Validators.required]],
-    doctoID: [0],
-    clasificacionID: [0],
-    subClasificacionID: [0],
-    vigencia: ['']
-  });
-  */
 
 
   marcarErrores() {
@@ -284,7 +264,7 @@ export class DocumentosComponent implements OnInit {
               this.doctos = []; // Limpiar la lista de doctos relacionados
               this.palabrasClaveComponent.limpiarPalabrasClave();
               this.limpiarRelacionesDocumento();
-              // this.obtenerDocumentosCargarTabla();
+              this.limpiarTabla();
               this.limpiarFormulario();
               Swal.fire('Creado', 'El documento ha sido creado exitosamente', 'success');
 
@@ -361,7 +341,7 @@ export class DocumentosComponent implements OnInit {
             this.doctos = []; // Limpiar la lista de doctos relacionados
             this.actualizarTablaRelaciones();
             this.palabrasClaveComponent.limpiarPalabrasClave();
-            // this.obtenerDocumentosCargarTabla();
+            this.limpiarTabla();
             this.limpiarFormulario();
             Swal.fire('Editado', 'El documento ha sido editado exitosamente', 'success');
 
@@ -511,7 +491,7 @@ export class DocumentosComponent implements OnInit {
             this.documentosService.eliminarDocumento(eliminarDTO).subscribe(response => {
                 console.log(response);
                 if(response){
-                  // this.obtenerDocumentosCargarTabla();
+                  this.limpiarTabla();
                   this.limpiarFormulario();
                   Swal.fire('Eliminado!', 'El documento ha sido eliminado.', 'success');
                 }else{
@@ -722,15 +702,25 @@ export class DocumentosComponent implements OnInit {
 
       
   }
+
+  limpiarTabla(){
+    this.listaDocumentos = [];
+    this.setTable([]);
+  }
+  
   
   realizarBusqueda() {
+    this.limpiarTabla();
+    this.obtenerDocumentos();
     this.filtrarData();
   }
 
   filtrarData() {
-    const data = this.listaDocumentos.slice();
-  
+   
+
     setTimeout(() => {
+
+      const data = this.listaDocumentos.slice();
       const dataFiltrada = data.filter(item => {
         // Verifica si el texto de búsqueda está en el asunto o en el código del item
         return (
@@ -740,7 +730,7 @@ export class DocumentosComponent implements OnInit {
       });
   
       this.setTable(dataFiltrada);
-    }, 1000); 
+    }, 1500); 
   }
   
 

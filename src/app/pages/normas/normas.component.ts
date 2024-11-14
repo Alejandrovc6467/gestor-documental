@@ -40,8 +40,6 @@ export class NormasComponent  implements OnInit{
 
   ngOnInit(): void {
     // this.obtenerNormasCargarTabla();
-    this.setTable([]);
-    this.obtenerNormas();
   }
   
 
@@ -131,7 +129,7 @@ export class NormasComponent  implements OnInit{
         this.normasService.crearNorma(categoria).subscribe(response => {
           console.log(response);
           if(response){
-            // this.obtenerNormasCargarTabla();
+            this.limpiarTabla();
             this.limpiarFormulario();
             Swal.fire('Creada!', 'La norma ha sido creada.', 'success');
           }else{
@@ -175,7 +173,7 @@ export class NormasComponent  implements OnInit{
         this.normasService.actualizarNorma(categoriaActualizada).subscribe(response => {
           console.log(response);
           if(response){
-            // this.obtenerNormasCargarTabla();
+            this.limpiarTabla();
             this.limpiarFormulario();
             Swal.fire('Editada!', 'La norma ha sido editada.', 'success');
           }else{
@@ -266,7 +264,7 @@ export class NormasComponent  implements OnInit{
             this.normasService.eliminarNorma(eliminarDTO).subscribe(response => {
                 console.log(response);
                 if(response){
-                  // this.obtenerNormasCargarTabla();
+                  this.limpiarTabla();
                   this.limpiarFormulario();
                   Swal.fire('Eliminado!', 'La norma ha sido eliminada.', 'success');
                 }else{
@@ -295,16 +293,23 @@ export class NormasComponent  implements OnInit{
     this.listCategoriasdataSource.paginator = this.paginator;
   }
   
+  limpiarTabla(){
+    this.listaCategorias = [];
+    this.setTable([]);
+  }
+  
   
   realizarBusqueda() {
-
+    this.limpiarTabla();
+    this.obtenerNormas();
     this.filtrarData();
   }
 
   filtrarData() {
-    const data = this.listaCategorias.slice();
-
+   
     setTimeout(() => {
+      const data = this.listaCategorias.slice();
+
       const dataFiltrada = data.filter(item => {
         return item.nombre.toLowerCase().includes(this.textoBuscar.toLowerCase());
       });

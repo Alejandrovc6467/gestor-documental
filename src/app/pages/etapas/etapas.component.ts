@@ -50,8 +50,7 @@ export class EtapasComponent implements OnInit{
     this.obtenerEtapasHuerfanas();
     this.obtenerNormas();
     this.obtenerEtapas();
-    this.setTable([]);
-    this.obtenerEtapass();
+   
   }
 
 
@@ -150,8 +149,9 @@ export class EtapasComponent implements OnInit{
         this.etapasService.crearEtapa(etapa).subscribe(response => {
             console.log(response);
             if(response){
-              // this.obtenerCategoriasCargarTabla();
+              
               this.obtenerEtapasHuerfanas();
+              this.limpiarTabla();
               this.limpiarFormulario();
               Swal.fire('Creada!', 'La Etapa ha sido creada.', 'success');
             }else{
@@ -202,7 +202,8 @@ export class EtapasComponent implements OnInit{
           this.etapasService.actualizarEtapa(categoriaActualizada).subscribe(response => {
             console.log(response);
             if(response){
-              // this.obtenerCategoriasCargarTabla();
+             
+              this.limpiarTabla();
               this.limpiarFormulario();
               Swal.fire('Editada!', 'La etapa ha sido editada.', 'success');
             }else{
@@ -296,7 +297,8 @@ export class EtapasComponent implements OnInit{
             this.etapasService.eliminarEtapa(eliminarDTO).subscribe(response => {
                 console.log(response);
                 if(response){
-                  // this.obtenerCategoriasCargarTabla();
+                
+                  this.limpiarTabla();
                   this.limpiarFormulario();
                   Swal.fire('Eliminado!', 'La etapa ha sido eliminada.', 'success');
                 }else{
@@ -360,14 +362,23 @@ export class EtapasComponent implements OnInit{
     }, 3000);
   }
   
+
+  limpiarTabla(){
+    this.listaEtapas = [];
+    this.setTable([]);
+  }
+  
  
   realizarBusqueda() {
+    this.limpiarTabla();
+    this.obtenerEtapass();
     this.filtrarData();
   }
 
   filtrarData() {
-    const data = this.listaEtapas.slice();
+   
     setTimeout(() => {
+      const data = this.listaEtapas.slice();
       const dataFiltrada = data.filter(item => {
         return item.nombre.toLowerCase().includes(this.textoBuscar.toLowerCase());
       });
