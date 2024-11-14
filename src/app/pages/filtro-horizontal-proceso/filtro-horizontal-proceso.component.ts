@@ -33,6 +33,8 @@ import { EtapaDTO } from '../../Core/models/EtapaDTO';
 import { NormaTreeComponent } from '../../Core/components/norma-tree/norma-tree.component';
 import { ComponentFixture } from '@angular/core/testing';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MovimientoDTO } from '../../Core/models/MovimientoDTO';
+import { MovimientoService } from '../../Core/services/movimiento.service';
 
 @Component({
   selector: 'app-filtro-horizontal-proceso',
@@ -58,6 +60,7 @@ export class FiltroHorizontalProcesoComponent {
   doctocsService = inject(DoctocsService);
   clasificacionesService = inject(ClasificacionesService);
   documentosService = inject(DocumentosService);
+  movimientoService = inject(MovimientoService);
 
 
   listaNormas! : CategoriaDTO[];
@@ -155,8 +158,19 @@ export class FiltroHorizontalProcesoComponent {
 
   // Descar y visualizacion de documentos ***********************************************************************************
   
-  descargarDocumento(archivo: any) {
-    this.filtroVerticalService.manejarDescargaArchivo(archivo);
+  descargarDocumento(element: any) {
+    this.filtroVerticalService.manejarDescargaArchivo(element.urlArchivo);
+    const movimiento:  MovimientoDTO = {
+      idMovimiento: 0,
+      versionID: element.versionID,
+      fechaIngreso: new Date().toISOString(),
+      usuarioID: 1,
+      movimiento: true
+    };
+
+    this.movimientoService.RegistrarMovimiento(movimiento).subscribe(response => {
+      console.log(response);
+    });
   }
 
 
@@ -170,6 +184,19 @@ export class FiltroHorizontalProcesoComponent {
         height: '100vh',
         width: '100vw',
       });
+
+      const movimiento:  MovimientoDTO = {
+        idMovimiento: 0,
+        versionID: element.versionID,
+        fechaIngreso: new Date().toISOString(),
+        usuarioID: 1,
+        movimiento: false
+      };
+  
+      this.movimientoService.RegistrarMovimiento(movimiento).subscribe(response => {
+        console.log(response);
+      });
+    
     }
   }
 

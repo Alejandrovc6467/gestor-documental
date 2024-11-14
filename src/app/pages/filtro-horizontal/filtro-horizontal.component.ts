@@ -32,6 +32,8 @@ import { DoctosModalComponent } from '../../Core/components/doctos-modal/doctos-
 import { OficinasService } from '../../Core/services/oficinas.service';
 import { OficinaDTO } from '../../Core/models/OficinaDTO';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MovimientoDTO } from '../../Core/models/MovimientoDTO';
+import { MovimientoService } from '../../Core/services/movimiento.service';
 
 
 @Component({
@@ -78,6 +80,7 @@ export class FiltroHorizontalComponent {
   textoBuscar: string = "";
   estaEditando: boolean = false;
   categoriaSeleccionada!: CategoriaDTO | null;
+  movimientoService = inject(MovimientoService);
 
 
 
@@ -139,11 +142,6 @@ export class FiltroHorizontalComponent {
 
 
       const camposVacios = Object.values(filtros).every(valor => valor === null || valor === '' || valor === 0);
-
-      if (camposVacios) {
-        Swal.fire('Campos vacíos', 'Por favor ingrese al menos un criterio para aplicar el filtro.', 'warning');
-        return; // Detiene la ejecución de la función si todos los campos están vacíos
-      }
           
       
       
@@ -228,7 +226,8 @@ export class FiltroHorizontalComponent {
 
 
 
-  descargarDocumento(archivo: any, descargable: boolean) {
+  descargarDocumento(element: any, descargable: boolean) {
+    console.log(element);
     if(descargable){
 
       Swal.fire({
@@ -244,8 +243,19 @@ export class FiltroHorizontalComponent {
     }).then((result) => {
         if (result.isConfirmed) {
 
-          this.filtroVerticalService.manejarDescargaArchivo(archivo);
+          this.filtroVerticalService.manejarDescargaArchivo(element.urlArchivo);
 
+          const movimiento:  MovimientoDTO = {
+            idMovimiento: 0,
+            versionID: element.id,
+            fechaIngreso: new Date().toISOString(),
+            usuarioID: 1,
+            movimiento: true
+          };
+      
+          this.movimientoService.RegistrarMovimiento(movimiento).subscribe(response => {
+            console.log(response);
+          });
           Swal.fire('Descargado!', 'El documento ha sido descargado.', 'success');
         }
       });
@@ -268,6 +278,19 @@ export class FiltroHorizontalComponent {
         height: '100vh',
         width: '100vw',
       });
+
+      const movimiento:  MovimientoDTO = {
+        idMovimiento: 0,
+        versionID: element.versionID,
+        fechaIngreso: new Date().toISOString(),
+        usuarioID: 1,
+        movimiento: false
+      };
+  
+      this.movimientoService.RegistrarMovimiento(movimiento).subscribe(response => {
+        console.log(response);
+      });
+    
     }
   }
 

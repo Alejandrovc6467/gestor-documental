@@ -724,19 +724,12 @@ export class DocumentosComponent implements OnInit {
   }
   
   realizarBusqueda() {
-    if (this.textoBuscar.trim() === '') {
-      this.setTable([]); // Si no hay texto de búsqueda, tabla vacía
-      return;
-    }
     this.filtrarData();
   }
 
   filtrarData() {
     const data = this.listaDocumentos.slice();
-    if (!this.textoBuscar.trim()) {
-      this.setTable([]);
-      return;
-    }
+  
     setTimeout(() => {
       const dataFiltrada = data.filter(item => {
         // Verifica si el texto de búsqueda está en el asunto o en el código del item

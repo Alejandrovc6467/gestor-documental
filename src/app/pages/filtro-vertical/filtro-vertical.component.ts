@@ -31,6 +31,8 @@ import { DoctosModalComponent } from '../../Core/components/doctos-modal/doctos-
 import { OficinaDTO } from '../../Core/models/OficinaDTO';
 import { OficinasService } from '../../Core/services/oficinas.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MovimientoService } from '../../Core/services/movimiento.service';
+import { MovimientoDTO } from '../../Core/models/MovimientoDTO';
 
 @Component({
   selector: 'app-filtro-vertical',
@@ -55,6 +57,7 @@ export class FiltroVerticalComponent {
   doctocsService = inject(DoctocsService);
   clasificacionesService = inject(ClasificacionesService);
   documentosService = inject(DocumentosService);
+  movimientoService = inject(MovimientoService);
 
 
   
@@ -140,10 +143,6 @@ export class FiltroVerticalComponent {
 
     const camposVacios = Object.values(filtros).every(valor => valor === null || valor === '' || valor === 0);
 
-    if (camposVacios) {
-      Swal.fire('Campos vacíos', 'Por favor ingrese al menos un criterio para aplicar el filtro.', 'warning');
-      return; // Detiene la ejecución de la función si todos los campos están vacíos
-    }
         
     
     
@@ -231,9 +230,23 @@ export class FiltroVerticalComponent {
 
 
 
-  descargarDocumento(urlArchivo: any) {
+  descargarDocumento(element: any) {
+    this.filtroVerticalService.manejarDescargaArchivo(element.urlArchivo);
+
+    console.log(element);
+    const movimiento:  MovimientoDTO = {
+      idMovimiento: 0,
+      versionID: element.versionID,
+      fechaIngreso: new Date().toISOString(),
+      usuarioID: 1,
+      movimiento: true
+    };
+
+    console.log(movimiento);
+    this.movimientoService.RegistrarMovimiento(movimiento).subscribe(response => {
+      console.log(response);
+    });
  
-    this.filtroVerticalService.manejarDescargaArchivo(urlArchivo);
   }
 
 
@@ -246,6 +259,18 @@ export class FiltroVerticalComponent {
         maxHeight: '100vh',
         height: '100vh',
         width: '100vw',
+      });
+
+      const movimiento:  MovimientoDTO = {
+        idMovimiento: 0,
+        versionID: element.versionID,
+        fechaIngreso: new Date().toISOString(),
+        usuarioID: 1,
+        movimiento: false
+      };
+  
+      this.movimientoService.RegistrarMovimiento(movimiento).subscribe(response => {
+        console.log(response);
       });
     }
   }

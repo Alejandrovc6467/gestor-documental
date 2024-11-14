@@ -291,19 +291,11 @@ export class CategoriasComponent implements OnInit {
   
   
   realizarBusqueda() {
-    if (this.textoBuscar.trim() === '') {
-      this.setTable([]); // Si no hay texto de búsqueda, tabla vacía
-      return;
-    }
     this.filtrarData();
   }
 
   filtrarData() {
     const data = this.listaCategorias.slice();
-    if (!this.textoBuscar.trim()) {
-      this.setTable([]);
-      return;
-    }
     setTimeout(() => {
       const dataFiltrada = data.filter(item => {
         return item.nombre.toLowerCase().includes(this.textoBuscar.toLowerCase());

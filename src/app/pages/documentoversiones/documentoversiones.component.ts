@@ -26,6 +26,8 @@ import { firstValueFrom } from 'rxjs';
 import { FiltroVerticalService } from '../../Core/services/filtro-vertical.service';
 import { RouterLink } from '@angular/router';
 import { EliminarDTO } from '../../Core/models/EliminarDTO';
+import { MovimientoDTO } from '../../Core/models/MovimientoDTO';
+import { MovimientoService } from '../../Core/services/movimiento.service';
 
 
 @Component({
@@ -48,6 +50,7 @@ export class DocumentoversionesComponent implements OnInit  {
 
   documentosService = inject(DocumentosService);
   versionesService = inject(VersionesService);
+  movimientoService = inject(MovimientoService);
 
   listaCategorias! : VersionDTO[];
   listCategoriasdataSource = new MatTableDataSource<VersionDTO>([]);
@@ -487,6 +490,19 @@ export class DocumentoversionesComponent implements OnInit  {
         height: '100vh',
         width: '100vw',
       });
+
+      const movimiento:  MovimientoDTO = {
+        idMovimiento: 0,
+        versionID: element.id,
+        fechaIngreso: new Date().toISOString(),
+        usuarioID: 1,
+        movimiento: false
+      };
+  
+      this.movimientoService.RegistrarMovimiento(movimiento).subscribe(response => {
+        console.log(response);
+      });
+    
    // }
   }
 
@@ -505,21 +521,11 @@ export class DocumentoversionesComponent implements OnInit  {
   
   
   realizarBusqueda() {
-    if (this.textoBuscar.trim() === '') {
-      this.setTable([]); // Si no hay texto de búsqueda, tabla vacía
-      return;
-    }
     this.filtrarData();
   }
 
   filtrarData() {
     const data = this.listaCategorias.slice();
-    
-    if (!this.textoBuscar.trim()) {
-      this.setTable([]);
-      return;
-    }
-    
     setTimeout(() => {
       const dataFiltrada = data.filter(item => {
         // Extrae el nombre del archivo del urlVersion

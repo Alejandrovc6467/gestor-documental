@@ -84,7 +84,7 @@
                     <th mat-header-cell *matHeaderCellDef> Acciones </th>
                     <td mat-cell *matCellDef="let element"> 
                         <div class="acciones-container-botones">
-                            <button (click)="descargarDocumento(element.urlArchivo)" class="boton_tabla">
+                            <button (click)="descargarDocumento(element)" class="boton_tabla">
                                 <mat-icon name="pie-chart-outline">download</mat-icon>
                             </button>
                             @if(element.archivo.contentType === 'application/pdf'){
