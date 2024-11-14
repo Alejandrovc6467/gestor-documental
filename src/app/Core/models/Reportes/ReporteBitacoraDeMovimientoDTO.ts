@@ -3,7 +3,7 @@ export interface ReporteBitacoraDeMovimientoDTO {
     nombreDocumento: string;
     acceso: string;
     version: number;
-    fecha: string;
+    fechaIngreso: string;
     usuario: string;
     movimiento: string;
     oficinaResponsable: string;
