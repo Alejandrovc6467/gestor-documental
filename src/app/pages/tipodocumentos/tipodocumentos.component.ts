@@ -133,7 +133,7 @@ export class TipodocumentosComponent implements OnInit  {
           console.log(response);
           if(response){
     
-            this.limpiarTabla();
+            this.realizarBusqueda();
             this.limpiarFormulario();
             Swal.fire('Creado!', 'El tipo de documento ha sido creado.', 'success');
     
@@ -179,7 +179,7 @@ export class TipodocumentosComponent implements OnInit  {
           if(response){
   
             // //
-            this.limpiarTabla();
+            this.realizarBusqueda();
             this.limpiarFormulario();
             Swal.fire('Editado!', 'El tipo de documento ha sido editado.', 'success');
   
@@ -274,7 +274,7 @@ export class TipodocumentosComponent implements OnInit  {
                 console.log(response);
 
                 if(response){
-                  this.limpiarTabla();
+                  this.realizarBusqueda();
                   this.limpiarFormulario();
                   Swal.fire('Eliminado!', 'El tipo de documento ha sido eliminado.', 'success');
                 }else{
@@ -326,7 +326,7 @@ export class TipodocumentosComponent implements OnInit  {
       });
 
       this.setTable(dataFiltrada);
-    }, 1500); 
+    }, 1000); 
   }
 
   onSearchChange(event: any) {

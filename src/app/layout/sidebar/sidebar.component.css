@@ -123,7 +123,8 @@ a{
 /*pruebas que hize en clases*/
 
 .nav__link:hover{
-  background-color: var(--bg-color-secundario);
+  background-color: #daa520;
+  /* background-color: #ffffff4d; */
 }
 .nav__icon{
   font-size: 1.25rem;

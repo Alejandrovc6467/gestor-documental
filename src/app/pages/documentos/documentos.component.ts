@@ -270,7 +270,7 @@ export class DocumentosComponent implements OnInit {
               this.doctos = []; // Limpiar la lista de doctos relacionados
               this.palabrasClaveComponent.limpiarPalabrasClave();
               this.limpiarRelacionesDocumento();
-              this.limpiarTabla();
+              this.realizarBusqueda();
               this.limpiarFormulario();
               Swal.fire('Creado', 'El documento ha sido creado exitosamente', 'success');
 
@@ -348,7 +348,7 @@ export class DocumentosComponent implements OnInit {
             this.doctos = []; // Limpiar la lista de doctos relacionados
             this.actualizarTablaRelaciones();
             this.palabrasClaveComponent.limpiarPalabrasClave();
-            this.limpiarTabla();
+            this.realizarBusqueda();
             this.limpiarFormulario();
             Swal.fire('Editado', 'El documento ha sido editado exitosamente', 'success');
 
@@ -500,7 +500,7 @@ export class DocumentosComponent implements OnInit {
             this.documentosService.eliminarDocumento(eliminarDTO).subscribe(response => {
                 console.log(response);
                 if(response){
-                  this.limpiarTabla();
+                  this.realizarBusqueda();
                   this.limpiarFormulario();
                   Swal.fire('Eliminado!', 'El documento ha sido eliminado.', 'success');
                 }else{

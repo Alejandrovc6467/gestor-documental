@@ -131,15 +131,10 @@ export class DocumentoversionesComponent implements OnInit  {
           oficina: this.Oficina?.nombre
         });
 
-
-        //console.log(this.objetoDocumentoParaCargarDatosQuemados);
-
       });
 
     }, 500);
     
-    //luego creo una VersionDTO y lo seteo con los datos del formulario y los de objetoDocumentoParaCargarDatosQuemados 
-    //esto ultimo en el metodo guardar obvio
   
   }
 
@@ -266,7 +261,7 @@ export class DocumentoversionesComponent implements OnInit  {
     
             console.log(response);
             if(response){
-              this.limpiarTabla();
+              this.realizarBusqueda();
               this.limpiarFormulario();
               Swal.fire('Creada!', 'La versión ha sido creada.', 'success');
             }else{
@@ -326,7 +321,7 @@ export class DocumentoversionesComponent implements OnInit  {
             console.log(response);
             if(response){
             
-              this.limpiarTabla();
+              this.realizarBusqueda();
               this.limpiarFormulario();
               Swal.fire('Editada!', 'La versión ha sido editada.', 'success');
 
@@ -480,7 +475,7 @@ export class DocumentoversionesComponent implements OnInit  {
             this.versionesService.eliminarVersion(eliminarDTO).subscribe(response => {
                 console.log(response);
                 if(response){
-                  this.limpiarTabla();
+                  this.realizarBusqueda();
                   this.limpiarFormulario();
                   Swal.fire('Eliminada!', 'La versión ha sido eliminada.', 'success');
                 }else{

@@ -133,7 +133,7 @@ export class CategoriasComponent implements OnInit {
         this.categoriasService.crearCategoria(categoria).subscribe(response => {
           console.log(response);
           if(response){
-            this.limpiarTabla();
+            this.realizarBusqueda();
             this.limpiarFormulario();
             Swal.fire('Creada!', 'La categoría ha sido creada.', 'success');
           }else{
@@ -173,7 +173,7 @@ export class CategoriasComponent implements OnInit {
         this.categoriasService.actualizarCategoria(categoriaActualizada).subscribe(response => {
           console.log(response);
           if(response){
-            this.limpiarTabla();
+            this.realizarBusqueda();
             this.limpiarFormulario();
             Swal.fire('Editada!', 'La categoría ha sido editada.', 'success');
           }else{
@@ -264,7 +264,7 @@ export class CategoriasComponent implements OnInit {
             this.categoriasService.eliminarCategoria(eliminarDTO).subscribe(response => {
                 console.log(response);
                 if(response){
-                  this.limpiarTabla();
+                  this.realizarBusqueda();
                   this.limpiarFormulario();
                   Swal.fire('Eliminado!', 'La categoría ha sido eliminada.', 'success');
                 }else{
@@ -313,7 +313,7 @@ export class CategoriasComponent implements OnInit {
       });
 
       this.setTable(dataFiltrada);
-    }, 1500); 
+    }, 1000); 
   }
 
   onSearchChange(event: any) {

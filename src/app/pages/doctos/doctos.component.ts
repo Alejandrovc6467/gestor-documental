@@ -130,7 +130,7 @@ export class DoctosComponent implements OnInit  {
         this.doctocService.crearDoctoc(categoria).subscribe(response => {
           console.log(response);
           if(response){
-            this.limpiarTabla();
+            this.realizarBusqueda();
             this.limpiarFormulario();
             Swal.fire('Creado!', 'El Doctoc ha sido creado.', 'success');
           }else{
@@ -169,7 +169,7 @@ export class DoctosComponent implements OnInit  {
         this.doctocService.actualizarDoctoc(categoriaActualizada).subscribe(response => {
           console.log(response);
           if(response){
-            this.limpiarTabla();
+            this.realizarBusqueda();
             this.limpiarFormulario();
             Swal.fire('Editado!', 'El Doctoc ha sido editado.', 'success');
           }else{
@@ -260,7 +260,7 @@ export class DoctosComponent implements OnInit  {
             this.doctocService.eliminarDoctoc(eliminarDTO).subscribe(response => {
                 console.log(response);
                 if(response){
-                  this.limpiarTabla();
+                  this.realizarBusqueda();
                   this.limpiarFormulario();
                   Swal.fire('Eliminado!', 'El Doctoc ha sido eliminado.', 'success');
                 }else{
@@ -311,7 +311,7 @@ export class DoctosComponent implements OnInit  {
       });
 
       this.setTable(dataFiltrada);
-    }, 1500); 
+    }, 1000); 
   }
 
   onSearchChange(event: any) {

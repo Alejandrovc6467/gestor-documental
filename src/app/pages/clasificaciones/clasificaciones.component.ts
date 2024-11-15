@@ -131,7 +131,7 @@ export class ClasificacionesComponent implements OnInit {
           console.log(response);
           if(response){
            
-            this.limpiarTabla();
+            this.realizarBusqueda();
             this.limpiarFormulario();
             Swal.fire('Creada!', 'La clasificación ha sido creada.', 'success');
           }else{
@@ -176,7 +176,7 @@ export class ClasificacionesComponent implements OnInit {
         this.clasificacionesService.actualizarClasificacion(categoriaActualizada).subscribe(response => {
           console.log(response);
           if(response){
-            this.limpiarTabla();
+            this.realizarBusqueda();
             this.limpiarFormulario();
             Swal.fire('Editada!', 'La clasificación ha sido editada.', 'success');
           }else{
@@ -266,7 +266,7 @@ export class ClasificacionesComponent implements OnInit {
             this.clasificacionesService.eliminarClasificacion(eliminarDTO).subscribe(response => {
                 console.log(response);
                 if(response){
-                  this.limpiarTabla();
+                  this.realizarBusqueda();
                   this.limpiarFormulario();
                   Swal.fire('Eliminado!', 'La clasificación ha sido eliminada.', 'success');
                 }else{

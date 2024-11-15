@@ -19,13 +19,13 @@
                 
                 <div class="nav__list">
 
-                    <a mat-button routerLink="/consultas/filtroHorizontal" class="nav__link active">
+                    <a mat-button routerLink="consultas/filtroHorizontal" class="nav__link"   [class.active]="isActiveRoute(['consultas/filtroHorizontal', 'consultas/filtroProceso', 'consultas/filtroVertical'])" >
                         <mat-icon name="home-outline" class="nav__icon">search</mat-icon>
                         <span class="nav__name">Consultas</span>
                     </a>
 
                     @if(rolIdLogin === 1 || rolIdLogin === 2 || rolIdLogin === 3){
-                        <a mat-button routerLink="/documentos" class="nav__link">
+                        <a mat-button routerLink="/documentos" class="nav__link" routerLinkActive="active">
                             <mat-icon name="folder-outline" class="nav__icon">description</mat-icon>
                             <span class="nav__name">Documentos</span>
                         </a>
@@ -39,19 +39,19 @@
                         <mat-icon class="collapse__link">keyboard_arrow_down</mat-icon>
 
                         <ul class="collapse__menu">
-                            <a routerLink="/reporteBitacoraMovimientos" class="collapse__sublink nav__link"><span>•</span>Bitacora movimientos</a>
-                            <a routerLink="/reporteControlDeVersiones" class="collapse__sublink nav__link"><span>•</span>Control versiones</a>
-                            <a routerLink="/reporteDocumentosAntiguos" class="collapse__sublink nav__link"><span>•</span>Documentos antiguos</a>
-                            <a routerLink="/reporteMaestroDeDocumentos" class="collapse__sublink nav__link"><span>•</span>Maestro documentos</a>
-                            <a routerLink="/reporteMaestroDeDocumentosPorNorma" class="collapse__sublink nav__link"><span>•</span>Maestro Documentos<br>por norma</a>
-                            <a routerLink="/reporteDescargaDeDocumentos" class="collapse__sublink nav__link"><span>•</span>Descarga documentos</a>
-                            <a routerLink="/reporteDocumentosSinMovimientos" class="collapse__sublink nav__link"><span>•</span>Documentos sin<br> movimientos</a>
+                            <a routerLink="/reporteBitacoraMovimientos" class="collapse__sublink nav__link" routerLinkActive="active"><span>•</span>Bitacora movimientos</a>
+                            <a routerLink="/reporteControlDeVersiones" class="collapse__sublink nav__link" routerLinkActive="active"><span>•</span>Control versiones</a>
+                            <a routerLink="/reporteDocumentosAntiguos" class="collapse__sublink nav__link" routerLinkActive="active"><span>•</span>Documentos antiguos</a>
+                            <a routerLink="/reporteMaestroDeDocumentos" class="collapse__sublink nav__link" routerLinkActive="active"><span>•</span>Maestro documentos</a>
+                            <a routerLink="/reporteMaestroDeDocumentosPorNorma" class="collapse__sublink nav__link" routerLinkActive="active"><span>•</span>Maestro Documentos<br>por norma</a>
+                            <a routerLink="/reporteDescargaDeDocumentos" class="collapse__sublink nav__link" routerLinkActive="active"><span>•</span>Descarga documentos</a>
+                            <a routerLink="/reporteDocumentosSinMovimientos" class="collapse__sublink nav__link" routerLinkActive="active"><span>•</span>Documentos sin<br> movimientos</a>
                         </ul>
                     </div>
 
            
                     @if(rolIdLogin === 1){
-                        <a routerLink="/normas" class="nav__link">
+                        <a routerLink="/normas" class="nav__link" routerLinkActive="active">
                             <mat-icon name="pie-chart-outline" class="nav__icon">article</mat-icon>
                             <span class="nav__name">Normas</span>
                         </a>
@@ -59,42 +59,42 @@
                    
                 
                     @if(rolIdLogin === 1 || rolIdLogin === 2 || rolIdLogin === 3){
-                        <a routerLink="/etapas" class="nav__link">
+                        <a routerLink="/etapas" class="nav__link" routerLinkActive="active">
                             <mat-icon name="pie-chart-outline" class="nav__icon">insert_chart</mat-icon>
                             <span class="nav__name">Etapas</span>
                         </a>
                     }
 
                     @if(rolIdLogin === 1 || rolIdLogin === 2 || rolIdLogin === 3){
-                        <a routerLink="/clasificaciones" class="nav__link">
+                        <a routerLink="/clasificaciones" class="nav__link" routerLinkActive="active">
                             <mat-icon name="pie-chart-outline" class="nav__icon">schema</mat-icon>
                             <span class="nav__name">Clasificaciones</span>
                         </a>
                     }
 
                     @if(rolIdLogin === 1 || rolIdLogin === 2 || rolIdLogin === 3){
-                        <a routerLink="/subclasificaciones" class="nav__link">
+                        <a routerLink="/subclasificaciones" class="nav__link" routerLinkActive="active">
                             <mat-icon name="pie-chart-outline" class="nav__icon">account_tree</mat-icon>
                             <span class="nav__name">Sub clasificaciones</span>
                         </a>
                     }
 
                     @if(rolIdLogin === 1){
-                        <a routerLink="/categorias" class="nav__link">
+                        <a routerLink="/categorias" class="nav__link" routerLinkActive="active">
                             <mat-icon name="pie-chart-outline" class="nav__icon">category</mat-icon>
                             <span class="nav__name">Categorías</span>
                         </a>
                     }
 
                     @if(rolIdLogin === 1 || rolIdLogin === 2 || rolIdLogin === 3){
-                        <a routerLink="/doctos" class="nav__link">
+                        <a routerLink="/doctos" class="nav__link" routerLinkActive="active">
                             <mat-icon name="pie-chart-outline" class="nav__icon">receipt_long</mat-icon>
                             <span class="nav__name">DocTos</span>
                         </a>
                     }
 
                     @if(rolIdLogin === 1 || rolIdLogin === 2 || rolIdLogin === 3){
-                        <a routerLink="/tipodocumentos" class="nav__link">
+                        <a routerLink="/tipodocumentos" class="nav__link" routerLinkActive="active">
                             <mat-icon name="pie-chart-outline" class="nav__icon">text_snippet</mat-icon>
                             <span class="nav__name">Tipo documentos</span>
                         </a>

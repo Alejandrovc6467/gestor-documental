@@ -153,7 +153,7 @@ export class SubclasificacionesComponent implements OnInit {
           console.log(response);
           if(response){
            
-            this.limpiarTabla();
+            this.realizarBusqueda();
             this.limpiarFormulario();
             Swal.fire('Creada!', 'La subclasificación ha sido creada.', 'success');
           }else{
@@ -198,7 +198,7 @@ export class SubclasificacionesComponent implements OnInit {
           console.log(response);
           if(response){
            
-            this.limpiarTabla();
+            this.realizarBusqueda();
             this.limpiarFormulario();
             Swal.fire('Editada!', 'La subclasificación ha sido editada.', 'success');
           }else{
@@ -291,7 +291,7 @@ export class SubclasificacionesComponent implements OnInit {
                 console.log(response);
                 if(response){
                   
-                  this.limpiarTabla();
+                  this.realizarBusqueda();
                   this.limpiarFormulario();
                   Swal.fire('Eliminado!', 'La Subclasificación ha sido eliminada.', 'success');
                 }else{
@@ -332,7 +332,7 @@ export class SubclasificacionesComponent implements OnInit {
       this.listCategoriasdataSource = new MatTableDataSource<SubclasificacionExtendidaDTO>(dataConClasificacionNombre);
       this.listCategoriasdataSource.paginator = this.paginator;
 
-    }, 3000);
+    }, 1000);
   }
   
 

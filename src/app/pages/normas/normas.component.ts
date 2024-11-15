@@ -132,7 +132,7 @@ export class NormasComponent  implements OnInit{
         this.normasService.crearNorma(categoria).subscribe(response => {
           console.log(response);
           if(response){
-            this.limpiarTabla();
+            this.realizarBusqueda();
             this.limpiarFormulario();
             Swal.fire('Creada!', 'La norma ha sido creada.', 'success');
           }else{
@@ -176,7 +176,7 @@ export class NormasComponent  implements OnInit{
         this.normasService.actualizarNorma(categoriaActualizada).subscribe(response => {
           console.log(response);
           if(response){
-            this.limpiarTabla();
+            this.realizarBusqueda();
             this.limpiarFormulario();
             Swal.fire('Editada!', 'La norma ha sido editada.', 'success');
           }else{
@@ -269,7 +269,7 @@ export class NormasComponent  implements OnInit{
             this.normasService.eliminarNorma(eliminarDTO).subscribe(response => {
                 console.log(response);
                 if(response){
-                  this.limpiarTabla();
+                  this.realizarBusqueda();
                   this.limpiarFormulario();
                   Swal.fire('Eliminado!', 'La norma ha sido eliminada.', 'success');
                 }else{

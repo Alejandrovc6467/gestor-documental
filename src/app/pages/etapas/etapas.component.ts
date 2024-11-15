@@ -154,7 +154,7 @@ export class EtapasComponent implements OnInit{
             if(response){
               
               this.obtenerEtapasHuerfanas();
-              this.limpiarTabla();
+              this.realizarBusqueda();
               this.limpiarFormulario();
               Swal.fire('Creada!', 'La Etapa ha sido creada.', 'success');
             }else{
@@ -206,7 +206,7 @@ export class EtapasComponent implements OnInit{
             console.log(response);
             if(response){
              
-              this.limpiarTabla();
+              this.realizarBusqueda();
               this.limpiarFormulario();
               Swal.fire('Editada!', 'La etapa ha sido editada.', 'success');
             }else{
@@ -304,7 +304,7 @@ export class EtapasComponent implements OnInit{
                 console.log(response);
                 if(response){
                 
-                  this.limpiarTabla();
+                  this.realizarBusqueda();
                   this.limpiarFormulario();
                   Swal.fire('Eliminado!', 'La etapa ha sido eliminada.', 'success');
                 }else{
@@ -365,7 +365,7 @@ export class EtapasComponent implements OnInit{
       this.listEtapasDataSource = new MatTableDataSource<EtapaExtendidaDTO>(dataConNormaYPadreNombre);
       this.listEtapasDataSource.paginator = this.paginator;
   
-    }, 3000);
+    }, 1000);
   }
   
 

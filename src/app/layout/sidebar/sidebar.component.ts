@@ -1,18 +1,21 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterOutlet, RouterModule, Router } from '@angular/router';
 import { SeguridadService } from '../../Core/services/seguridad.service';
+import { CommonModule } from '@angular/common';
 
 
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, MatIconModule],
+  imports: [RouterOutlet, RouterLink, MatIconModule, RouterModule, CommonModule ],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css'
 })
 export class SidebarComponent implements OnInit{
+
+  router = inject(Router);
 
   seguridadService = inject(SeguridadService);
   rolIdLogin: number = 0;
@@ -27,6 +30,13 @@ export class SidebarComponent implements OnInit{
     this.seguridadService.logout();
   }
 
+  // este lo hize especialmente para que me mantenga "Consultas" activo aun asi este en filtroVertical o filtroProceso, esto porque son rutas hijas
+  // si no tuviera rutas hijas esto no es necesario
+  isActiveRoute(routes: string[]): boolean {
+    const currentRoute = this.router.url;
+    return routes.some(route => currentRoute.includes(route));
+  }
+ 
 
   //configuaraciones del sidebar
   initSidebar() {
@@ -47,14 +57,14 @@ export class SidebarComponent implements OnInit{
     showMenu()
 
     
-    // LINK ACTIVE
+    // LINK ACTIVE      -   Esto ya no es necesario ya que estoy utilizando el routerLinkActive="active" en las etiqutas "a",  la clase que si le tengo que poner a la etiquetas "a" es nav__link para darle estilo, per pero como digo esto ya no es necesario, ya que esto hace la logica de quitar y poner el active, pero eso ya lo hace el roterLinkActive de Angular
     const linkColor = document.querySelectorAll('.nav__link');
     const colorLink = (event: Event) => {
       linkColor.forEach(l => l.classList.remove('active'));
       (event.currentTarget as HTMLElement).classList.add('active');
     };
     linkColor.forEach(l => l.addEventListener('click', colorLink));
-
+    
     
 
     
@@ -72,6 +82,7 @@ export class SidebarComponent implements OnInit{
 
 
   }
+  
 
 }
 
