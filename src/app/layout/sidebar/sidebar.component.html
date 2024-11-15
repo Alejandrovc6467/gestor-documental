@@ -31,23 +31,24 @@
                         </a>
                     }
 
+                    @if(rolIdLogin === 1 || rolIdLogin === 2 || rolIdLogin === 3){
+                        <div  class="nav__link_collapse collapse">
+                            <mat-icon name="pie-chart-outline" class="nav__icon">leaderboard</mat-icon>
+                            <span class="nav__name">Reportes</span>
 
-                    <div  class="nav__link_collapse collapse">
-                        <mat-icon name="pie-chart-outline" class="nav__icon">leaderboard</mat-icon>
-                        <span class="nav__name">Reportes</span>
+                            <mat-icon class="collapse__link">keyboard_arrow_down</mat-icon>
 
-                        <mat-icon class="collapse__link">keyboard_arrow_down</mat-icon>
-
-                        <ul class="collapse__menu">
-                            <a routerLink="/reporteBitacoraMovimientos" class="collapse__sublink nav__link" routerLinkActive="active"><span>•</span>Bitacora movimientos</a>
-                            <a routerLink="/reporteControlDeVersiones" class="collapse__sublink nav__link" routerLinkActive="active"><span>•</span>Control versiones</a>
-                            <a routerLink="/reporteDocumentosAntiguos" class="collapse__sublink nav__link" routerLinkActive="active"><span>•</span>Documentos antiguos</a>
-                            <a routerLink="/reporteMaestroDeDocumentos" class="collapse__sublink nav__link" routerLinkActive="active"><span>•</span>Maestro documentos</a>
-                            <a routerLink="/reporteMaestroDeDocumentosPorNorma" class="collapse__sublink nav__link" routerLinkActive="active"><span>•</span>Maestro Documentos<br>por norma</a>
-                            <a routerLink="/reporteDescargaDeDocumentos" class="collapse__sublink nav__link" routerLinkActive="active"><span>•</span>Descarga documentos</a>
-                            <a routerLink="/reporteDocumentosSinMovimientos" class="collapse__sublink nav__link" routerLinkActive="active"><span>•</span>Documentos sin<br> movimientos</a>
-                        </ul>
-                    </div>
+                            <ul class="collapse__menu">
+                                <a routerLink="/reporteBitacoraMovimientos" class="collapse__sublink nav__link" routerLinkActive="active"><span>•</span>Bitacora movimientos</a>
+                                <a routerLink="/reporteControlDeVersiones" class="collapse__sublink nav__link" routerLinkActive="active"><span>•</span>Control versiones</a>
+                                <a routerLink="/reporteDocumentosAntiguos" class="collapse__sublink nav__link" routerLinkActive="active"><span>•</span>Documentos antiguos</a>
+                                <a routerLink="/reporteMaestroDeDocumentos" class="collapse__sublink nav__link" routerLinkActive="active"><span>•</span>Maestro documentos</a>
+                                <a routerLink="/reporteMaestroDeDocumentosPorNorma" class="collapse__sublink nav__link" routerLinkActive="active"><span>•</span>Maestro Documentos<br>por norma</a>
+                                <a routerLink="/reporteDescargaDeDocumentos" class="collapse__sublink nav__link" routerLinkActive="active"><span>•</span>Descarga documentos</a>
+                                <a routerLink="/reporteDocumentosSinMovimientos" class="collapse__sublink nav__link" routerLinkActive="active"><span>•</span>Documentos sin<br> movimientos</a>
+                            </ul>
+                        </div>
+                    }
 
            
                     @if(rolIdLogin === 1){

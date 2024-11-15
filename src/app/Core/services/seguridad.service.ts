@@ -34,7 +34,7 @@ export class SeguridadService {
         console.log('Respuesta de login:', response);
   
         // Aquí puedes almacenar información en el localStorage
-        localStorage.setItem('isAuthenticated', 'true');
+        sessionStorage.setItem('isAuthenticated', 'true');
         localStorage.setItem('correo', response.correo.toString());
         localStorage.setItem('nombre', response.nombre.toString());
         localStorage.setItem('apellido', response.apellido.toString());
@@ -61,7 +61,7 @@ export class SeguridadService {
 
 
   isAuthenticated(): boolean {
-    return localStorage.getItem('isAuthenticated') === 'true';
+    return sessionStorage.getItem('isAuthenticated') === 'true';// este atributo se borra automaticamente cuando el usuario sale de la pagina, asi que no tengo necesiadad de limpiarlo en el logout
   }
 
   // Nuevo método para verificar roles
@@ -71,8 +71,6 @@ export class SeguridadService {
   }
 
   logout(): void {
-
-    localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('correo');
     localStorage.removeItem('nombre');
     localStorage.removeItem('apellido');

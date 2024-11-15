@@ -40,6 +40,8 @@ export class SidebarComponent implements OnInit{
 
   //configuaraciones del sidebar
   initSidebar() {
+
+   
     /*===== EXPANDER MENU  =====*/ 
     const showMenu = ()=>{
       const toggle = document.getElementById('nav-toggle'),
@@ -56,29 +58,33 @@ export class SidebarComponent implements OnInit{
     }
     showMenu()
 
-    
-    // LINK ACTIVE      -   Esto ya no es necesario ya que estoy utilizando el routerLinkActive="active" en las etiqutas "a",  la clase que si le tengo que poner a la etiquetas "a" es nav__link para darle estilo, per pero como digo esto ya no es necesario, ya que esto hace la logica de quitar y poner el active, pero eso ya lo hace el roterLinkActive de Angular
+      
+    // LINK ACTIVE      -   Esto ya no es necesario ya que estoy utilizando el routerLinkActive="active" en las etiqutas "a",  la clase que si le tengo que poner a la etiquetas "a" es nav__link para darle estilo, per pero como digo esto ya no es necesario, ya que esto hace la logica de quitar y poner el active, pero eso ya lo hace el roterLinkActive de Angular, ahora si estoy trabajando con otra tecnologia como react o laravel es mejor tener este codigo a la mano
     const linkColor = document.querySelectorAll('.nav__link');
     const colorLink = (event: Event) => {
       linkColor.forEach(l => l.classList.remove('active'));
       (event.currentTarget as HTMLElement).classList.add('active');
     };
     linkColor.forEach(l => l.addEventListener('click', colorLink));
-    
-    
+      
+      
 
-    
-    // COLLAPSE MENU  
-    const linkCollapse = document.getElementsByClassName('collapse__link');
-    for (let i = 0; i < linkCollapse.length; i++) {
-      linkCollapse[i].addEventListener('click', (event: Event) => {
-        const collapseMenu = (event.currentTarget as HTMLElement).nextElementSibling as HTMLElement;
-        collapseMenu.classList.toggle('showCollapse');
+    setTimeout(() => { // este timeOut lo puse obligado por el tema de que este metodo se carga mucho antes de las validaciones de los if que estan en el html  para validar si el rol puede o no ver todo este collapse (Reportes)
 
-        const rotate = collapseMenu.previousElementSibling as HTMLElement;
-        rotate.classList.toggle('rotate');
-      });
-    }
+      // COLLAPSE MENU  
+      const linkCollapse = document.getElementsByClassName('collapse__link');
+      for (let i = 0; i < linkCollapse.length; i++) {
+        linkCollapse[i].addEventListener('click', (event: Event) => {
+          const collapseMenu = (event.currentTarget as HTMLElement).nextElementSibling as HTMLElement;
+          collapseMenu.classList.toggle('showCollapse');
+
+          const rotate = collapseMenu.previousElementSibling as HTMLElement;
+          rotate.classList.toggle('rotate');
+        });
+      }
+
+
+    }, 1000); 
 
 
   }

@@ -48,13 +48,13 @@ export const routes: Routes = [
             {path: 'doctos', component:DoctosComponent , canActivate:[administradorGuard], data:{roles:['1', '2','3']}},
             {path: 'tipodocumentos', component:TipodocumentosComponent , canActivate:[administradorGuard], data:{roles:['1', '2','3']}},
         
-            {path: 'reporteBitacoraMovimientos', component:ReporteBitacoraDeMovimientosComponent , canActivate:[administradorGuard], data:{roles:['1', '2','3', '4']}},
-            {path: 'reporteControlDeVersiones', component:ReporteControlDeVersionesComponent , canActivate:[administradorGuard], data:{roles:['1', '2','3', '4']}},
-            {path: 'reporteDocumentosAntiguos', component:ReporteDocumentosAntiguosComponent , canActivate:[administradorGuard], data:{roles:['1', '2','3', '4']}},
-            {path: 'reporteMaestroDeDocumentos', component:ReporteMaestroDeDocumentosComponent , canActivate:[administradorGuard], data:{roles:['1', '2','3', '4']}},
-            {path: 'reporteMaestroDeDocumentosPorNorma', component:ReporteMaestroDeDocumentosPorNormaComponent , canActivate:[administradorGuard], data:{roles:['1', '2','3', '4']}},
-            {path: 'reporteDescargaDeDocumentos', component:ReporteDescargaDeDocumentosComponent , canActivate:[administradorGuard], data:{roles:['1', '2','3', '4']}},
-            {path: 'reporteDocumentosSinMovimientos', component:ReporteDocumentosSinMovimientosComponent , canActivate:[administradorGuard], data:{roles:['1', '2','3', '4']}},
+            {path: 'reporteBitacoraMovimientos', component:ReporteBitacoraDeMovimientosComponent , canActivate:[administradorGuard], data:{roles:['1', '2','3']}},
+            {path: 'reporteControlDeVersiones', component:ReporteControlDeVersionesComponent , canActivate:[administradorGuard], data:{roles:['1', '2','3']}},
+            {path: 'reporteDocumentosAntiguos', component:ReporteDocumentosAntiguosComponent , canActivate:[administradorGuard], data:{roles:['1', '2','3']}},
+            {path: 'reporteMaestroDeDocumentos', component:ReporteMaestroDeDocumentosComponent , canActivate:[administradorGuard], data:{roles:['1', '2','3']}},
+            {path: 'reporteMaestroDeDocumentosPorNorma', component:ReporteMaestroDeDocumentosPorNormaComponent , canActivate:[administradorGuard], data:{roles:['1', '2','3']}},
+            {path: 'reporteDescargaDeDocumentos', component:ReporteDescargaDeDocumentosComponent , canActivate:[administradorGuard], data:{roles:['1', '2','3']}},
+            {path: 'reporteDocumentosSinMovimientos', component:ReporteDocumentosSinMovimientosComponent , canActivate:[administradorGuard], data:{roles:['1', '2','3']}},
 
             { path: '', redirectTo: 'consultas/filtroHorizontal', pathMatch: 'full' }
        
@@ -64,7 +64,7 @@ export const routes: Routes = [
 
 
     {path: 'iniciosesionprincipal', component:IniciosesionprincipalComponent},
-    {path: 'iniciosesionoficinas', component:IniciosesionoficinasComponent}, //este debe llevar el canActive puede ser cualquiera de los que haga pero que se auntentifique primero
+    {path: 'iniciosesionoficinas', component:IniciosesionoficinasComponent, canActivate:[administradorGuard], data:{roles:['1', '2','3', '4']}}, //este debe llevar el canActive puede ser cualquiera de los que haga pero que se auntentifique primero
 
     //si la ruta  no existe redirecciona a usuarios, obvio si no esta autenticado pues nunca entra aqui y lo manda al loggin
     {path: '**', redirectTo:'consultas/filtroHorizontal'},
